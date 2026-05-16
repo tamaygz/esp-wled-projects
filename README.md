@@ -63,7 +63,22 @@ Four diagram types are produced:
 
 All outputs land in `my-project/docs/` — never hand-edit them. Or use the **`/gen-diagrams`** prompt in Copilot chat.
 
-### 4 · Build & Flash
+### 4 · Generate Enclosure
+
+Use the **`/gen-enclosure`** prompt in Copilot chat, or run the helper directly after the SCAD is in place:
+
+```powershell
+pwsh tools/render_enclosure.ps1 -Project my-project -ScadName my-project-enclosure
+```
+
+Produces `my-project/mechanical/enclosure/`:
+
+- `my-project-base.stl`, `my-project-lid.stl` — print-ready
+- `my-project-{base,lid}-{iso,top}.png` — 4 preview PNGs, committed alongside the STLs
+
+Lid closure defaults to **snap-on** (no screws). Source of truth: [.github/skills/enclosure-gen/SKILL.md](.github/skills/enclosure-gen/SKILL.md).
+
+### 5 · Build & Flash
 
 ```bash
 # Inside the WLED repo, with firmware/platformio_override.ini alongside platformio.ini:
@@ -72,14 +87,14 @@ pio run -e esp32dev_my-project -t upload
 
 First boot → connect to `wled-ap` hotspot → configure WiFi credentials via Captive Portal.
 
-### 5 · Connect to Home Assistant
+### 6 · Connect to Home Assistant
 
 1. Enable native WLED integration: **Settings → Devices & Services → Add → WLED**
 2. Device auto-discovers via mDNS (`my-project.local`)
 3. Verify light entities appear and on/off / brightness / colour work
 4. (Optional) Install [hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) for state-driven effects
 
-### 6 · Export & Commit
+### 7 · Export & Commit
 
 ```bash
 # Export config from WLED web UI → backup
@@ -100,8 +115,7 @@ git commit -m "feat(my-project): initial project setup"
 │   ├── pcb/                # KiCad PCB files, Gerbers
 │   └── bom/                # bom.md — parts list + power budget
 ├── mechanical/
-│   ├── 3d-models/          # STL / STEP / .3mf files
-│   └── enclosure/          # Housing files, print settings
+│   └── enclosure/          # YAPP_Box SCAD + STLs + preview PNGs + print settings
 ├── design/
 │   ├── led-map/            # 2D pixel maps, segment plans
 │   └── effects/            # WLED presets.json, palettes, ha-automations.yaml
@@ -129,6 +143,7 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `diagram-gen.instructions.md` | Auto-loaded when editing diagram generators or `docs/` |
 | `/new-project` prompt | Scaffolds a full project folder from `_template/` |
 | `/gen-diagrams` prompt | Runs `tools/gen_diagrams.py` with validation |
+| `/gen-enclosure` prompt | Generates YAPP_Box SCAD + renders STLs and preview PNGs |
 | ESP/WLED Project Planner agent | 7-phase guided planning: LED → power → GPIO → HA → scaffold |
 
 ---
@@ -140,6 +155,8 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | WLED web installer | Flash pre-built firmware | https://install.wled.me |
 | WLED custom build | Online build with usermods | https://wled-compile.github.io |
 | KiCad | Schematic / PCB | https://kicad.org |
+| OpenSCAD | Parametric 3D models (enclosure rendering) | https://openscad.org |
+| YAPP_Box v3 | Parametric box generator (shared at `tools/yapp/`) | https://github.com/mrWheel/YAPP_Box |
 | PlatformIO | Build & flash from source | https://platformio.org |
 | hacs-wledext-effects | State-driven HA effects | https://github.com/tamaygz/hacs-wledext-effects |
 | WLED-MM (MoonModules) | Sound-reactive fork | https://github.com/MoonModules/WLED-MM |

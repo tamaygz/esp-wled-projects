@@ -13,9 +13,12 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 | `_template/` | Copy-paste skeleton for every new project |
 | `tools/diagram_gen/` | Shared Python library for generating all project diagrams |
 | `tools/gen_diagrams.py` | CLI runner: `python tools/gen_diagrams.py <project>` |
+| `tools/yapp/YAPPgenerator_v3.scad` | Shared YAPP_Box library (MIT) — included by every project SCAD |
+| `tools/render_enclosure.ps1` | One-shot helper: renders base + lid STLs + 4 preview PNGs |
 | `reefs/` | Active project — driftwood ambient lamps (SK6812 RGBW, ESP32, Home Assistant) |
 | `.github/instructions/` | Scoped Copilot instruction files |
-| `.github/prompts/` | Reusable prompt templates |
+| `.github/prompts/` | Reusable prompt templates (incl. `/gen-enclosure`, `/gen-diagrams`, `/new-project`) |
+| `.github/skills/enclosure-gen/` | API reference for YAPP_Box / OpenSCAD enclosure generation |
 | `.github/agents/` | Custom agent mode definitions |
 
 ## Common Agent Tasks
@@ -23,13 +26,13 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 ### Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
-2. Edit `<project-name>/specs.md` (concept, requirements, acceptance criteria)
+2. Edit `<project-name>/specs.md` (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria)
 3. Fill `<project-name>/hardware/bom/bom.md` with LED current budget
 4. Create `<project-name>/gen_diagrams_config.py` following `reefs/gen_diagrams_config.py`
-5. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`
-6. Add a row to the Projects table in `README.md`
-7. Add a **"Home Assistant"** section to `specs.md` — list expected entity IDs and note whether `hacs-wledext-effects` is applicable
-8. Set a unique mDNS hostname in `firmware/cfg.json` so HA auto-discovers the device
+5. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`; run `python tools/gen_diagrams.py <project-name>`
+6. Run `/gen-enclosure` to write the SCAD and render shells + preview PNGs into `mechanical/enclosure/` (helper: `pwsh tools/render_enclosure.ps1 -Project <project-name> -ScadName <project-name>-enclosure`)
+7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`)
+8. Add a row to the Projects table in `README.md`
 9. Open a PR from a branch named `project/<project-name>`
 
 ### Home Assistant Integration
@@ -65,6 +68,18 @@ Each effect creates controllable HA entities (Switch / Number / Select / Sensor 
 3. Settings → Devices & Services → Add → "WLED Effects" → select WLED device
 4. Document installed effects and entity IDs in `specs.md` → "Home Assistant"
 5. Store example automations in `design/effects/ha-automations.yaml`
+
+### Generating an Enclosure
+
+- Authoritative API reference: [`.github/skills/enclosure-gen/SKILL.md`](.github/skills/enclosure-gen/SKILL.md)
+- Slash command: `/gen-enclosure` (writes SCAD + spec, then renders)
+- Manual re-render after editing the SCAD:
+  ```powershell
+  pwsh tools/render_enclosure.ps1 -Project <project> -ScadName <project>-enclosure
+  ```
+- Defaults to enforce: snap-on lid (`snapJoins`, no `connectors`), `yappBaseOnly` for `pcbStands`, `ridgeHeight = 6.0` (≥ wallThickness × 1.8), shared library included via `../../../tools/yapp/YAPPgenerator_v3.scad`, explicit `YAPPgenerate();` as the last line
+- Commit alongside the SCAD: `<project>-base.stl`, `<project>-lid.stl`, and the 4 preview PNGs (`-base-iso`, `-base-top`, `-lid-iso`, `-lid-top`)
+- Inspect the iso PNGs before committing — floating stems on the lid mean a `pcbStands` entry still uses `yappBoth` and must be switched to `yappBaseOnly`
 
 ### Modifying Shared Diagram Generation
 
@@ -103,6 +118,7 @@ Key `DIAGRAM_CONFIG` fields for concept/real-world diagrams: `lamps` (list with 
 - Do not modify `.git/` files.
 - Do not add generated images without regenerating them from source.
 - Do not add new pip dependencies without updating `tools/diagram_gen/requirements.txt`.
+- Do not modify the upstream `tools/yapp/YAPPgenerator_v3.scad` library file.
 - Do not commit secrets, WiFi credentials, or API keys.
 - Do not edit files in `<project>/docs/` by hand — they are tool outputs.
 
