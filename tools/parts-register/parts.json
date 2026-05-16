@@ -1,0 +1,157 @@
+{
+  "version": "1.0.0",
+  "updated": "2025-05-16",
+  "note": "All dimensions in mm. 'pcb_or_body_mm' gives L×W×H of the PCB footprint or encapsulated body. 'mounting_holes' positions are measured from the bottom-left corner of the footprint bounding box. 'verified: false' entries are estimated from datasheet families or community sources — confirm before committing to a PCB layout or enclosure cutout.",
+  "parts": {
+    "D1_MINI_V4": {
+      "name": "Wemos LOLIN D1 Mini v4",
+      "manufacturer": "LOLIN (Wemos)",
+      "mfr_part_number": "D1 Mini v4",
+      "category": "microcontroller",
+      "pcb_or_body_mm": { "l": 34.2, "w": 25.6, "h": 10.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [
+        {
+          "label": "USB-C port",
+          "l": 9.0,
+          "w": 3.5,
+          "x_from_left": 12.6,
+          "y_from_bottom": 0.0,
+          "note": "Centred on short edge; approximate — measure your unit before cutting"
+        }
+      ],
+      "key_notes": [
+        "No mounting holes — use friction-fit pocket or side-wall retaining clips in enclosure",
+        "Headers: 2.54mm pitch, 8 pins per row, two rows spaced ~17.8mm apart",
+        "ESP-12F module raises max component height to ~10mm above PCB top surface",
+        "USB-C replaces Micro-USB from v4 onwards",
+        "3.3V logic — level-shift data lines before 5V LED strips"
+      ],
+      "source_url": "https://www.wemos.cc/en/latest/d1/d1_mini.html",
+      "verified": true
+    },
+    "HLK_30M05": {
+      "name": "Hi-Link HLK-30M05 30W 5V 6A AC-DC Module",
+      "manufacturer": "Hi-Link",
+      "mfr_part_number": "HLK-30M05",
+      "category": "ac_dc_psu",
+      "pcb_or_body_mm": { "l": 57.5, "w": 33.6, "h": 22.5 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "UNVERIFIED — dimensions estimated from same-family HLK-30M12/HLK-30M15 (JLCPCB DIP,57.5×33.6mm, 22.5mm height); confirm from HLK-30M05 datasheet before PCB layout",
+        "4 DIP through-hole pins: pin1=AC(L), pin2=AC(N), pin3=VO-, pin4=VO+",
+        "Input 85–264 Vac; Output 5V @ 6A max (30W)",
+        "Fully encapsulated potted module — no user-serviceable parts",
+        "Recommend 2A/250Vac slow-blow fuse on AC input",
+        "Isolation 3000 Vac; operating temp −40 to +85 °C"
+      ],
+      "source_url": "https://www.hlktech.net/index.php?id=986",
+      "verified": false
+    },
+    "HLK_20M05": {
+      "name": "Hi-Link HLK-20M05 20W 5V 4A AC-DC Module",
+      "manufacturer": "Hi-Link",
+      "mfr_part_number": "HLK-20M05",
+      "category": "ac_dc_psu",
+      "pcb_or_body_mm": { "l": 56.0, "w": 32.0, "h": 22.5 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "4 DIP through-hole pins: pin1=AC(L), pin2=AC(N), pin3=VO-, pin4=VO+",
+        "Input 85–264 Vac; Output 5V @ 4A max (20W)",
+        "Fully encapsulated potted module",
+        "Recommend 1.5A/250Vac slow-blow fuse on AC input",
+        "LCSC part C465406; packaging confirmed DIP,56×32mm; height 22.5mm (Evelta/JLCPCB)"
+      ],
+      "source_url": "https://lcsc.com/product-detail/Power-Modules_HI-LINK-HLK-20M05_C465406.html",
+      "verified": true
+    },
+    "HLK_5M05": {
+      "name": "Hi-Link HLK-5M05 5W 5V 1A AC-DC Module",
+      "manufacturer": "Hi-Link",
+      "mfr_part_number": "HLK-5M05",
+      "category": "ac_dc_psu",
+      "pcb_or_body_mm": { "l": 38.0, "w": 23.0, "h": 18.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Also listed as 'HLK-PM05' on some Chinese marketplaces; the canonical Hi-Link part number is HLK-5M05 (no 'PM05' exists in official Hi-Link catalog)",
+        "4 DIP through-hole pins: pin1=AC(L), pin2=AC(N), pin3=VO-, pin4=VO+",
+        "Input 85–264 Vac; Output 5V @ 1A max (5W)",
+        "Fully encapsulated potted module",
+        "JLCPCB part C209907; confirmed DIP,38×23mm footprint, 18mm body height"
+      ],
+      "source_url": "https://jlcpcb.com/partdetail/HILINK-HLK5M05/C209907",
+      "verified": true
+    },
+    "IC_74AHCT125_DIP14": {
+      "name": "74AHCT125 Quad 3-State Buffer DIP-14",
+      "manufacturer": "Texas Instruments / NXP",
+      "mfr_part_number": "SN74AHCT125N",
+      "category": "level_shifter_ic",
+      "pcb_or_body_mm": { "l": 19.05, "w": 6.35, "h": 4.57 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Standard JEDEC 0.3-inch DIP-14 package (D-014_T)",
+        "14 pins: 7 per row, 2.54mm pin pitch, 7.62mm row spacing",
+        "5V supply; inputs TTL-compatible (accepts 3.3V logic from ESP32/ESP8266)",
+        "3-state outputs; use to level-shift 3.3V GPIO to 5V LED strip data line",
+        "TI part SN74AHCT125N; NXP equivalent 74AHCT125N; LCSC C12494 (SO-14), C57369 (DIP-14)"
+      ],
+      "source_url": "https://www.ti.com/product/SN74AHCT125",
+      "verified": true
+    },
+    "JST_SM_2P5_3PIN": {
+      "name": "JST SM 2.5mm 3-Circuit Connector (Female Housing)",
+      "manufacturer": "JST",
+      "mfr_part_number": "SMR-03V-B",
+      "category": "connector",
+      "pcb_or_body_mm": { "l": 9.5, "w": 6.0, "h": 6.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [
+        {
+          "label": "panel-mount rectangular pocket (enclosure wall)",
+          "l": 9.5,
+          "w": 6.0,
+          "x_from_left": 0.0,
+          "y_from_bottom": 0.0,
+          "note": "Confirmed from reefs project enclosure SCAD: 9.5×6mm pocket with internal shoulder retains connector body; connector inserts from outside"
+        }
+      ],
+      "key_notes": [
+        "2.5mm pitch wire-to-wire connector; 3 circuits",
+        "Pocket dimensions 9.5×6mm confirmed from reefs enclosure SCAD (reefs-automatedvariant-enclosure-spec.md)",
+        "Commonly pre-wired on WS2812/SK6812 LED strips for power injection",
+        "Female housing: SMR-03V-B (or SM-03V-BC depending on revision); male housing: SMS-03V-BC",
+        "Crimp contact: SYM-001T-P0.6; rated 3A per contact; max wire AWG 26–22",
+        "Body depth into wall ~6mm; use printed shoulder stop to prevent push-through"
+      ],
+      "source_url": "https://www.jst-mfg.com/product/pdf/eng/eSM.pdf",
+      "verified": false
+    },
+    "SK6812_RGBW_60": {
+      "name": "SK6812 RGBW Addressable LED Strip 60 LED/m 5V",
+      "manufacturer": "Various (Worldsemi SK6812 chip)",
+      "mfr_part_number": "SK6812-RGBW-60-5V",
+      "category": "led_strip",
+      "pcb_or_body_mm": { "l": 1000.0, "w": 10.0, "h": 1.5 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Per-meter dimensions; cut at every 3-LED interval (50mm)",
+        "LED pitch: 16.67mm (1000mm ÷ 60 LEDs)",
+        "FPC (flexible PCB) ~1.5mm thick including LED package",
+        "Power pads (+5V, GND) at each cut point; pad-to-pad spacing ~2.54mm",
+        "Data signal: 800kHz single-wire NZR protocol (WS2812-compatible timing)",
+        "Max current per LED: 20mA per channel (RGBW = up to 80mA per LED at full white)",
+        "Colour order: GRBW — set chipset to SK6812 RGBW in WLED LED settings",
+        "3.3V data line requires level-shift to 5V before strip DIN",
+        "Power inject every ≤50 LEDs to prevent voltage sag on long runs"
+      ],
+      "source_url": "https://cdn-shop.adafruit.com/product-files/1138/SK6812+LED+datasheet+.pdf",
+      "verified": true
+    }
+  }
+}
