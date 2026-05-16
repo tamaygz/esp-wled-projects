@@ -1,0 +1,30 @@
+blueprint:
+  name: "Reefs — Scheduled Off"
+  description: >
+    Turn off all Reefs driftwood lamps at a set time each night.
+  domain: automation
+  source_url: https://raw.githubusercontent.com/tamaygz/esp-wled-projects/main/reefs/homeassistant/blueprints/reefs-off.yaml
+  input:
+    master_light:
+      name: Master light
+      description: "Master light entity controlling all Reefs lamps."
+      selector:
+        entity:
+          domain: light
+    off_time:
+      name: Turn-off time
+      description: "Time at which to turn off the lamps."
+      default: "00:00:00"
+      selector:
+        time: {}
+
+trigger:
+  - platform: time
+    at: !input off_time
+
+action:
+  - service: light.turn_off
+    target:
+      entity_id: !input master_light
+
+mode: single

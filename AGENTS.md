@@ -16,6 +16,8 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 | `tools/yapp/YAPPgenerator_v3.scad` | Shared YAPP_Box library (MIT) — included by every project SCAD |
 | `tools/render_enclosure.ps1` | One-shot helper: renders base + lid STLs + 4 preview PNGs |
 | `reefs/` | Active project — driftwood ambient lamps (SK6812 RGBW, ESP32, Home Assistant) |
+| `reefs/homeassistant/` | HA package, blueprints, lovelace card, import guide |
+| `reefs/firmware/spiffs/ha-import.html` | Device-served HA import assistant page |
 | `.github/instructions/` | Scoped Copilot instruction files |
 | `.github/prompts/` | Reusable prompt templates (incl. `/gen-enclosure`, `/gen-diagrams`, `/new-project`) |
 | `.github/skills/enclosure-gen/` | API reference for YAPP_Box / OpenSCAD enclosure generation |
@@ -32,8 +34,9 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 5. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`; run `python tools/gen_diagrams.py <project-name>`
 6. Run `/gen-enclosure` to write the SCAD and render shells + preview PNGs into `mechanical/enclosure/` (helper: `pwsh tools/render_enclosure.ps1 -Project <project-name> -ScadName <project-name>-enclosure`)
 7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`)
-8. Add a row to the Projects table in `README.md`
-9. Open a PR from a branch named `project/<project-name>`
+8. Create `homeassistant/` artifacts (see "Home Assistant Config Files" section below)
+9. Add a row to the Projects table in `README.md`
+10. Open a PR from a branch named `project/<project-name>`
 
 ### Home Assistant Integration
 
@@ -43,6 +46,35 @@ Every project **must** be controllable from Home Assistant via the native WLED i
 - No MQTT. Do not add MQTT unless explicitly required.
 - Verify on/off, brightness, and color control work in HA before marking a project complete.
 - Document all HA entity IDs in the project's `specs.md` under a **"Home Assistant"** section.
+
+### Home Assistant Config Files
+
+Every project must have a `homeassistant/` folder at the project root containing:
+
+| File | Purpose |
+|------|---------|
+| `homeassistant/README.md` | Import guide with `my.home-assistant.io` blueprint badge links |
+| `homeassistant/package.yaml` | HA Package: helpers + scripts + automations |
+| `homeassistant/lovelace.yaml` | Dashboard card YAML |
+| `homeassistant/blueprints/*.yaml` | Project-specific blueprints (one per automation pattern) |
+| `firmware/spiffs/ha-import.html` | Device-served import assistant page |
+
+**Blueprint rules:**
+- File name: `{project}-{pattern}.yaml`
+- Must include `source_url` pointing to GitHub raw URL
+- Use `blueprint.input` for all entity IDs
+- Include `domain: automation` at blueprint level
+
+**`ha-import.html` rules:**
+- Copy from `_template/firmware/spiffs/ha-import.html`
+- Update the `PROJECT_CONFIG` / `REPO_BASE` / `BLUEPRINTS` / `PACKAGE_FILE` block at the top
+- Core HTML/JS body must not diverge from the template
+- Page reads WLED `/json/info` + `/json/state` to auto-compute HA entity IDs
+
+**package.yaml rules:**
+- Top of file: commented entity ID substitution block pointing to `ha-import.html`
+- Section order: helpers (`input_boolean`, `input_number`, `input_select`) → `script` → `automation`
+- Automation `id` format: `{project}_{automation_slug}`
 
 ### hacs-wledext-effects
 
@@ -67,7 +99,7 @@ Each effect creates controllable HA entities (Switch / Number / Select / Sensor 
 2. Install "WLED Effects" from HACS → restart HA
 3. Settings → Devices & Services → Add → "WLED Effects" → select WLED device
 4. Document installed effects and entity IDs in `specs.md` → "Home Assistant"
-5. Store example automations in `design/effects/ha-automations.yaml`
+5. Document installed effects and entity IDs in `specs.md` → "Home Assistant"; add example automations to `homeassistant/package.yaml`
 
 ### Generating an Enclosure
 
@@ -106,6 +138,15 @@ Key `DIAGRAM_CONFIG` fields for concept/real-world diagrams: `lamps` (list with 
 - `platformio_override.ini` — build-time overrides only; do not touch WLED upstream sources
 - `firmware/cfg.json`, `firmware/presets.json` — runtime WLED config exported from the web UI
 - **No WiFi credentials in any committed file**
+
+### Maintaining the Parts Register
+
+- Check `tools/parts-register/parts.json` before introducing any new component dimensions, ratings, or board pin mappings.
+- If a part is missing, add it to the register before using it elsewhere in the project.
+- New entries should include the technical fields that matter for reuse, not just physical dimensions.
+- For boards and devkits, capture pinout data when possible: official image/PDF link, source URL, software identifiers, and a structured pin list with GPIO numbers, aliases, capabilities, and warnings.
+- Prefer official datasheets and board pages first, then PlatformIO or framework metadata for machine-readable identifiers, then distributor listings. Mark community-derived data as unverified.
+- If you touch an older geometry-only entry during new work, backfill technical metadata or board pinout details instead of creating parallel notes in project files.
 
 ### Fixing Wiring Diagrams
 

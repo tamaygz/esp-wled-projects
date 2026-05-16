@@ -1,0 +1,50 @@
+blueprint:
+  name: "Reefs — Night Dim"
+  description: >
+    Dim the Reefs driftwood lamps to a low brightness at a set time each night.
+    Useful for transitioning from evening ambient to night mode.
+  domain: automation
+  source_url: https://raw.githubusercontent.com/tamaygz/esp-wled-projects/main/reefs/homeassistant/blueprints/reefs-night-dim.yaml
+  input:
+    lamp_1:
+      name: Lamp 1
+      description: "Light entity for Driftwood Lamp 1 (Segment 0)."
+      selector:
+        entity:
+          domain: light
+    lamp_2:
+      name: Lamp 2
+      description: "Light entity for Driftwood Lamp 2 (Segment 1)."
+      selector:
+        entity:
+          domain: light
+    dim_time:
+      name: Dim time
+      description: "Time at which to dim the lamps."
+      default: "23:00:00"
+      selector:
+        time: {}
+    brightness_pct:
+      name: Night brightness (%)
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+          unit_of_measurement: "%"
+
+trigger:
+  - platform: time
+    at: !input dim_time
+
+action:
+  - service: light.turn_on
+    target:
+      entity_id:
+        - !input lamp_1
+        - !input lamp_2
+    data:
+      brightness_pct: !input brightness_pct
+      effect: "Night Glow"
+
+mode: single

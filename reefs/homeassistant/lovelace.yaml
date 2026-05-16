@@ -1,0 +1,57 @@
+type: vertical-stack
+cards:
+  - type: light
+    entity: light.reefs
+    name: "Reefs — Both lamps"
+    show_brightness_control: true
+    show_color_control: false
+    show_color_temp_control: true
+
+  - type: horizontal-stack
+    cards:
+      - type: light
+        entity: light.reefs_lamp_1
+        name: "Lamp 1"
+        show_brightness_control: true
+      - type: light
+        entity: light.reefs_lamp_2
+        name: "Lamp 2"
+        show_brightness_control: true
+
+  - type: entities
+    title: "Scenes"
+    entities:
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.reefs_scene_warm_ambient
+        name: "Warm Ambient"
+        icon: mdi:lamp
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.reefs_scene_reef_calm
+        name: "Reef Calm"
+        icon: mdi:waves
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.reefs_scene_night_glow
+        name: "Night Glow"
+        icon: mdi:weather-night
+
+  - type: entities
+    title: "Device"
+    entities:
+      - entity: select.reefs_preset
+        name: "Active Preset"
+      - entity: input_boolean.reefs_movie_mode
+        name: "Movie Mode"
+      - entity: sensor.reefs_estimated_current
+        name: "Draw (mA)"

@@ -1,0 +1,76 @@
+# HA Package — [Project Name]
+#
+# ENTITY ID SUBSTITUTION
+# ─────────────────────────────────────────────────────────────────────
+# Open http://[wled-ip]/ha-import.html for automatic entity ID lookup.
+# Or verify manually: HA → Settings → Devices & Services → WLED → [device]
+#
+# Replace the values below before copying to your HA packages/ folder:
+#
+#   [MASTER_LIGHT]   →  light.[device_mdns_name]
+#                        e.g. light.my_wled_device
+#   [SEGMENT_1]      →  light.[device_mdns_name]_[segment_1_name]
+#                        e.g. light.my_wled_device_lamp_1
+#   [SEGMENT_2]      →  light.[device_mdns_name]_[segment_2_name]
+#
+# ─────────────────────────────────────────────────────────────────────
+# INSTALL:
+#   1. Copy this file to <ha-config>/packages/[project].yaml
+#   2. Add to configuration.yaml:
+#        homeassistant:
+#          packages: !include_dir_named packages
+#   3. Restart Home Assistant
+# ─────────────────────────────────────────────────────────────────────
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+input_boolean:
+  [project]_active:
+    name: "[Project] Active"
+    icon: mdi:led-strip-variant
+
+# ---------------------------------------------------------------------------
+# Scripts
+# ---------------------------------------------------------------------------
+script:
+  [project]_scene_default:
+    alias: "[Project] — Default Scene"
+    mode: single
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - [SEGMENT_1]
+            - [SEGMENT_2]
+        data:
+          brightness_pct: 40
+          effect: "Solid"
+
+# ---------------------------------------------------------------------------
+# Automations
+# ---------------------------------------------------------------------------
+automation:
+  - id: "[project]_sunset_on"
+    alias: "[Project] — Turn on at sunset"
+    description: "Activate default scene 30 minutes before sunset."
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: "-00:30:00"
+    action:
+      - service: script.turn_on
+        target:
+          entity_id: script.[project]_scene_default
+    mode: single
+
+  - id: "[project]_off_midnight"
+    alias: "[Project] — Turn off at midnight"
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: [MASTER_LIGHT]
+    mode: single

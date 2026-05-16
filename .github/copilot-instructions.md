@@ -18,15 +18,22 @@ Every project mirrors the `_template/` skeleton:
 ```
 [project]/
 ├── firmware/               # platformio_override.ini, cfg.json, presets.json
+│   └── spiffs/             # Files flashed to WLED LittleFS (e.g. ha-import.html)
 ├── hardware/
 │   ├── wiring/             # KiCad schematics, wiring notes, PDFs
 │   ├── pcb/                # KiCad PCB files, Gerbers
 │   └── bom/                # bom.md with full power budget
+├── homeassistant/          # Home Assistant config artifacts
+│   ├── README.md           # Import guide with one-click blueprint badges
+│   ├── package.yaml        # HA Package: helpers + scripts + automations
+│   ├── lovelace.yaml       # Ready-made dashboard card YAML
+│   └── blueprints/         # Project-specific automation blueprints
+│       └── *.yaml          # Each blueprint importable from GitHub raw URL
 ├── mechanical/
 │   └── enclosure/          # YAPP_Box SCAD + STLs + preview PNGs + print settings
 ├── design/
 │   ├── led-map/            # 2D pixel maps, segment plans
-│   └── effects/            # WLED presets.json, palette exports
+│   └── effects/            # WLED presets.json, palette exports, ha-automations.yaml
 ├── docs/                   # Auto-generated diagrams (PNG/SVG) — never hand-edit
 ├── gen_diagrams.py         # Project diagram script — imports from tools/diagram_gen
 ├── gen_diagrams_config.py  # DIAGRAM_CONFIG dict for this project
@@ -141,18 +148,77 @@ Each effect creates Switch, Number, Select, Sensor, and Button entities in HA an
 2. Install "WLED Effects" from HACS, restart HA
 3. Add Integration: Settings → Devices & Services → Add → "WLED Effects", select your WLED device
 4. Document installed effects and their entity IDs in `specs.md` → **"Home Assistant"** section
-5. Add example automations to a `design/effects/ha-automations.yaml` file in the project
+5. Add example automations to `homeassistant/package.yaml` or `design/effects/ha-automations.yaml`
 
-## Parts Dimensions Register
+## Home Assistant Config Files
 
-`tools/parts-register/parts.json` is the authoritative source for physical component dimensions used across all projects in this repo.
+Every project must include a `homeassistant/` folder (parallel to `firmware/` and `hardware/`) containing all HA configuration artifacts.
 
-**Always check the register before specifying dimensions in:**
+### Required files per project
+
+| File | Required | Purpose |
+|------|----------|---------|
+| `homeassistant/README.md` | Yes | Import guide with blueprint badge links and step-by-step instructions |
+| `homeassistant/package.yaml` | Yes | HA Package: input_boolean/number/select helpers + scripts + automations |
+| `homeassistant/lovelace.yaml` | Yes | Ready-made dashboard card YAML (paste into HA manual card editor) |
+| `homeassistant/blueprints/*.yaml` | Yes (≥1) | Project-specific blueprints importable from GitHub raw URL |
+| `firmware/spiffs/ha-import.html` | Yes | Device-served import assistant (JS reads /json/info, computes entity IDs) |
+
+### Import story (no Python, no terminal required)
+
+Three import paths — from most to least automated:
+
+1. **Device import page** (recommended): Flash firmware + spiffs → visit `http://[wled-ip]/ha-import.html` → JS reads WLED device data, shows entity IDs, offers blueprint import links, and lets user download a pre-filled `package.yaml`.
+2. **One-click blueprint import**: Click `my.home-assistant.io` badge links in `homeassistant/README.md` → HA opens its blueprint importer, user picks entities in HA UI.
+3. **Manual package**: Copy `package.yaml` → HA `packages/` → edit entity ID substitution block → restart HA.
+
+### Entity ID conventions
+
+- WLED entity IDs in HA follow the pattern `light.{device_slug}` (master) and `light.{device_slug}_{segment_slug}` (per segment).
+- `{device_slug}` is the WLED mDNS name lowercased with spaces → underscores (e.g. `reefs`).
+- `{segment_slug}` is the WLED segment name lowercased with spaces → underscores (e.g. `lamp_1`).
+- `ha-import.html` computes these from the live `/json/info` and `/json/state` responses — no hardcoding needed.
+- `package.yaml` must have a commented substitution block at the top (see template).
+
+### ha-import.html rules
+
+- One file per project in `firmware/spiffs/ha-import.html`.
+- Copy from `_template/firmware/spiffs/ha-import.html` and update the `PROJECT_CONFIG` block at the top.
+- Fields to update: `PROJECT.name`, `PROJECT.repoBase`, `PROJECT.blueprints[]`, `PROJECT.packageFile`.
+- The HTML/JS body is otherwise identical across projects — do not diverge.
+- The page fetches `/json/info` and `/json/state` from the same origin (WLED device IP); works without internet for the entity ID section; needs internet to fetch `package.yaml` from GitHub.
+
+### Blueprint rules
+
+- One blueprint per automation pattern; file name: `{project}-{pattern}.yaml`.
+- Each blueprint must include a `source_url` field pointing to its GitHub raw URL.
+- Use `blueprint.input` for all entity IDs — users should never have to hand-edit blueprint YAML.
+- Include `domain: automation` at blueprint level.
+
+### package.yaml rules
+
+- Top of file: commented block listing all entity ID substitutions needed.
+- Pointer to `ha-import.html` for automatic substitution.
+- Sections in order: helpers (`input_boolean`, `input_number`, `input_select`), `script`, `automation`.
+- Automation `id` fields must be globally unique: use `{project}_{automation_slug}` pattern.
+
+## Parts Register
+
+`tools/parts-register/parts.json` is the authoritative source for component dimensions, technical metadata, and board pinout definitions used across all projects in this repo.
+
+**Always check the register before specifying dimensions, ratings, or pin mappings in:**
 - `hardware/bom/bom.md` — component footprint sizes and current budgets
 - `mechanical/enclosure/*-enclosure.scad` — cutout sizes, board height, standoff positions
 - `hardware/wiring/WIRING.md` — connector body dimensions and panel-mount pocket sizes
 
-**Workflow:** check register → if not found, web-search the datasheet → add a new `parts.json` entry (set `"verified": false` if estimated) → use dimensions in project files.
+**Workflow:** check register → if not found, web-search the datasheet/product page → add a new `parts.json` entry with the relevant mechanical and technical fields (set `"verified": false` if estimated) → for boards, also add `software_identifiers` and `board_pinout` when sources exist → use register data in project files.
+
+For boards and devkits, prefer collecting both:
+
+- a human-facing pinout source such as an official pinout PDF/image or board page
+- a machine-facing source such as a PlatformIO board manifest or Arduino/framework variant pin map
+
+Board entries should include a structured pin definition when possible so future agents can reuse pin metadata instead of rebuilding it from scratch. Existing geometry-only entries should be backfilled when they are touched for new work.
 
 **Key parts in the register:**
 
@@ -179,7 +245,13 @@ See `tools/parts-register/README.md` for field definitions and instructions for 
 5. Create `gen_diagrams_config.py` from the `reefs/` example, then run `python tools/gen_diagrams.py <project-name>`
 6. Generate the enclosure with the `/gen-enclosure` slash command (writes SCAD + STLs + 4 preview PNGs into `mechanical/enclosure/`)
 7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`) so HA auto-discovers the device
-8. Add a row to the Projects table in `README.md`
+8. Create `homeassistant/` artifacts:
+   - `homeassistant/package.yaml` — helpers, scripts, automations (see rules above)
+   - `homeassistant/blueprints/*.yaml` — one blueprint per automation pattern
+   - `homeassistant/lovelace.yaml` — dashboard card
+   - `homeassistant/README.md` — import guide with badge links
+   - `firmware/spiffs/ha-import.html` — update `PROJECT_CONFIG` block from template
+9. Add a row to the Projects table in `README.md`
 
 ## Commit Convention
 

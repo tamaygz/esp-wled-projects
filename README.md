@@ -11,6 +11,7 @@ Each subfolder is a self-contained project with firmware config, wiring docs, po
 | Project | Status | LEDs | Controller | Description |
 |---------|--------|------|------------|-------------|
 | [reefs](./reefs/) | wip | SK6812 RGBW 60/m × 2 | ESP32-WROOM-32 | Driftwood ambient lamps, Home Assistant integrated |
+| [curtaincinemalights](./curtaincinemalights/) | wip | SK6812 RGBW 60/m, ~180 LEDs · 3 m | ESP8266 D1 Mini | Cinema curtain LED sync — center-fill mirrors curtain position, State Sync + Chase + Breathe via hacs-wledext-effects |
 
 ---
 

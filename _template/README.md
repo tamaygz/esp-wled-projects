@@ -49,7 +49,9 @@
 | [hardware/bom/bom.md](hardware/bom/bom.md) | Bill of materials, current budget, PSU sizing |
 | [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) | GPIO assignments, power rails, cable runs |
 | [design/led-map/LED-DESIGN.md](design/led-map/LED-DESIGN.md) | Segment plan, preset design, colour strategy |
-| [design/effects/ha-automations.yaml](design/effects/ha-automations.yaml) | Home Assistant automation examples |
+| [homeassistant/README.md](homeassistant/README.md) | HA import guide with one-click blueprint badges |
+| [homeassistant/package.yaml](homeassistant/package.yaml) | HA Package: helpers, scripts, automations |
+| [homeassistant/lovelace.yaml](homeassistant/lovelace.yaml) | Dashboard card YAML |
 | [mechanical/enclosure/MODELS.md](mechanical/enclosure/MODELS.md) | 3D print settings, cutout dimensions |
 | [firmware/platformio_override.ini](firmware/platformio_override.ini) | WLED build config (env, usermods, build flags) |
 | [firmware/cfg.json](firmware/cfg.json) | WLED device config (mDNS, outputs, boot preset) |
@@ -76,7 +78,9 @@ See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO tab
 - [ ] Assemble control box (PSU, ESP32, level shifter)
 - [ ] Wire lamp cables; connect via JST connectors
 - [ ] Configure WLED: outputs, LED count, colour order, boot preset
+- [ ] Flash spiffs (`pio run -t uploadfs`) so `ha-import.html` is served by the device
 - [ ] Add WLED integration to Home Assistant; verify light entities
+- [ ] Open `http://[device-ip]/ha-import.html` → import blueprints / download package.yaml
 - [ ] Mount installation; conceal cables
 - [ ] Thermal soak: 60 min at 50 % brightness — verify ≤ 45 °C on strip
 

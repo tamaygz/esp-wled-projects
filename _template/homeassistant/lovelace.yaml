@@ -1,0 +1,31 @@
+type: vertical-stack
+cards:
+  - type: light
+    entity: light.[MASTER_LIGHT]
+    name: "[Project] — All"
+    show_brightness_control: true
+    show_color_control: false
+    show_color_temp_control: true
+
+  - type: entities
+    title: "[Project] Segments"
+    entities:
+      - entity: light.[SEGMENT_1]
+        name: "Segment 1"
+      - entity: light.[SEGMENT_2]
+        name: "Segment 2"
+
+  - type: entities
+    title: "[Project] Presets"
+    entities:
+      - entity: select.[device_mdns_name]_preset
+        name: "Active Preset"
+
+  - type: button
+    tap_action:
+      action: call-service
+      service: script.turn_on
+      service_data:
+        entity_id: script.[project]_scene_default
+    name: "Default Scene"
+    icon: mdi:lightbulb-auto

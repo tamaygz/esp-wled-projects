@@ -1,7 +1,18 @@
+# DEPRECATED — this file has been superseded.
+#
+# HA configuration has moved to:
+#   reefs/homeassistant/package.yaml       — full HA package (helpers + scripts + automations)
+#   reefs/homeassistant/blueprints/        — importable blueprints (GitHub URL import)
+#   reefs/homeassistant/lovelace.yaml      — dashboard card
+#   reefs/firmware/spiffs/ha-import.html  — device-served import assistant
+#
+# For import instructions see: reefs/homeassistant/README.md
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# ORIGINAL CONTENT PRESERVED BELOW FOR REFERENCE
+# ─────────────────────────────────────────────────────────────────────────────
+#
 # Home Assistant Automations — Reefs
-
-# Example automations for the Reefs driftwood ambient lamps.
-# Import via: Settings → Automations & Scenes → ⋮ → Import Blueprint / paste YAML.
 #
 # Entity IDs — adjust to match your HA instance after WLED auto-discovery:
 #   light.reef_lamps_lamp_1     — Lamp 1 (Driftwood A)

@@ -1,0 +1,157 @@
+# HA Package — Reefs
+# Driftwood ambient lamps — SK6812 RGBW, ESP32-WROOM-32, WLED v16+
+#
+# ENTITY ID SUBSTITUTION
+# ─────────────────────────────────────────────────────────────────────
+# Open http://reefs.local/ha-import.html for automatic entity ID lookup.
+# Or verify: HA → Settings → Devices & Services → WLED → Reefs → entities
+#
+# Default entity IDs (mDNS name "reefs", segments "Lamp 1" / "Lamp 2"):
+#
+#   light.reefs            — Master light (both segments together)
+#   light.reefs_lamp_1     — Lamp 1 (Driftwood A)
+#   light.reefs_lamp_2     — Lamp 2 (Driftwood B)
+#   select.reefs_preset    — Preset selector
+#
+# If your IDs differ, find and replace the values below.
+# ─────────────────────────────────────────────────────────────────────
+# INSTALL:
+#   1. Copy to <ha-config>/packages/reefs.yaml
+#   2. Add to configuration.yaml:
+#        homeassistant:
+#          packages: !include_dir_named packages
+#   3. Restart Home Assistant
+# ─────────────────────────────────────────────────────────────────────
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+input_boolean:
+  reefs_movie_mode:
+    name: "Reefs — Movie Mode"
+    icon: mdi:movie
+    initial: false
+
+input_select:
+  reefs_scene:
+    name: "Reefs — Active Scene"
+    options:
+      - Warm Ambient
+      - Reef Calm
+      - Night Glow
+      - Movie
+      - "Off"
+    initial: "Warm Ambient"
+    icon: mdi:led-strip-variant
+
+# ---------------------------------------------------------------------------
+# Scripts
+# ---------------------------------------------------------------------------
+script:
+  reefs_scene_warm_ambient:
+    alias: "Reefs — Warm Ambient"
+    icon: mdi:lamp
+    mode: single
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reefs_lamp_1
+            - light.reefs_lamp_2
+        data:
+          effect: "Warm Ambient"
+          brightness_pct: 40
+
+  reefs_scene_reef_calm:
+    alias: "Reefs — Reef Calm"
+    icon: mdi:waves
+    mode: single
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reefs_lamp_1
+            - light.reefs_lamp_2
+        data:
+          effect: "Reef Calm"
+          brightness_pct: 30
+
+  reefs_scene_night_glow:
+    alias: "Reefs — Night Glow"
+    icon: mdi:weather-night
+    mode: single
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reefs_lamp_1
+            - light.reefs_lamp_2
+        data:
+          effect: "Night Glow"
+          brightness_pct: 10
+
+# ---------------------------------------------------------------------------
+# Automations
+# ---------------------------------------------------------------------------
+automation:
+  - id: reefs_sunset_on
+    alias: "Reefs — Turn on at sunset"
+    description: "Activate warm ambient preset on both lamps 30 minutes before sunset."
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: "-00:30:00"
+    action:
+      - service: script.reefs_scene_warm_ambient
+    mode: single
+
+  - id: reefs_dim_late_evening
+    alias: "Reefs — Dim at 23:00"
+    description: "Reduce to Night Glow at 23:00."
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    action:
+      - service: script.reefs_scene_night_glow
+    mode: single
+
+  - id: reefs_off_midnight
+    alias: "Reefs — Turn off at midnight"
+    description: "Turn both lamps off at 00:00."
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.reefs
+    mode: single
+
+  - id: reefs_movie_mode_on
+    alias: "Reefs — Movie Mode on"
+    description: "Dim both lamps when movie mode helper is turned on."
+    trigger:
+      - platform: state
+        entity_id: input_boolean.reefs_movie_mode
+        to: "on"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reefs_lamp_1
+            - light.reefs_lamp_2
+        data:
+          brightness_pct: 15
+          color_temp: 500
+    mode: single
+
+  - id: reefs_movie_mode_off
+    alias: "Reefs — Movie Mode off"
+    description: "Restore warm ambient when movie mode is turned off."
+    trigger:
+      - platform: state
+        entity_id: input_boolean.reefs_movie_mode
+        to: "off"
+    action:
+      - service: script.reefs_scene_warm_ambient
+    mode: single
