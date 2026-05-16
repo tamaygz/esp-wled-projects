@@ -4,8 +4,8 @@ description: Regenerate all diagrams (or a specific type) for a project using to
 argument-hint: "project-name [schematic|blocks|concept|wiring]"
 agent: agent
 tools:
-   - read_file
-   - run_in_terminal
+   - read
+   - terminal
    - vscode/askQuestion
 ---
 

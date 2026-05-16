@@ -8,12 +8,10 @@ description: >
   esp32 led project, power budget led, wled segments, wled home assistant setup.
 argument-hint: "project idea, install type, LED length, power source, or Home Assistant goals"
 tools:
-  - read_file
-  - create_file
-  - replace_string_in_file
-  - run_in_terminal
-  - file_search
-  - grep_search
+  - read
+  - search
+  - edit
+  - terminal
   - vscode/askQuestion
 handoffs:
   - label: Review Scaffold And Docs

@@ -70,6 +70,7 @@ Every project mirrors the `_template/` skeleton:
 - Use `.github/skills/*/SKILL.md` for reusable capabilities that may include scripts, examples, and resources.
 - Use `.github/hooks/README.md` as the repo hook policy reference until concrete workspace hooks are added.
 - Prefer prompts for lightweight one-shot workflows, skills for portable multi-step capabilities, and custom agents for persistent personas or constrained-tool workflows.
+- In prompt and agent frontmatter, prefer current VS Code tool identifiers and tool sets such as `read`, `search`, `edit`, `terminal`, and `agent` instead of environment-specific helper names.
 - Prefer handoffs for guided, user-controlled phase changes such as planning → review. Use them to suggest the next best step without forcing the workflow forward automatically.
 - Prefer subagents only when isolated research, parallel analysis, or multi-perspective review genuinely improves focus. Keep coordinator instructions explicit about when delegation is allowed.
 - Use hooks only for deterministic automation or guardrails, such as validation, formatting, or blocking unsafe tool usage. Do not use hooks for fuzzy decision-making or to replace user collaboration.

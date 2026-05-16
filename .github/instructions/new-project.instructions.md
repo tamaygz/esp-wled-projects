@@ -30,6 +30,7 @@ Then work through these steps **in order**:
 7. **`firmware/cfg.json`** — set a unique mDNS hostname: `"id": {"mdns": "<project-name>"}` and ensure `"nw": {"mdns": 1}`
 8. **`README.md`** (project level) — full project README following the **Project README Structure** standard below: concept images first, documentation index table, wiring diagrams, build checklist
 9. **`README.md`** (repo root) — add a row to the Projects table
+10. **Review pass** — after scaffolding or broad project doc updates, switch to the `ESP/WLED Project Reviewer` agent or the planner's review handoff so the first pass is checked for missing artifacts, register-backed hardware facts, and current repo-meta coherence
 
 ## Planning With The Parts Register
 

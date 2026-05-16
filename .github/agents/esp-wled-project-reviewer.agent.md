@@ -7,12 +7,10 @@ description: >
   of leaving review as an ad-hoc manual step.
 argument-hint: "project folder, scaffold to review, or 'meta layer'"
 tools:
-  - read_file
-  - create_file
-  - replace_string_in_file
-  - run_in_terminal
-  - file_search
-  - grep_search
+  - read
+  - search
+  - edit
+  - terminal
   - vscode/askQuestion
 handoffs:
   - label: Return To Planning

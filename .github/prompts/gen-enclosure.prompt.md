@@ -10,10 +10,9 @@ description: >
 argument-hint: "project-name"
 agent: agent
 tools:
-  - read_file
-  - create_file
-  - replace_string_in_file
-  - run_in_terminal
+  - read
+  - edit
+  - terminal
   - vscode/askQuestion
 ---
 

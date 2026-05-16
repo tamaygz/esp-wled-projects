@@ -4,11 +4,9 @@ description: Scaffold a new ESP32/WLED project from the _template/ skeleton. Fil
 argument-hint: "project-name led-type led-count outputs description"
 agent: agent
 tools:
-   - read_file
-   - create_file
-   - replace_string_in_file
-   - file_search
-   - grep_search
+   - read
+   - search
+   - edit
    - vscode/askQuestion
 ---
 
@@ -89,6 +87,8 @@ If any required input is missing or ambiguous, use the VS Code ask-question tool
 
 10. Update root `README.md`:
    - Add a row to the Projects table: `| [$PROJECT_NAME](./$PROJECT_NAME/) | planning | $LED_TYPE × $LED_COUNT | $DESCRIPTION |`
+
+11. After the scaffold is in place, switch to the `ESP/WLED Project Reviewer` agent or use the planner's review handoff so the first pass is checked for missing files, parts-register-backed hardware facts, and repo-meta coherence before it is treated as complete.
 
 ## Constraints
 
