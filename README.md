@@ -2,7 +2,16 @@
 
 > DIY LED lighting projects powered by **WLED** on ESP32 / ESP8266 — fully integrated with Home Assistant.
 
-Each subfolder is a self-contained project with firmware config, wiring docs, power budget, 3D models, and generated diagrams.
+This repository has two layers:
+
+- the **meta main folder**, which contains the reusable project system
+- the **project folders**, which contain individual lighting builds
+
+The meta main folder is there to make new project creation repeatable instead of ad-hoc. It contains the shared `_template/` skeleton, Copilot agents and instructions under `.github/` and `AGENTS.md`, the parts register in [tools/parts-register/parts.json](./tools/parts-register/parts.json), shared generators in [tools/](./tools/), and the integration conventions for WLED, Home Assistant, diagrams, and enclosures. Together, those pieces are meant to help a project consumer move from idea to implementation faster: reuse known parts and pinouts, scaffold the right files, generate diagrams and enclosures consistently, and keep firmware, hardware, and Home Assistant artifacts aligned.
+
+Each actual project folder is then a self-contained build with its own firmware config, wiring docs, power budget, 3D models, and generated diagrams.
+
+I created this repository primarily for myself as a structured workspace for planning, building, documenting, and reusing WLED-based lighting projects. The goal is to keep my own process consistent first, while still making each finished project understandable and reusable for others.
 
 ---
 
