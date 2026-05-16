@@ -1,11 +1,19 @@
 ---
-mode: agent
+name: gen-diagrams
 description: Regenerate all diagrams (or a specific type) for a project using tools/gen_diagrams.py. Validates the config file before running.
+argument-hint: "project-name [schematic|blocks|concept|wiring]"
+agent: agent
+tools:
+   - read_file
+   - run_in_terminal
+   - vscode/askQuestion
 ---
 
 # Generate Diagrams
 
 Regenerate the visual documentation for a project.
+
+If the project name or diagram type is missing, use the VS Code ask-question tool to offer common options and allow free-form input.
 
 ## Inputs
 

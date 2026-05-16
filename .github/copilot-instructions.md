@@ -61,6 +61,43 @@ Every project mirrors the `_template/` skeleton:
 - `gen_diagrams_config.py` in each project exports a single `DIAGRAM_CONFIG` dict. Copy `reefs/gen_diagrams_config.py` as the starting point.
 - `docs/` in each project is output-only; the sources are the Python scripts.
 
+## VS Code Insiders Customization Guidance
+
+- Use `.github/copilot-instructions.md` and `AGENTS.md` for always-on repo guidance.
+- Use `.github/instructions/*.instructions.md` for file- or task-scoped rules with `applyTo` patterns.
+- Use `.github/prompts/*.prompt.md` for repeatable slash-command workflows.
+- Use `.github/agents/*.agent.md` for specialized personas with tool restrictions and optional handoffs.
+- Use `.github/skills/*/SKILL.md` for reusable capabilities that may include scripts, examples, and resources.
+- Use `.github/hooks/README.md` as the repo hook policy reference until concrete workspace hooks are added.
+- Prefer prompts for lightweight one-shot workflows, skills for portable multi-step capabilities, and custom agents for persistent personas or constrained-tool workflows.
+- Prefer handoffs for guided, user-controlled phase changes such as planning → review. Use them to suggest the next best step without forcing the workflow forward automatically.
+- Prefer subagents only when isolated research, parallel analysis, or multi-perspective review genuinely improves focus. Keep coordinator instructions explicit about when delegation is allowed.
+- Use hooks only for deterministic automation or guardrails, such as validation, formatting, or blocking unsafe tool usage. Do not use hooks for fuzzy decision-making or to replace user collaboration.
+- Keep customizations concise, use Markdown links instead of duplicating rules, and align file metadata with current VS Code Insiders conventions.
+- Use the Agent Customizations editor (`Chat: Open Customizations`) to manage these files and the Chat diagnostics view to troubleshoot loading problems.
+- If a contributor opens only a subfolder of this repo, enable `chat.useCustomizationsInParentRepositories` so the root customizations are discovered.
+
+## Workflow Design
+
+- Keep the main repo workflow intuitive: plan with the planner agent, then hand off to a reviewer agent before considering the scaffold or meta-layer update complete.
+- When adding future agents, prefer a coordinator-and-reviewer structure over many overlapping general-purpose agents.
+- If a future agent should only be used internally, mark it `user-invocable: false`. If it should not be auto-selected as a subagent, use `disable-model-invocation: true` unless an explicit coordinator needs it.
+- If future prompt files need isolated research or parallel checks, include agent/subagent tooling intentionally rather than assuming broad delegation.
+
+## Hooks Guidance
+
+- Workspace hooks belong in `.github/hooks/*.json`.
+- Start with low-risk events such as `SessionStart`, `PreToolUse`, or `PostToolUse` only when there is a clear deterministic benefit.
+- Keep hook commands cross-platform where possible, or provide OS-specific commands.
+- Validate and sanitize all hook inputs, avoid secrets in hook configs, and do not let the agent freely rewrite hook scripts without user review.
+- Good future candidates in this repo are policy checks that protect generated outputs or block unsafe edits; poor candidates are interactive planning choices, prose generation, or anything that should stay user-directed.
+
+## User Collaboration
+
+- When key requirements or tradeoffs are unclear, use the VS Code ask-question tool instead of asking only in free-form chat.
+- Always provide a short list of sensible options and keep free-form input enabled so the user can choose or supply a different answer.
+- Use structured questions especially for project planning choices such as LED family, controller board, PSU strategy, Home Assistant integration level, enclosure style, and whether to scaffold files immediately.
+
 Run diagrams from repo root:
 ```bash
 python tools/gen_diagrams.py <project>                  # all 4 types

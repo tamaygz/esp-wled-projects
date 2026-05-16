@@ -1,4 +1,5 @@
 ---
+name: enclosure-gen
 description: >
   LLM-assisted 3D enclosure design for ESP32/WLED projects using YAPP_Box — an
   open-source, MIT-licensed OpenSCAD parametric box generator. Reads project docs
@@ -8,11 +9,7 @@ description: >
   Use when designing, planning, generating, or documenting a project enclosure box.
   Triggers: enclosure, 3d case, project box, box maker, openscad, stl, yapp,
   cutouts, standoffs, iec c14, cable gland, pg9, panel holes, enclosure spec.
-applyTo:
-  - "*/mechanical/enclosure/**"
-  - "**/enclosure-spec.md"
-  - "**/*-enclosure.scad"
-  - "**/MODELS.md"
+user-invocable: false
 ---
 
 # Enclosure Generation Skill

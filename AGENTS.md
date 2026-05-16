@@ -22,7 +22,33 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 | `.github/instructions/` | Scoped Copilot instruction files |
 | `.github/prompts/` | Reusable prompt templates (incl. `/gen-enclosure`, `/gen-diagrams`, `/new-project`) |
 | `.github/skills/enclosure-gen/` | API reference for YAPP_Box / OpenSCAD enclosure generation |
-| `.github/agents/` | Custom agent mode definitions |
+| `.github/agents/` | Custom agent definitions |
+| `.github/hooks/README.md` | Hook policy and adoption guidance for deterministic automation |
+
+## VS Code Insiders Customizations
+
+This repo is set up for the current VS Code Insiders customization model:
+
+- `.github/copilot-instructions.md` and `AGENTS.md` provide always-on guidance.
+- `.github/instructions/*.instructions.md` provide scoped rules with `applyTo` patterns.
+- `.github/prompts/*.prompt.md` provide slash-command workflows.
+- `.github/agents/*.agent.md` provide specialized personas with tool restrictions.
+- `.github/skills/*/SKILL.md` provide reusable capabilities and reference material.
+- `.github/hooks/README.md` documents when hooks should and should not be used in this repo.
+
+### Handoffs, Subagents, And Hooks
+
+- Prefer agent handoffs for guided phase changes such as planning → review so the user stays in control while the next step is obvious.
+- Prefer subagents only for isolated research, parallel analysis, or specialized review perspectives. Keep those flows explicit rather than implicit.
+- Use hooks only for deterministic automation and guardrails. Hooks are not a replacement for user decisions, clarifying questions, or planning logic.
+- If hooks are added later, keep them under `.github/hooks/*.json`, make commands cross-platform, and keep them narrowly scoped.
+
+For discoverability and troubleshooting in VS Code Insiders:
+
+- open `Chat: Open Customizations` to manage prompts, instructions, skills, agents, hooks, and plugins
+- use `/agents`, `/prompts`, `/instructions`, `/skills`, and `/hooks` in chat to open the relevant configuration UIs
+- use the Chat diagnostics view to inspect which customizations loaded and whether any have metadata errors
+- if you open only a child folder of this repo, enable `chat.useCustomizationsInParentRepositories` so the root customizations are discovered
 
 ## Common Agent Tasks
 
@@ -160,6 +186,18 @@ Key `DIAGRAM_CONFIG` fields for concept/real-world diagrams: `lamps` (list with 
 - When writing user-facing docs such as `README.md`, `specs.md`, `hardware/bom/bom.md`, or `hardware/wiring/WIRING.md`, surface relevant register facts instead of restating ad-hoc estimates.
 - If a register entry has a `source_url`, link to it from user-facing docs when the part is mentioned in a summary or parts table.
 - If a board entry has `board_pinout.image_url` or `board_pinout.image_path`, embed or link a preview in project-facing docs when it helps the reader understand the hardware quickly.
+
+### User Decisions And Ambiguities
+
+- When user input is needed for planning or tradeoffs, prefer the VS Code ask-question tool over ad-hoc prose questions.
+- Always offer concrete options first and keep free-form input enabled so the user can override or refine the suggestion.
+- Use structured questions for ambiguous choices such as LED family, board selection, PSU strategy, enclosure constraints, HA integration depth, and whether to proceed with scaffolding or generation steps.
+
+### Review Workflow
+
+- Use the planner agent to gather requirements and scaffold a project.
+- After scaffolding or major meta-layer edits, hand off to the project reviewer agent instead of treating the first pass as complete.
+- The review phase should verify current VS Code customization conventions, repo instruction coherence, project doc completeness, and parts-register-backed hardware summaries.
 
 ### Fixing Wiring Diagrams
 

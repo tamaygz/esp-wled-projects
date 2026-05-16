@@ -1,5 +1,5 @@
 ---
-mode: agent
+name: gen-enclosure
 description: >
   Generate a complete 3D-printable enclosure for an ESP32/WLED project using
   YAPP_Box (MIT-licensed parametric OpenSCAD box generator). Reads project
@@ -7,17 +7,22 @@ description: >
   mechanical/enclosure/<project>-enclosure.scad, then renders both shells plus
   4 preview PNGs via tools/render_enclosure.ps1. Default lid closure is
   snap-on (no screws).
+argument-hint: "project-name"
+agent: agent
 tools:
   - read_file
   - create_file
   - replace_string_in_file
   - run_in_terminal
+  - vscode/askQuestion
 ---
 
 # /gen-enclosure
 
 Generate a YAPP_Box `.scad` enclosure for project **$PROJECT_NAME** and render
 all printable artifacts.
+
+If the project docs leave key enclosure decisions ambiguous, use the VS Code ask-question tool to present options and keep free-form input enabled.
 
 Use the [`enclosure-gen` skill](../skills/enclosure-gen/SKILL.md) as the
 canonical reference for the YAPP_Box API, cutout dimensions, ESP32 standoff

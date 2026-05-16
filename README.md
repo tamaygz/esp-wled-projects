@@ -30,6 +30,8 @@ Use the **ESP/WLED Project Planner** agent in Copilot chat, or work through thes
 | GPIO plan | Assign data lines to GPIO 16 / 17 / 18; level shifter required (3.3 V → 5 V) |
 | HA effects | Decide if [hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) is needed for state-driven effects |
 
+Start with [tools/parts-register/parts.json](./tools/parts-register/parts.json) during planning so you can reuse known board, LED strip, PSU, connector, and cutout data before searching the web again.
+
 ### 2 · Scaffold
 
 ```bash
@@ -45,6 +47,10 @@ Then fill in order:
 5. `firmware/cfg.json` — set unique mDNS hostname: `"id": {"mdns": "my-project"}`
 
 Or use the **`/new-project`** prompt in Copilot chat to scaffold automatically.
+
+### 2.5 · Review The Scaffold
+
+When the scaffold or meta-layer update is in place, switch to the **ESP/WLED Project Reviewer** agent or use the planner's review handoff. The review step checks repo-instruction coherence, missing files, register-backed hardware facts, and whether user-facing docs match the current project state.
 
 ### 3 · Generate Diagrams
 
@@ -134,10 +140,10 @@ See [_template/](./_template/) for a ready-to-copy skeleton.
 
 This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud agents.
 
-| Primitive | What it does |
+| Customization | What it does |
 |-----------|-------------|
 | Always-on instructions | `.github/copilot-instructions.md` — full project conventions |
-| `AGENTS.md` | GitHub Copilot Coding Agent guidance (cloud) |
+| `AGENTS.md` | Root agent guidance shared across coding agents |
 | `firmware.instructions.md` | Auto-loaded when editing `platformio_override.ini`, `cfg.json` |
 | `hardware.instructions.md` | Auto-loaded when editing wiring / BOM / PCB files |
 | `new-project.instructions.md` | Auto-loaded when editing `specs.md` or `_template/` |
@@ -145,7 +151,19 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `/new-project` prompt | Scaffolds a full project folder from `_template/` |
 | `/gen-diagrams` prompt | Runs `tools/gen_diagrams.py` with validation |
 | `/gen-enclosure` prompt | Generates YAPP_Box SCAD + renders STLs and preview PNGs |
-| ESP/WLED Project Planner agent | 7-phase guided planning: LED → power → GPIO → HA → scaffold |
+| `ESP/WLED Project Planner` custom agent | Guided planning: requirements → LED → power → GPIO → HA → scaffold |
+| `ESP/WLED Project Reviewer` custom agent | Reviews scaffold/meta coherence, upgrades docs, and checks current customization conventions |
+| `enclosure-gen` skill | Reusable enclosure reference and YAPP_Box workflow support |
+| `.github/hooks/README.md` | Documents the repo hook policy and recommended first deterministic hook use cases |
+
+### Working In VS Code Insiders
+
+- Run `Chat: Open Customizations` to manage prompts, instructions, skills, agents, hooks, and plugins.
+- Type `/agents`, `/prompts`, `/instructions`, `/skills`, or `/hooks` in chat for quick entry to the relevant customization UI.
+- Use Chat diagnostics to inspect which customizations loaded and to catch metadata issues quickly.
+- If you open only a project subfolder instead of the repo root, enable `chat.useCustomizationsInParentRepositories` so these root-level customizations are discovered.
+- When an agent needs input for an important choice, it should use the VS Code structured ask-question flow with suggested options and free-form input enabled.
+- Prefer planner → reviewer handoffs for guided workflows; use hooks only for deterministic automation such as validation or policy enforcement.
 
 ---
 

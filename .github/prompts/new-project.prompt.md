@@ -1,11 +1,22 @@
 ---
-mode: agent
+name: new-project
 description: Scaffold a new ESP32/WLED project from the _template/ skeleton. Fills in specs.md, bom.md, gen_diagrams_config.py, and updates the root README.
+argument-hint: "project-name led-type led-count outputs description"
+agent: agent
+tools:
+   - read_file
+   - create_file
+   - replace_string_in_file
+   - file_search
+   - grep_search
+   - vscode/askQuestion
 ---
 
 # New Project Scaffold
 
 Scaffold a new WLED project in this repository.
+
+If any required input is missing or ambiguous, use the VS Code ask-question tool to collect it with suggested options and keep free-form input enabled.
 
 ## Inputs
 
