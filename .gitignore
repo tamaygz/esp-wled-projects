@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.ruff_cache/
+
+# WLED build outputs
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Diagram generation temp
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
