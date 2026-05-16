@@ -105,6 +105,8 @@ If hacs is applicable, list the specific effects to install and note they go in 
 
 Ask: "Ready to create the project files?"
 
+Before finalizing each phase, check `tools/parts-register/parts.json` for any already-known controller, LED strip, PSU, level shifter, or connector so planning uses existing part metadata instead of re-researching it. If a central part is missing, add it to the register before the scaffolded docs describe it.
+
 If yes, use the `new-project` prompt to scaffold the folder structure. Fill in:
 - LED type, count, output count from Phase 2–3
 - GPIO assignments from Phase 5
@@ -116,8 +118,8 @@ If yes, use the `new-project` prompt to scaffold the folder structure. Fill in:
 
 Once BOM and wiring are finalised, plan the enclosure:
 
-- Identify components that determine inner volume (PSU, ESP32 DevKit, terminal blocks, fuses, level shifter)
-- Identify connectors that need cutouts (IEC C14 inlet, USB-C OTA port, cable glands for LED runs)
+- Identify components that determine inner volume (PSU, ESP32 DevKit, terminal blocks, fuses, level shifter) using parts-register dimensions when available
+- Identify connectors that need cutouts (IEC C14 inlet, USB-C OTA port, cable glands for LED runs) using parts-register cutout metadata when available
 - Confirm lid closure preference — **snap-on by default**; only switch to screw connectors if explicitly requested
 - Add a row to the Mechanical section of `specs.md` with the target outer size
 

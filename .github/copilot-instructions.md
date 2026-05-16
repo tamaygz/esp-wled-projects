@@ -206,6 +206,8 @@ Three import paths — from most to least automated:
 
 `tools/parts-register/parts.json` is the authoritative source for component dimensions, technical metadata, and board pinout definitions used across all projects in this repo.
 
+Use it during planning as well as implementation. It should be the first stop for recurring part questions about controller boards, LED strips, PSUs, level shifters, connectors, and cutout-driving components.
+
 **Always check the register before specifying dimensions, ratings, or pin mappings in:**
 - `hardware/bom/bom.md` — component footprint sizes and current budgets
 - `mechanical/enclosure/*-enclosure.scad` — cutout sizes, board height, standoff positions
@@ -219,6 +221,13 @@ For boards and devkits, prefer collecting both:
 - a machine-facing source such as a PlatformIO board manifest or Arduino/framework variant pin map
 
 Board entries should include a structured pin definition when possible so future agents can reuse pin metadata instead of rebuilding it from scratch. Existing geometry-only entries should be backfilled when they are touched for new work.
+
+When creating or updating user-facing project docs:
+
+- prefer register-backed facts over freehand summaries in `README.md`, `specs.md`, `hardware/bom/bom.md`, and `hardware/wiring/WIRING.md`
+- link to a part's `source_url` when the register provides one and the part appears in a summary table or hardware overview
+- if a board entry provides `board_pinout.image_url` or `board_pinout.image_path`, include a preview or direct link in the project README or spec when it materially improves comprehension
+- cite `PART_ID`s in tables or prose when that helps future maintenance
 
 **Key parts in the register:**
 
@@ -239,24 +248,26 @@ See `tools/parts-register/README.md` for field definitions and instructions for 
 ## Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
-2. Fill in `specs.md` first (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria, open questions)
-3. Calculate power budget and fill `hardware/bom/bom.md`
-4. Document wiring in `hardware/wiring/WIRING.md`
-5. Create `gen_diagrams_config.py` from the `reefs/` example, then run `python tools/gen_diagrams.py <project-name>`
-6. Generate the enclosure with the `/gen-enclosure` slash command (writes SCAD + STLs + 4 preview PNGs into `mechanical/enclosure/`)
-7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`) so HA auto-discovers the device
-8. Create `homeassistant/` artifacts:
+2. Check `tools/parts-register/parts.json` for the selected controller, LED strip, PSU, level shifter, connectors, and enclosure-driving parts; add missing entries before those parts appear in project docs
+3. Fill in `specs.md` first (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria, open questions)
+4. Calculate power budget and fill `hardware/bom/bom.md`
+5. Document wiring in `hardware/wiring/WIRING.md`
+6. Create `gen_diagrams_config.py` from the `reefs/` example, then run `python tools/gen_diagrams.py <project-name>`
+7. Generate the enclosure with the `/gen-enclosure` slash command (writes SCAD + STLs + 4 preview PNGs into `mechanical/enclosure/`)
+8. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`) so HA auto-discovers the device
+9. Create `homeassistant/` artifacts:
    - `homeassistant/package.yaml` — helpers, scripts, automations (see rules above)
    - `homeassistant/blueprints/*.yaml` — one blueprint per automation pattern
    - `homeassistant/lovelace.yaml` — dashboard card
    - `homeassistant/README.md` — import guide with badge links
    - `firmware/spiffs/ha-import.html` — update `PROJECT_CONFIG` block from template
-9. Push spiffs files to the device over WiFi (works after web installer, no USB needed):
+10. In project-facing docs, include a compact hardware summary sourced from the parts register, with `source_url` links and board pinout previews when available
+11. Push spiffs files to the device over WiFi (works after web installer, no USB needed):
    ```
    python tools/upload_spiffs.py --project <project-name>
    ```
    Alternative (PlatformIO + USB): `pio run -t uploadfs`
-10. Add a row to the Projects table in `README.md`
+12. Add a row to the Projects table in `README.md`
 
 ## Commit Convention
 

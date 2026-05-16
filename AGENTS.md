@@ -29,22 +29,23 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 ### Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
-2. Edit `<project-name>/specs.md` (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria)
-3. Fill `<project-name>/hardware/bom/bom.md` with LED current budget
-4. Create `<project-name>/gen_diagrams_config.py` following `reefs/gen_diagrams_config.py`
-5. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`; run `python tools/gen_diagrams.py <project-name>`
-6. Run `/gen-enclosure` to write the SCAD and render shells + preview PNGs into `mechanical/enclosure/` (helper: `pwsh tools/render_enclosure.ps1 -Project <project-name> -ScadName <project-name>-enclosure`)
-7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`)
-8. Create `homeassistant/` artifacts (see "Home Assistant Config Files" section below)
-9. Upload spiffs to the device over WiFi (no USB required):
+2. Use `tools/parts-register/parts.json` during planning to quickly identify known controller, LED strip, PSU, level shifter, and connector facts before re-researching them
+3. Edit `<project-name>/specs.md` (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria)
+4. Fill `<project-name>/hardware/bom/bom.md` with LED current budget
+5. Create `<project-name>/gen_diagrams_config.py` following `reefs/gen_diagrams_config.py`
+6. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`; run `python tools/gen_diagrams.py <project-name>`
+7. Run `/gen-enclosure` to write the SCAD and render shells + preview PNGs into `mechanical/enclosure/` (helper: `pwsh tools/render_enclosure.ps1 -Project <project-name> -ScadName <project-name>-enclosure`)
+8. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`)
+9. Create `homeassistant/` artifacts (see "Home Assistant Config Files" section below)
+10. Upload spiffs to the device over WiFi (no USB required):
    ```
    python tools/upload_spiffs.py --project <project-name>
    # or with explicit IP:
    python tools/upload_spiffs.py --project <project-name> --device 192.168.x.x
    ```
    Alternative (PlatformIO / USB): `pio run -t uploadfs`
-10. Add a row to the Projects table in `README.md`
-11. Open a PR from a branch named `project/<project-name>`
+11. Add a row to the Projects table in `README.md`
+12. Open a PR from a branch named `project/<project-name>`
 
 ### Home Assistant Integration
 
@@ -150,11 +151,15 @@ Key `DIAGRAM_CONFIG` fields for concept/real-world diagrams: `lamps` (list with 
 ### Maintaining the Parts Register
 
 - Check `tools/parts-register/parts.json` before introducing any new component dimensions, ratings, or board pin mappings.
+- During planning, use the register first to answer routine questions about candidate LEDs, boards, PSUs, level shifters, and connectors before re-researching the same part.
 - If a part is missing, add it to the register before using it elsewhere in the project.
 - New entries should include the technical fields that matter for reuse, not just physical dimensions.
 - For boards and devkits, capture pinout data when possible: official image/PDF link, source URL, software identifiers, and a structured pin list with GPIO numbers, aliases, capabilities, and warnings.
 - Prefer official datasheets and board pages first, then PlatformIO or framework metadata for machine-readable identifiers, then distributor listings. Mark community-derived data as unverified.
 - If you touch an older geometry-only entry during new work, backfill technical metadata or board pinout details instead of creating parallel notes in project files.
+- When writing user-facing docs such as `README.md`, `specs.md`, `hardware/bom/bom.md`, or `hardware/wiring/WIRING.md`, surface relevant register facts instead of restating ad-hoc estimates.
+- If a register entry has a `source_url`, link to it from user-facing docs when the part is mentioned in a summary or parts table.
+- If a board entry has `board_pinout.image_url` or `board_pinout.image_path`, embed or link a preview in project-facing docs when it helps the reader understand the hardware quickly.
 
 ### Fixing Wiring Diagrams
 

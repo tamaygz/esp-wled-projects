@@ -41,6 +41,26 @@
 
 ---
 
+## Key Components
+
+<!-- Source this section from tools/parts-register/parts.json. Include the controller, LED strip, PSU, level shifter, and any connector/module that materially affects the build. -->
+
+| Part | Register ID | Role | Key facts | Source |
+|---|---|---|---|---|
+| Controller board | `PART_ID` | Main controller | Logic voltage, MCU / wireless, notable constraints | [Datasheet / product page](https://example.com) |
+| LED strip | `PART_ID` | Main light source | Voltage, protocol, color order, density | [Datasheet / product page](https://example.com) |
+| PSU | `PART_ID` | Main power source | Input/output, max current, power rating | [Datasheet / product page](https://example.com) |
+| Level shifter | `PART_ID` | 3.3V to 5V data translation | Package, channel count, logic compatibility | [Datasheet / product page](https://example.com) |
+
+<!-- If a board entry has board_pinout.image_url or board_pinout.image_path, add a small preview here. -->
+<!-- Example:
+### Board Pinout
+
+![Board pinout](https://example.com/pinout.png)
+-->
+
+---
+
 ## Documentation Index
 
 | Document | What's inside |

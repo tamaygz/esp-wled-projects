@@ -17,6 +17,8 @@ applyTo:
 
 # Enclosure Generation Skill
 
+Before sizing any enclosure, check `tools/parts-register/parts.json` for the project's PSU, board, level shifter, terminal blocks, and external connectors. Use register dimensions and `cutouts_needed` first when present; only fall back to BOM notes, datasheets, or the cutout tables below when the register does not yet contain the part.
+
 ## Primary Tool: YAPP_Box
 
 **Yet Another Parametric Projectbox** by Willem Aandewiel  
@@ -28,6 +30,8 @@ Documentation: <https://mrwheel-docs.gitbook.io/yappgenerator_en/>
 > MIT-licensed, CLI-renderable, version-controllable, and requires no account or
 > browser. An LLM can generate the complete project `.scad` config file directly
 > from project docs.
+
+The repo-specific fast path is: parts register first, then project BOM/WIRING, then raw datasheets if something is still missing.
 
 ---
 

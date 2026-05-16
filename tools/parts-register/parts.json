@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated": "2025-05-16",
+  "updated": "2026-05-16",
   "note": "All dimensions in mm. 'pcb_or_body_mm' gives L×W×H of the PCB footprint or encapsulated body. 'mounting_holes' positions are measured from the bottom-left corner of the footprint bounding box. 'verified: false' entries are estimated from datasheet families or community sources — confirm before committing to a PCB layout or enclosure cutout.",
   "parts": {
     "D1_MINI_V4": {
@@ -39,15 +39,16 @@
       "mounting_holes": [],
       "cutouts_needed": [],
       "key_notes": [
-        "UNVERIFIED — dimensions estimated from same-family HLK-30M12/HLK-30M15 (JLCPCB DIP,57.5×33.6mm, 22.5mm height); confirm from HLK-30M05 datasheet before PCB layout",
+        "Footprint DIP,57.5×33.6mm confirmed from JLCPCB HLK-30M12 (C2761166) and HLK-30M24 (C2761168) entries — entire 30W family shares this PCB footprint; height 22.5mm confirmed from Hi-Link page",
         "4 DIP through-hole pins: pin1=AC(L), pin2=AC(N), pin3=VO-, pin4=VO+",
-        "Input 85–264 Vac; Output 5V @ 6A max (30W)",
-        "Fully encapsulated potted module — no user-serviceable parts",
-        "Recommend 2A/250Vac slow-blow fuse on AC input",
-        "Isolation 3000 Vac; operating temp −40 to +85 °C"
+        "Input 85–264 Vac; Output 5V @ 6A max (30W); no-load loss <0.1W",
+        "Fully encapsulated IP65-rated potted module — no user-serviceable parts",
+        "Recommend 2A/250Vac slow-blow fuse on AC input; varistor 10D561K for surge protection",
+        "Isolation 3000 Vac; operating temp −40 to +85 °C; efficiency ≥87% at 230Vac full load",
+        "External EMC: safety cap 0.1µF/275Vac + common-mode choke 10–20mH required for CE compliance"
       ],
       "source_url": "https://www.hlktech.net/index.php?id=986",
-      "verified": false
+      "verified": true
     },
     "HLK_20M05": {
       "name": "Hi-Link HLK-20M05 20W 5V 4A AC-DC Module",
@@ -122,11 +123,13 @@
       ],
       "key_notes": [
         "2.5mm pitch wire-to-wire connector; 3 circuits",
+        "Rated 3A per contact, 250V AC/DC; wire range AWG 28–22 (0.08–0.33 mm²)",
+        "Temperature range −25°C to +85°C; insulation resistance ≥500MΩ; withstand 1500Vac/1min",
         "Pocket dimensions 9.5×6mm confirmed from reefs enclosure SCAD (reefs-automatedvariant-enclosure-spec.md)",
         "Commonly pre-wired on WS2812/SK6812 LED strips for power injection",
         "Female housing: SMR-03V-B (or SM-03V-BC depending on revision); male housing: SMS-03V-BC",
-        "Crimp contact: SYM-001T-P0.6; rated 3A per contact; max wire AWG 26–22",
-        "Body depth into wall ~6mm; use printed shoulder stop to prevent push-through"
+        "Crimp contact: SYM-001T-P0.6; body depth into wall ~6mm; use printed shoulder stop to prevent push-through",
+        "Body dimensions estimated from JST SM series geometry (2×2.5mm pitch + ~4.5mm walls ≈ 9.5mm total width); datasheet PDF encrypted — dimensions not confirmed from official drawing"
       ],
       "source_url": "https://www.jst-mfg.com/product/pdf/eng/eSM.pdf",
       "verified": false

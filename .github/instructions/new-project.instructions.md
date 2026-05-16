@@ -31,6 +31,21 @@ Then work through these steps **in order**:
 8. **`README.md`** (project level) — full project README following the **Project README Structure** standard below: concept images first, documentation index table, wiring diagrams, build checklist
 9. **`README.md`** (repo root) — add a row to the Projects table
 
+## Planning With The Parts Register
+
+At each planning step, check `tools/parts-register/parts.json` first so the project reuses known part data instead of re-deriving it.
+
+| Planning step | Use the register for |
+|---------------|----------------------|
+| Concept / part selection | Compare candidate LED strips, controller boards, PSUs, and connectors already used in the repo |
+| specs.md | Pull canonical part names, MPNs, voltages, protocols, and board capabilities |
+| bom.md | Reuse exact part identity, sizing assumptions, and source links |
+| WIRING.md | Reuse connector notes, board pinout data, GPIO warnings, and level-shifter guidance |
+| Enclosure planning | Reuse `pcb_or_body_mm`, `cutouts_needed`, connector bodies, and board heights |
+| README.md | Reuse concise part facts, `source_url` links, and board pinout previews when available |
+
+If a required part is missing from the register, add it before finalizing the project docs.
+
 ## specs.md Structure
 
 A `specs.md` must contain at minimum:
@@ -90,7 +105,13 @@ Every project `README.md` **must** follow this section order:
    - `docs/concept-top-view.png` — floor-plan with installation positions and cable run
    - `docs/concept-system.png` — system block diagram (PSU → ESP32 → strips → HA)
 3. **Quick Facts table** — board, LED type, LED count, PSU, WLED version, smart-home target
-4. **Documentation Index table** — one row per document that physically exists in the project, linking to:
+4. **Key Components / Parts Snapshot** — concise table sourced from `tools/parts-register/parts.json` for the controller, LED strip, PSU, level shifter, and any connector or module that is central to the build. Include:
+   - register `PART_ID`
+   - part name / role in the project
+   - 1–3 high-value facts from the register
+   - link to `source_url` when present
+   - for boards, a pinout preview or pinout link when `board_pinout.image_url` or `board_pinout.image_path` is available
+5. **Documentation Index table** — one row per document that physically exists in the project, linking to:
    - `specs.md`
    - `hardware/bom/bom.md`
    - `hardware/wiring/WIRING.md`
@@ -100,12 +121,15 @@ Every project `README.md` **must** follow this section order:
    - `firmware/platformio_override.ini`
    - `firmware/cfg.json`
    - `firmware/presets.json`
-5. **Wiring & Schematics section** — embed `docs/wiring-physical.svg`, then a two-column table containing `docs/schematic-level-shifter.png` and `docs/schematic-power.png`; include a text link to `hardware/wiring/WIRING.md` for the GPIO table
-6. **Build Checklist** — project-specific MVP steps as a task list
-7. **Resources** — at minimum link to `specs.md`, WLED Docs, and WLED GitHub
+6. **Wiring & Schematics section** — embed `docs/wiring-physical.svg`, then a two-column table containing `docs/schematic-level-shifter.png` and `docs/schematic-power.png`; include a text link to `hardware/wiring/WIRING.md` for the GPIO table
+7. **Build Checklist** — project-specific MVP steps as a task list
+8. **Resources** — at minimum link to `specs.md`, WLED Docs, and WLED GitHub
 
 **Rules:**
 - Concept images must appear **before** the Quick Facts table — visuals communicate the idea before the spec details.
+- The Key Components section must reuse register facts instead of hand-written approximations whenever the relevant part exists in `tools/parts-register/parts.json`.
+- If the register provides `source_url`, link it from the Key Components table or related part mention.
+- If the register provides `board_pinout.image_url` or `board_pinout.image_path`, show a board pinout preview or an explicit pinout link in the README.
 - If diagrams have not been generated yet, keep the `![](docs/...)` image tags in place and add a callout: `> Run \`python tools/gen_diagrams.py <project>\` to generate these images.`
 - Only link files that physically exist. Remove links to empty stubs from the Documentation Index.
 - Do not hand-edit anything in `docs/` — regenerate via `python tools/gen_diagrams.py <project>`.

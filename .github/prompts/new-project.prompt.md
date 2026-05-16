@@ -22,6 +22,7 @@ Scaffold a new WLED project in this repository.
 2. Edit `$PROJECT_NAME/specs.md`:
    - Replace `[Project Name]` with the human-readable project name
    - Set Status to `planning`
+   - Check `tools/parts-register/parts.json` first for the selected board, LED strip, PSU, level shifter, and connector facts
    - Fill the Requirements section with LED type, count, and power from inputs above
    - Add a **Home Assistant** section listing: expected HA entity IDs, mDNS device name (`<project-name>`), and whether hacs-wledext-effects is applicable
    - Leave Open Questions with at least one placeholder
@@ -29,6 +30,7 @@ Scaffold a new WLED project in this repository.
 3. Edit `$PROJECT_NAME/hardware/bom/bom.md`:
    - Calculate peak current: `$LED_COUNT × $NUM_OUTPUTS × 20 mA × channels`
    - Add 20 % headroom to determine minimum PSU current rating
+   - Reuse register-backed part names, source links, and dimensions when the selected parts already exist in `tools/parts-register/parts.json`
    - Add a placeholder parts list table (Part | Qty | Unit Price | Supplier | Part No.)
 
 4. Create `$PROJECT_NAME/gen_diagrams_config.py`:
@@ -64,14 +66,15 @@ Scaffold a new WLED project in this repository.
       > Run `python tools/gen_diagrams.py $PROJECT_NAME` from the repo root to generate these images.
       ```
    3. **Quick Facts** table — board, `$LED_TYPE`, count, PSU, WLED version, Home Assistant
-   4. **Documentation Index** table — link every file that will exist:
+   4. **Key Components / Parts Snapshot** — build a short table from `tools/parts-register/parts.json` covering the controller, LED strip, PSU, level shifter, and any important connector. Include `PART_ID`, role, 1–3 key facts, `source_url` link when present, and board pinout preview/link when available.
+   5. **Documentation Index** table — link every file that will exist:
       `specs.md`, `hardware/bom/bom.md`, `hardware/wiring/WIRING.md`,
       `design/led-map/LED-DESIGN.md`, `design/effects/ha-automations.yaml`,
       `firmware/platformio_override.ini`, `firmware/cfg.json`, `firmware/presets.json`
-   5. **Wiring & Schematics** section — embed `docs/wiring-physical.svg`, two-column table with
+   6. **Wiring & Schematics** section — embed `docs/wiring-physical.svg`, two-column table with
       `docs/schematic-level-shifter.png` and `docs/schematic-power.png`, link to `hardware/wiring/WIRING.md`
-   6. **Build Checklist** — project-specific MVP steps (flash, bench-test, assemble, configure WLED, add to HA, mount, thermal soak)
-   7. **Resources** — link `specs.md`, WLED Docs, WLED GitHub
+   7. **Build Checklist** — project-specific MVP steps (flash, bench-test, assemble, configure WLED, add to HA, mount, thermal soak)
+   8. **Resources** — link `specs.md`, WLED Docs, WLED GitHub
 
 10. Update root `README.md`:
    - Add a row to the Projects table: `| [$PROJECT_NAME](./$PROJECT_NAME/) | planning | $LED_TYPE × $LED_COUNT | $DESCRIPTION |`
@@ -82,3 +85,4 @@ Scaffold a new WLED project in this repository.
 - Do not modify `_template/` — only copy from it
 - Do not run `gen_diagrams.py` yet — leave that for after hardware config is finalised
 - Keep `![](docs/...)` image tags in the README even though images do not exist yet; the generate note explains this
+- If a required part is missing from the parts register, add it before finalizing the README, specs, or BOM text that describes that part

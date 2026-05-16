@@ -32,6 +32,7 @@ geometry, label placement, and the reefs worked example.
 | Target outer dimensions (max) | `$PROJECT_NAME/specs.md` → Constraints section |
 | Component list + physical dimensions | `$PROJECT_NAME/hardware/bom/bom.md` |
 | Connector positions + types | `$PROJECT_NAME/hardware/wiring/WIRING.md` |
+| Reusable part dimensions + cutouts | `tools/parts-register/parts.json` |
 | Print material / layer height | `$PROJECT_NAME/specs.md` → Mechanical section (optional) |
 
 ---
@@ -46,6 +47,8 @@ Read in parallel:
 - `$PROJECT_NAME/hardware/wiring/WIRING.md`
 - `$PROJECT_NAME/mechanical/enclosure/MODELS.md` (if present)
 
+Then check `tools/parts-register/parts.json` for any controller, PSU, connector, or board already named in the project docs so enclosure sizing reuses canonical repo dimensions and cutout metadata.
+
 ### 2. Inventory components
 
 Build two lists:
@@ -53,6 +56,8 @@ Build two lists:
 **Internal layout** (sets interior volume): component, L×W mm, height mm, wiring clearance.
 
 **Face-mounted connectors** (sets cutouts): connector → assigned face → cutout size from the table in the skill.
+
+Prefer parts-register dimensions and `cutouts_needed` over ad-hoc BOM notes whenever the part already exists in the register.
 
 Face assignment rules:
 - Mains inlet (IEC C14) → Back wall
