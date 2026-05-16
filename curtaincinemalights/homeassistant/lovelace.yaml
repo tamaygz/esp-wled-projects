@@ -1,0 +1,68 @@
+type: vertical-stack
+cards:
+  - type: light
+    entity: light.curtaincinemalights
+    name: "Curtain Cinema Lights — All"
+    show_brightness_control: true
+    show_color_control: false
+    show_color_temp_control: false
+
+  - type: entities
+    title: "Curtain LED Segments"
+    entities:
+      - entity: light.curtaincinemalights_left_panel
+        name: "Left Panel"
+      - entity: light.curtaincinemalights_right_panel
+        name: "Right Panel"
+
+  - type: entities
+    title: "Cinema Mode"
+    entities:
+      - entity: input_boolean.cinema_mode_active
+        name: "Cinema Mode Active"
+        icon: mdi:movie
+
+  - type: gauge
+    entity: sensor.cinema_curtain_position
+    name: "Curtain Position"
+    min: 0
+    max: 100
+    unit: "%"
+    needle: true
+    severity:
+      green: 66
+      yellow: 33
+      red: 0
+
+  - type: entities
+    title: "Presets"
+    entities:
+      - entity: select.curtaincinemalights_preset
+        name: "Active Preset"
+
+  - type: horizontal-stack
+    cards:
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.curtaincinemalights_scene_default
+        name: "Default"
+        icon: mdi:lightbulb-auto
+      - type: button
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.curtaincinemalights_scene_cinema
+        name: "Cinema"
+        icon: mdi:filmstrip
+      - type: button
+        tap_action:
+          action: call-service
+          service: light.turn_off
+          service_data:
+            entity_id: light.curtaincinemalights
+        name: "Off"
+        icon: mdi:lightbulb-off-outline

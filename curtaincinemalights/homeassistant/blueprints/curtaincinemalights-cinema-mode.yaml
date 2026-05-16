@@ -1,0 +1,128 @@
+blueprint:
+  name: "Curtain Cinema Lights — Cinema Mode"
+  description: >
+    Switch the curtain LED strip to a dim red Breathe effect when a
+    projector or TV media player starts playing. Automatically resumes
+    curtain-position sync (or ambient wave) when playback stops.
+    Also responds to a manual input_boolean for cinema mode override.
+  domain: automation
+  source_url: https://raw.githubusercontent.com/tamaygz/esp-wled-projects/main/curtaincinemalights/homeassistant/blueprints/curtaincinemalights-cinema-mode.yaml
+  input:
+    media_player_entity:
+      name: Projector / TV media player
+      description: "Media player entity that triggers cinema mode when playing."
+      selector:
+        entity:
+          domain: media_player
+    cinema_mode_boolean:
+      name: Cinema Mode helper
+      description: "input_boolean.cinema_mode_active — tracks whether cinema mode is on."
+      default: input_boolean.cinema_mode_active
+      selector:
+        entity:
+          domain: input_boolean
+    cinema_breathe_switch:
+      name: Cinema Breathe switch
+      description: "hacs-wledext-effects Breathe switch for dim red cinema effect."
+      selector:
+        entity:
+          domain: switch
+    curtain_entity:
+      name: Curtain cover entity
+      description: "Used to decide which effect to resume after cinema mode ends."
+      selector:
+        entity:
+          domain: cover
+    state_sync_left:
+      name: State Sync switch — Left Panel
+      selector:
+        entity:
+          domain: switch
+    state_sync_right:
+      name: State Sync switch — Right Panel
+      selector:
+        entity:
+          domain: switch
+    ambient_rainbow:
+      name: Ambient Rainbow switch
+      selector:
+        entity:
+          domain: switch
+    chase_left:
+      name: Chase switch — Left Panel
+      selector:
+        entity:
+          domain: switch
+    chase_right:
+      name: Chase switch — Right Panel
+      selector:
+        entity:
+          domain: switch
+
+trigger:
+  - platform: state
+    entity_id: !input media_player_entity
+    to: "playing"
+    id: "playing"
+  - platform: state
+    entity_id: !input media_player_entity
+    to:
+      - "idle"
+      - "off"
+      - "paused"
+    id: "stopped"
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "playing"
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input cinema_mode_boolean
+          - service: switch.turn_off
+            target:
+              entity_id:
+                - !input state_sync_left
+                - !input state_sync_right
+                - !input chase_left
+                - !input chase_right
+                - !input ambient_rainbow
+          - service: switch.turn_on
+            target:
+              entity_id: !input cinema_breathe_switch
+
+      - conditions:
+          - condition: trigger
+            id: "stopped"
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input cinema_mode_boolean
+          - service: switch.turn_off
+            target:
+              entity_id: !input cinema_breathe_switch
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input curtain_entity
+                    state: "open"
+                sequence:
+                  - service: switch.turn_on
+                    target:
+                      entity_id: !input ambient_rainbow
+              - conditions:
+                  - condition: not
+                    conditions:
+                      - condition: state
+                        entity_id: !input curtain_entity
+                        state: "closed"
+                sequence:
+                  - service: switch.turn_on
+                    target:
+                      entity_id:
+                        - !input state_sync_left
+                        - !input state_sync_right
+
+mode: single
