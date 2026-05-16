@@ -48,7 +48,8 @@ basePlaneThickness  = 1.5;
 lidPlaneThickness   = 1.5;
 baseWallHeight      = 30;
 lidWallHeight       = 26;
-ridgeHeight         = 5.0;
+// ridgeHeight must be >= wallThickness * 1.8 for snapJoins (YAPP wallToRidgeRatio)
+ridgeHeight         = 6.0;
 ridgeSlack          = 0.3;
 ridgeGap            = 0.5;
 roundRadius         = 3.0;
@@ -65,19 +66,19 @@ pcb = [
 // Orientation: USB-C toward FRONT (high X)
 pcbStands = [
   [81,  35, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
-   standoffHoleSlack, yappBoth, yappPin, yappBackLeft,   yappCoordPCB],
+   standoffHoleSlack, yappBaseOnly, yappPin, yappBackLeft,   yappCoordPCB],
   [81,  58, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
-   standoffHoleSlack, yappBoth, yappPin, yappBackRight,  yappCoordPCB],
+   standoffHoleSlack, yappBaseOnly, yappPin, yappBackRight,  yappCoordPCB],
   [126, 35, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
-   standoffHoleSlack, yappBoth, yappPin, yappFrontLeft,  yappCoordPCB],
+   standoffHoleSlack, yappBaseOnly, yappPin, yappFrontLeft,  yappCoordPCB],
   [126, 58, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
-   standoffHoleSlack, yappBoth, yappPin, yappFrontRight, yappCoordPCB],
+   standoffHoleSlack, yappBaseOnly, yappPin, yappFrontRight, yappCoordPCB],
 ];
 
-// ---- Lid connectors: 4x M3 corner screws ----
-connectors = [
-  [5, 5, 12, 3, 6, 3.2, 8, yappAllCorners, yappCoordBoxInside],
-];
+// ---- Lid closure: SNAP-ON (no screws) ----
+// 4 snap-joins centred on the two long walls (yappSymmetric mirrors each entry
+// about the wall midline). Width 15 mm per snap. Tool-free open/close.
+connectors = [];
 
 // ---- BACK wall: IEC C14 mains inlet (28x48 mm) ----
 cutoutsBack = [
@@ -140,8 +141,12 @@ labelsPlane = [
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
 ];
 
-// ---- Unused features ----
-snapJoins     = [];
+// ---- Snap-on lid joins ----
+// posx=40 on each long wall, mirrored to posx=110 via yappSymmetric => 4 snaps total.
+// Width 15 mm. Requires ridgeHeight >= wallThickness * 1.8 (= 5.4 mm); we use 6.0.
+snapJoins = [
+  [40, 15, yappLeft, yappRight, yappCenter, yappSymmetric],
+];
 boxMounts     = [];
 lightTubes    = [];
 pushButtons   = [];
