@@ -16,3 +16,7 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+**/err**.txt
+**/out**.txt
+**/render**.txt
+
