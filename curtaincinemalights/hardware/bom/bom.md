@@ -8,7 +8,7 @@
 | # | Component | Spec | Qty | Unit Price | Supplier | Part No. | Notes |
 |---|-----------|------|-----|------------|----------|----------|-------|
 | 1 | SK6812 RGBW LED strip | 5V, 60 LED/m, IP20, 4-pin (GRBW), 10mm wide | ~3 m (180 LEDs) | ~€8/m | AliExpress / BTF-Lighting | — | **Measure curtain width first** — order cut length + 10 cm slack; 1 m min per order |
-| 2 | ESP8266 LOLIN D1 Mini v4 | ESP-12F, 4MB flash, USB-C, 34.2 × 25.6 × 10 mm | 1 | ~€3 | AliExpress / LCSC | C701341 variant | No native mounting holes — friction pocket in enclosure |
+| 2 | ESP8266 LOLIN D1 Mini v4 | ESP-12F, 4MB flash, USB-C, 34.2 × 25.6 × 10 mm | 1 | ~€3 | LOLIN / generic devkit vendor | D1 Mini v4 reference | Use `D1_MINI_V4` in the parts register for dimensions and cutout guidance. `LCSC C701341` is an ESP32 module part and is not a D1 Mini variant |
 | 3 | Hi-Link HLK-20M05 | 5V 4A 20W AC-DC module, DIP, 56 × 32 × 22.5 mm | 1 | ~€4 | LCSC | C465406 | ⚠️ WLED ABL must be ≤ 3200 mA; upgrade to HLK-30M05 if adding more LEDs |
 | 4 | Aluminium LED channel (U-profile) | 12–16 mm wide with frosted diffuser lid, cut to curtain width | 1 length | ~€4/m | Local / LUMINES | Type-Z or equiv. | Cut on site; conducts heat away from curtain fabric |
 | 5 | 74AHCT125 level shifter | DIP-14, 7.62 mm row pitch, 19.05 × 6.35 × 4.57 mm | 1 | ~€0.30 | LCSC | C57369 | Buffers 3.3 V GPIO → 5 V SK6812 data; uses 1 of 4 gates |

@@ -229,7 +229,7 @@ MAINS (230 V AC)
 | # | Component | Spec | Qty | Notes |
 |---|---|---|---|---|
 | 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin | 2 × **1 m** (60 LEDs each) | Order 1.1 m per lamp to allow for trimming to fit |
-| 2 | ESP32 DevKit (38-pin) | ESP32-WROOM-32, USB-C preferred | 1 | Any 38-pin pinout works |
+| 2 | ESP32 DevKit-class board (38-pin) | ESP32-WROOM-32 / DevKitC-class reference | 1 | Use `ESP32_DEVKITC_V4` as the reference board entry for dimensions and pinout; actual installed dev board variant still to be confirmed |
 | 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | User-specified; verify actual model current rating |
 | 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ strip length | 2 | e.g., LUMINES Type-Z or equivalent; conduct heat away from wood |
 | 5 | 3-conductor cable | 18 AWG (power) + 26 AWG (data) **or** 3-core 20 AWG flex | 2 × 2.5 m | Adds 0.5 m slack; one cable per lamp |

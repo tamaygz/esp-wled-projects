@@ -7,7 +7,7 @@
 | # | Component | Spec | Qty | Unit Price | Supplier | Part No. | Notes |
 |---|-----------|------|-----|------------|----------|----------|-------|
 | 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin (GRBW) | 2 × 1 m (60 LEDs each) | ~€8/m | AliExpress / BTF-Lighting | — | Order 1.1 m per lamp; trim to fit |
-| 2 | ESP32 DevKit (38-pin) | ESP32-WROOM-32, USB-C preferred | 1 | ~€4 | LCSC | C701341 | Any 38-pin pinout works |
+| 2 | ESP32 DevKit-class board (38-pin) | ESP32-WROOM-32 / DevKitC-class reference | 1 | ~€4 | Espressif / generic devkit vendor | ESP32-DevKitC-32E reference | Use `ESP32_DEVKITC_V4` in the parts register for reference dimensions and pinout. `LCSC C701341` is the bare ESP32-WROOM-32E module, not the full dev board |
 | 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | (user-owned) | — | — | Verify nameplate rating ≥ 10 A |
 | 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ 1 m | 2 | ~€5 ea | Local / LUMINES | Type-Z or equiv. | Conducts heat away from wood |
 | 5 | 3-conductor cable | 18 AWG power + 26 AWG data, or 3-core 20 AWG flex | 2 × 2.5 m | ~€2/m | Local electrical | — | 0.5 m slack; one cable per lamp |

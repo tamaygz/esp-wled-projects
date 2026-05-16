@@ -1,57 +1,47 @@
-# Reef Love 🪵
+# reefs — Driftwood Ambient Lamps
 
-> Two driftwood ambient lamps powered by SK6812 RGBW strips, an ESP32 running WLED, and a single 3D-printed control box — fully integrated with Home Assistant.
-
----
-
-## Quick Facts
-
-Each piece of driftwood is a self-contained lamp. An SK6812 RGBW LED strip (60 LEDs, 1 m) is mounted in an aluminium channel on the **rear face** of the wood, casting diffused wall-wash light behind it. The room-facing side stays dark, framing the glow through the wood grain.
-
-Both lamps run from one control box: a Honeywell 5 V / 10 A PSU and an ESP32 running WLED, enclosed in a custom 3D-printed case. WLED exposes each lamp as an independent segment — individually controllable from Home Assistant or the WLED web UI.
-
-| Property | Value |
-|---|---|
-| **Board** | ESP32-WROOM-32 |
-| **LED Type** | SK6812 RGBW, 5 V, 60 LED/m |
-| **LED Count** | 120 total (60 per lamp × 2) |
-| **Power Supply** | Honeywell 5 V / 10 A (50 W) |
-| **WLED Version** | v16+ |
-| **Smart home** | Home Assistant (native WLED integration) |
-| **Enclosure** | 3D-printed PETG box (~150 × 100 × 60 mm) |
-
----
+> Two driftwood wall-wash lamps powered by SK6812 RGBW strips, a shared ESP32/WLED controller, and a compact 3D-printed control box with Home Assistant integration.
 
 ## Concept
 
-### Side View — How the wall-wash works
+Each piece of driftwood is treated as its own lamp: a 1 m SK6812 RGBW strip sits in an aluminium channel on the rear face of the wood and throws diffused light onto the wall behind it. The front stays visually dark, so the shape and grain of the driftwood frame the glow rather than being lit directly.
 
-The LED strip sits in an aluminium channel on the **rear face** of the driftwood, pressed against the wall. Light spills between the wood and the wall surface, creating a diffused amber halo. The room-facing side of the wood stays dark.
+Both lamps run back to one concealed control box. That box handles the 5 V power distribution, level-shifted data outputs, WLED configuration, and Home Assistant discovery while keeping the installation to a single mains lead and two lamp cable runs.
 
 ![Side-view cross-section](docs/concept-side-view.png)
 
-### Top-Down Floor Plan — Two lamps, one control box
-
-Both driftwood lamps mount along the same wall. Two 2 m cable runs (5 V + GND + DATA) route along the baseboard to the control box tucked in the corner.
-
 ![Top-down floor plan](docs/concept-top-view.png)
-
-### System Block Diagram
-
-Power and data flow from mains → PSU → ESP32 + level shifter → both lamps, with Home Assistant reachable over Wi-Fi.
 
 ![System block diagram](docs/concept-system.png)
 
 ---
 
-## Control Box Enclosure
+## Quick Facts
 
-The BambuStudio project file is at [`mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf`](mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf).
+| Property | Value |
+|---|---|
+| Board | ESP32 DevKit-class board, 38-pin layout |
+| LED Type | SK6812 RGBW, 5 V, 60 LED/m, GRBW |
+| LED Count | 120 total (60 per lamp × 2) |
+| Power Supply | Honeywell 5 V / 10 A external PSU |
+| WLED Version | v16+ |
+| Smart home | Home Assistant native WLED integration |
+| Outputs | GPIO16 → Lamp 1, GPIO17 → Lamp 2 via 74AHCT125 |
+| Enclosure | 3D-printed PETG / ASA control box, snap-on lid |
 
-![Control box — isometric preview](mechanical/enclosure/case-preview.png)
+---
 
-> Printed in PETG or ASA. Ventilation slots on all sides for PSU convection. IEC C14 inlet cutout, USB-C access port for OTA recovery, and two PG9 cable glands for the lamp runs.  
-> Full print settings and cutout dimensions: [`mechanical/enclosure/MODELS.md`](mechanical/enclosure/MODELS.md).
+## Key Components / Parts Snapshot
+
+| PART_ID | Role | Register-backed facts | Source / Pinout |
+|---|---|---|---|
+| `ESP32_DEVKITC_V4` | Reference controller board | `esp32dev` PlatformIO target; 38-pin board; avoid strapping pins such as GPIO0/2/12/15 for attached hardware at boot | [Board guide](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html) · [Pinout](https://docs.espressif.com/projects/esp-dev-kits/en/latest/_images/esp32-devkitC-v4-pinout.png) |
+| `SK6812_RGBW_60` | LED emitters | 10 mm strip width; GRBW colour order; inject power every ≤ 50 LEDs on longer runs | [Datasheet](https://cdn-shop.adafruit.com/product-files/1138/SK6812+LED+datasheet+.pdf) |
+| `AL_LED_CHANNEL_12MM` | Heat-spreading channel | 12.3 mm inner width; 17.4 × 7.6 mm outer profile; helps move heat away from wood and diffuser | [Profile reference](https://www.superlightingled.com/light-diffuser-aluminum-led-profile-for-12mm-flexible-led-strip-lights-p-4554.html) |
+| `IC_74AHCT125_DIP14` | Data level shifter | 5 V supply; TTL-compatible inputs accept 3.3 V logic; quad buffer lets one gate drive each lamp output | [TI datasheet](https://www.ti.com/product/SN74AHCT125) |
+| `JST_SM_2P5_3PIN` | Lamp connector interface | 3 A/contact; 9.5 × 6 mm panel pocket; common prewired connector format for addressable LED strips | [Series reference](https://www.jst-mfg.com/product/pdf/eng/eSM.pdf) |
+
+The Honeywell PSU used here is project-specific and is not yet represented in the shared parts register.
 
 ---
 
@@ -59,15 +49,20 @@ The BambuStudio project file is at [`mechanical/enclosure/CustomProjectEnclosure
 
 | Document | What's inside |
 |---|---|
-| [specs.md](specs.md) | Full PRD: concept, requirements, power budget, BOM, WLED config, HA integration |
-| [hardware/bom/bom.md](hardware/bom/bom.md) | Bill of materials, current budget, PSU sizing |
-| [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) | GPIO assignments, power rails, cable runs |
+| [specs.md](specs.md) | Full PRD: concept, requirements, power budget, WLED config, HA integration |
+| [hardware/bom/bom.md](hardware/bom/bom.md) | Bill of materials, current budget, voltage-drop notes |
+| [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) | GPIO assignments, control-box wiring, connector strategy |
 | [design/led-map/LED-DESIGN.md](design/led-map/LED-DESIGN.md) | Segment plan, preset design, colour strategy |
 | [design/effects/ha-automations.yaml](design/effects/ha-automations.yaml) | Home Assistant automation examples |
-| [mechanical/enclosure/MODELS.md](mechanical/enclosure/MODELS.md) | 3D print settings, cutout dimensions |
-| [firmware/platformio_override.ini](firmware/platformio_override.ini) | WLED build config (env, usermods, build flags) |
-| [firmware/cfg.json](firmware/cfg.json) | WLED device config (mDNS, outputs, boot preset) |
+| [mechanical/enclosure/MODELS.md](mechanical/enclosure/MODELS.md) | Print settings, enclosure notes, cutout details |
+| [mechanical/enclosure/reefs-automatedvariant-enclosure.scad](mechanical/enclosure/reefs-automatedvariant-enclosure.scad) | Current enclosure source |
+| [firmware/platformio_override.ini](firmware/platformio_override.ini) | WLED build config |
+| [firmware/cfg.json](firmware/cfg.json) | WLED runtime config |
 | [firmware/presets.json](firmware/presets.json) | Exported WLED presets |
+| [firmware/spiffs/ha-import.html](firmware/spiffs/ha-import.html) | Device-served HA import assistant |
+| [homeassistant/README.md](homeassistant/README.md) | HA import methods and entity ID guidance |
+| [homeassistant/package.yaml](homeassistant/package.yaml) | HA package with helpers, scripts, and automations |
+| [homeassistant/lovelace.yaml](homeassistant/lovelace.yaml) | Ready-made dashboard card |
 
 ---
 
@@ -75,7 +70,7 @@ The BambuStudio project file is at [`mechanical/enclosure/CustomProjectEnclosure
 
 ![Physical wiring](docs/wiring-physical.svg)
 
-See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO table and wiring notes.
+See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO table, current-limited connector notes, and control-box wiring details.
 
 | Level-shifter circuit | Power distribution |
 |---|---|
@@ -83,64 +78,37 @@ See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO tab
 
 ---
 
-## Build Checklist (MVP)
+## Enclosure
 
-- [ ] Flash WLED to ESP32, verify Wi-Fi
-- [ ] Bench-test SK6812 strip on GPIO 16
-- [ ] Mount aluminium channels on driftwood rear faces
-- [ ] Solder strips; bench-test both on GPIO 16 + 17
-- [ ] Print enclosure v1
-- [ ] Assemble control box (PSU, terminal block, ESP32, level shifter, fuses)
-- [ ] Wire lamp cables; connect via JST connectors
-- [ ] Configure WLED: 2 outputs, 60 LEDs each, SK6812 GRBW, boot preset
-- [ ] Add WLED integration to Home Assistant; verify 2 light entities
-- [ ] Mount lamps; conceal cables
-- [ ] Thermal soak: 60 min at 50 % brightness — verify ≤ 45 °C on strip
+The current enclosure source is [mechanical/enclosure/reefs-automatedvariant-enclosure.scad](mechanical/enclosure/reefs-automatedvariant-enclosure.scad). The generated build uses a captive Schuko mains lead, a front USB access slot, and JST SM lamp-output pockets rather than the older IEC / cable-gland concept.
+
+| Base shell | Lid |
+|---|---|
+| ![Base iso](mechanical/enclosure/reefs-automatedvariant-base-iso.png) | ![Lid iso](mechanical/enclosure/reefs-automatedvariant-lid-iso.png) |
+
+Re-render with `pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-automatedvariant-enclosure`.
 
 ---
 
-## Repo Structure
+## Build Checklist
 
-```
-reefs/
-├── firmware/
-│   ├── platformio_override.ini   ← WLED build config (env:esp32dev_reefs)
-│   ├── cfg.json                  ← WLED device config (mDNS, outputs, boot preset)
-│   └── presets.json              ← Exported WLED presets
-├── hardware/
-│   ├── bom/
-│   │   └── bom.md                ← 16-item BOM with power budget
-│   └── wiring/
-│       └── WIRING.md             ← Wiring notes, GPIO table, references to diagrams
-├── mechanical/
-│   └── enclosure/
-│       ├── CustomProjectEnclosureV1.7.8b.3mf  ← BambuStudio project
-│       ├── case-preview.png
-│       ├── case-top.png
-│       └── MODELS.md             ← Print settings, cutout dimensions
-├── design/
-│   ├── led-map/
-│   │   └── LED-DESIGN.md         ← Segment plan, preset design, white channel strategy
-│   └── effects/
-│       └── ha-automations.yaml   ← Example HA automations and Reef Scene script
-├── docs/                         ← Auto-generated diagrams (do not hand-edit)
-│   ├── concept-side-view.png
-│   ├── concept-top-view.png
-│   ├── concept-system.png
-│   ├── schematic-level-shifter.png
-│   ├── schematic-power.png
-│   └── wiring-physical.svg
-├── gen_diagrams.py               ← Diagram generation entry point (uses tools/diagram_gen)
-├── gen_diagrams_config.py        ← DIAGRAM_CONFIG dict for this project
-├── README.md                     ← this file
-└── specs.md                      ← Full PRD (wiring, BOM, WLED config, HA integration)
-```
+- [ ] Flash WLED to the ESP32 and verify Wi-Fi join
+- [ ] Bench-test one SK6812 strip on GPIO16 through the level shifter
+- [ ] Bench-test both outputs on GPIO16 + GPIO17 with 60 LEDs each
+- [ ] Mount aluminium channels on the driftwood rear faces
+- [ ] Print the current enclosure variant and verify cable-entry fit
+- [ ] Assemble control box: PSU, controller, level shifter, fuses, JST outputs
+- [ ] Configure WLED: 2 outputs, 60 LEDs each, SK6812 GRBW, boot preset
+- [ ] Upload `ha-import.html` and verify Home Assistant discovery
+- [ ] Add WLED integration in Home Assistant and verify both lamp entities
+- [ ] Perform 60-minute thermal soak at 50 % brightness
 
 ---
 
 ## Resources
 
 - [specs.md](specs.md) — full project spec
+- [homeassistant/README.md](homeassistant/README.md) — Home Assistant import guide
+- [tools/parts-register/parts.json](../tools/parts-register/parts.json) — shared part facts used across the repo
 - [WLED Docs](https://kno.wled.ge)
 - [WLED GitHub](https://github.com/wled/WLED)
-- [WLED Discord](https://discord.gg/QAh7wJHrRM)
