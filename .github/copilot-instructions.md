@@ -23,8 +23,7 @@ Every project mirrors the `_template/` skeleton:
 │   ├── pcb/                # KiCad PCB files, Gerbers
 │   └── bom/                # bom.md with full power budget
 ├── mechanical/
-│   ├── 3d-models/          # STL / STEP / .3mf files
-│   └── enclosure/          # Housing files, print settings
+│   └── enclosure/          # YAPP_Box SCAD + STLs + preview PNGs + print settings
 ├── design/
 │   ├── led-map/            # 2D pixel maps, segment plans
 │   └── effects/            # WLED presets.json, palette exports
@@ -36,18 +35,21 @@ Every project mirrors the `_template/` skeleton:
 
 ## Tech Stack
 
-- **Firmware**: WLED v0.15+ on ESP32-WROOM-32 (primary target); ESP8266 (legacy)
+- **Firmware**: WLED v16.0+ on ESP32-WROOM-32 (primary target); ESP8266 (legacy, v0.15 branch)
 - **LED strips**: SK6812 RGBW 5 V (preferred), WS2812B RGB 5 V, WS2811 12 V
 - **Build system**: PlatformIO — each project provides `firmware/platformio_override.ini`
 - **Diagrams**: Python 3 via `tools/diagram_gen/` (schemdraw ≥ 0.22, matplotlib, drawsvg ≥ 2.4)
+- **Enclosures**: OpenSCAD + [YAPP_Box v3](https://github.com/mrWheel/YAPP_Box) (MIT) at `tools/yapp/YAPPgenerator_v3.scad`, rendered via `tools/render_enclosure.ps1`
 - **Schematics / PCB**: KiCad
-- **3D printing**: PETG / ASA enclosures in `.3mf`, `.stl`, `.step`
+- **3D printing**: PETG / ASA enclosures — STLs and 4 preview PNGs committed per project
 - **Smart home**: Home Assistant via native WLED integration (no MQTT required) — **mandatory for every project**
 - **Extended HA effects**: [hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) — context-aware LED effects driven by HA state (use when applicable, see rules below)
 
 ## Shared Tooling Rules
 
 - All diagram generation logic lives in `tools/diagram_gen/`. **Never copy modules into project folders.**
+- The YAPP_Box library lives at `tools/yapp/YAPPgenerator_v3.scad`. **Never copy it into a project folder** — project SCAD files include it via the relative path `../../../tools/yapp/YAPPgenerator_v3.scad`.
+- The enclosure render helper is `tools/render_enclosure.ps1` — it produces both shells and 4 preview PNGs. Use the [`enclosure-gen` skill](skills/enclosure-gen/SKILL.md) as the API reference and invoke it via the `/gen-enclosure` slash command.
 - Project-level `gen_diagrams.py` scripts import the shared package via a `sys.path` insert — follow the exact pattern in `reefs/gen_diagrams.py`.
 - `gen_diagrams_config.py` in each project exports a single `DIAGRAM_CONFIG` dict. Copy `reefs/gen_diagrams_config.py` as the starting point.
 - `docs/` in each project is output-only; the sources are the Python scripts.
@@ -132,7 +134,7 @@ Each effect creates Switch, Number, Select, Sensor, and Button entities in HA an
 ### Requirements
 - Home Assistant ≥ 2024.1.0
 - Native WLED integration already installed and device discovered in HA
-- WLED firmware ≥ 0.14.0 (WLED v0.15+ used in this repo satisfies this)
+- WLED firmware ≥ 0.14.0 (WLED v16+ used in this repo satisfies this)
 
 ### Installation checklist (per project)
 1. Add HACS custom repository `https://github.com/tamaygz/hacs-wledext-effects` (category: Integration)
@@ -144,13 +146,13 @@ Each effect creates Switch, Number, Select, Sensor, and Button entities in HA an
 ## Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
-2. Fill in `specs.md` first (concept, requirements, acceptance criteria, open questions)
+2. Fill in `specs.md` first (concept, requirements, **Home Assistant** section, mechanical constraints, acceptance criteria, open questions)
 3. Calculate power budget and fill `hardware/bom/bom.md`
 4. Document wiring in `hardware/wiring/WIRING.md`
-5. Create `gen_diagrams_config.py` from the `reefs/` example
-6. Add a row to the Projects table in `README.md`
-7. Add a **"Home Assistant"** section to `specs.md` listing expected HA entities and whether `hacs-wledext-effects` effects are needed
-8. Set a unique mDNS hostname in `firmware/cfg.json` so HA auto-discovers the device
+5. Create `gen_diagrams_config.py` from the `reefs/` example, then run `python tools/gen_diagrams.py <project-name>`
+6. Generate the enclosure with the `/gen-enclosure` slash command (writes SCAD + STLs + 4 preview PNGs into `mechanical/enclosure/`)
+7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`) so HA auto-discovers the device
+8. Add a row to the Projects table in `README.md`
 
 ## Commit Convention
 

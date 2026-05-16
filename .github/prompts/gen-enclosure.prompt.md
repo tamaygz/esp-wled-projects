@@ -1,10 +1,12 @@
 ---
 mode: agent
 description: >
-  Generate a complete 3D enclosure for an ESP32/WLED project using YAPP_Box
-  (MIT-licensed parametric OpenSCAD box generator). Reads project documentation
-  and produces a ready-to-render mechanical/enclosure/<project>-enclosure.scad
-  file and an updated MODELS.md. Run after hardware wiring is finalised.
+  Generate a complete 3D-printable enclosure for an ESP32/WLED project using
+  YAPP_Box (MIT-licensed parametric OpenSCAD box generator). Reads project
+  documentation and produces a ready-to-render
+  mechanical/enclosure/<project>-enclosure.scad, then renders both shells plus
+  4 preview PNGs via tools/render_enclosure.ps1. Default lid closure is
+  snap-on (no screws).
 tools:
   - read_file
   - create_file
@@ -14,23 +16,23 @@ tools:
 
 # /gen-enclosure
 
-Generate a YAPP_Box `.scad` enclosure for project **$PROJECT_NAME**.
+Generate a YAPP_Box `.scad` enclosure for project **$PROJECT_NAME** and render
+all printable artifacts.
 
-Use the `enclosure-gen` skill as the primary reference for the YAPP_Box API,
-cutout dimensions, and component tables.
+Use the [`enclosure-gen` skill](../skills/enclosure-gen/SKILL.md) as the
+canonical reference for the YAPP_Box API, cutout dimensions, ESP32 standoff
+geometry, label placement, and the reefs worked example.
 
 ---
 
 ## Inputs
-
-Gather these facts before writing any file:
 
 | Input | Source |
 |-------|--------|
 | Target outer dimensions (max) | `$PROJECT_NAME/specs.md` → Constraints section |
 | Component list + physical dimensions | `$PROJECT_NAME/hardware/bom/bom.md` |
 | Connector positions + types | `$PROJECT_NAME/hardware/wiring/WIRING.md` |
-| Print material / layer height | `$PROJECT_NAME/specs.md` → Mechanical section |
+| Print material / layer height | `$PROJECT_NAME/specs.md` → Mechanical section (optional) |
 
 ---
 
@@ -38,213 +40,144 @@ Gather these facts before writing any file:
 
 ### 1. Read project documentation
 
-Read the following files in parallel:
+Read in parallel:
 - `$PROJECT_NAME/specs.md`
 - `$PROJECT_NAME/hardware/bom/bom.md`
 - `$PROJECT_NAME/hardware/wiring/WIRING.md`
-
-If `$PROJECT_NAME/mechanical/enclosure/MODELS.md` exists, read it for any
-pre-existing enclosure constraints.
-
----
+- `$PROJECT_NAME/mechanical/enclosure/MODELS.md` (if present)
 
 ### 2. Inventory components
 
-Build two lists from the BOM and wiring docs:
+Build two lists:
 
-**Internal layout** (determines interior volume):
+**Internal layout** (sets interior volume): component, L×W mm, height mm, wiring clearance.
 
-| Component | L×W mm | Height mm | Notes |
-|-----------|--------|-----------|-------|
-| (fill from BOM) | | | |
-
-**Face-mounted connectors** (determine cutouts):
-
-| Connector | Type | Assigned face | Cutout (W×H or radius) |
-|-----------|------|---------------|------------------------|
-| (fill from BOM + WIRING.md) | | | |
+**Face-mounted connectors** (sets cutouts): connector → assigned face → cutout size from the table in the skill.
 
 Face assignment rules:
-- Mains inlet (IEC C14) → Back wall (largest face if applicable)
-- USB-C for OTA/programming → Front wall or most accessible side
-- Cable glands (lamp/LED cables) → Front wall, away from mains
+- Mains inlet (IEC C14) → Back wall
+- USB-C for OTA → Front or accessible side
+- Cable glands (lamp/LED) → Front, away from mains
 - Buttons / display → Lid or front wall
-- Multiple identical connectors → Same face, evenly spaced
-
----
 
 ### 3. Calculate dimensions
 
 ```
-inner_L = widest_component_footprint_along_L + 10mm margin   (5mm each side)
-inner_W = widest_component_footprint_along_W + 10mm margin
-inner_H = tallest_stack (standoffHeight + pcbThickness + tallest_component) + 10mm
-
-Round each dimension UP to nearest 5mm.
-
-outer_L = inner_L + 2 × wallThickness
-outer_W = inner_W + 2 × wallThickness
-outer_H = inner_H + basePlaneThickness + lidPlaneThickness
-
-Verify outer fits the constraint in specs.md.
-If it does not, reduce margins proportionally and document the trade-off.
+inner_L = widest_component_span_along_L + 10mm margin
+inner_W = widest_component_span_along_W + 10mm margin
+inner_H = standoffHeight + pcbThickness + tallest_internal_component + 10mm
+→ round each UP to nearest 5mm
+→ verify outer (= inner + 2×wallThickness) fits the spec constraint
 ```
 
-Split the inner height into base + lid wall heights.
-Default split: baseWallHeight ≈ 55 % of inner_H, lidWallHeight ≈ 45 %.
-Ensure `ridgeHeight` (default 5.0) ≤ `lidWallHeight`.
-
----
+Default split: `baseWallHeight ≈ 55 %`, `lidWallHeight ≈ 45 %` of inner height.
 
 ### 4. Generate `<project>-enclosure.scad`
 
-Create the file at `$PROJECT_NAME/mechanical/enclosure/$PROJECT_NAME-enclosure.scad`
-using the template structure from the `enclosure-gen` skill.
+Create the file at
+`$PROJECT_NAME/mechanical/enclosure/$PROJECT_NAME-enclosure.scad`.
 
-The file **must** include (in this order):
-1. Header comment with project name, date, outer dimensions, render commands
-2. Render control flags (`printBaseShell`, `printLidShell`, etc.)
-3. Dimension variables (pcbLength, pcbWidth, wall heights, paddings = 0)
-4. `pcb = [ ["Main", ...] ]` block
-5. `pcbStands` — 4 standoffs for ESP32 DevKit or actual PCB mounting holes
-6. `connectors` — 4×M3 lid corner screws
-7. All six cutout arrays (`cutoutsFront`, `cutoutsBack`, `cutoutsLeft`, `cutoutsRight`, `cutoutsLid`, `cutoutsBase`)
-8. `labelsPlane` with **two mandatory label groups**:
-   - **Project title on lid** — 1–3 lines centered on the lid:
-     - Line 1 (always): project name, size 10, `"Liberation Sans:style=Bold"`, raised (`depth = -0.6`)
-     - Line 2 (if user supplied a subtitle or description): subtitle, size 6
-     - Line 3 (optional): version / short tagline, size 4
-     - All centered using `yappTextHAlignCenter, yappTextVAlignCenter`
-     - Lid center = `(outerL/2, outerW/2)` where `outerL = pcbLength + 2×wallThickness`
-     - Line spacing = 1.6 × largest font size (mm)
-   - **Cutout identification labels** — one entry per external connector/hole:
-     - Same face constant (`yappFront`, `yappBack`, `yappLeft`, `yappRight`, `yappLid`) as the cutout
-     - Horizontally centred on the cutout: `posx = cutout_p0 + wallThickness`
-     - Vertically placed **above** the cutout hole (prefer above; use below if at wall top):
-       - Above: `posy = (cutout_p1 + hole_half_height + 2 + 2) + basePlaneThickness`
-       - Below: `posy = (cutout_p1 − hole_half_height − 2 − 2) + basePlaneThickness`
-       - For circles: `hole_half_height = radius`
-     - Font size 4–5mm; text = connector purpose in ALLCAPS (e.g. `"POWER IN"`, `"OTA"`, `"LAMP 1"`)
-     - Raised text: `depth = -0.4`
-9. Empty arrays for unused features (`snapJoins`, `boxMounts`, `lightTubes`, `pushButtons`, `displayMounts`)
-10. `include <./YAPPgenerator_v3.scad>` — **this must be the very last line**
+**Required file structure** (follow the reefs worked example in the skill):
 
-Use `yappCoordBoxInside, yappCenter` for all cutout positioning.
-Add inline comments explaining each cutout's purpose and its source in the BOM.
-Add inline comments on each label showing the coordinate calculation.
+1. **Line 1:** header comment with project name, date, target dimensions, and the render command
+2. **Line 2 (FIRST executable):** `include <../../../tools/yapp/YAPPgenerator_v3.scad>` — must be first so project values below override library defaults
+3. Render-control flags (`printBaseShell = true; printLidShell = true; …`)
+4. Dimension variables (`pcbLength`, `pcbWidth`, wall heights; paddings = 0 — virtual PCB approach)
+5. `wallThickness = 3.0; basePlaneThickness = 1.5; lidPlaneThickness = 1.5;`
+6. **`ridgeHeight = 6.0;`** (must satisfy `ridgeHeight >= wallThickness * 1.8` whenever `snapJoins` is non-empty — YAPP asserts this)
+7. `pcb = [ ["Main", pcbLength, pcbWidth, 0, 0, pcbThickness, standoffHeight, standoffDiameter, standoffPinDiameter, standoffHoleSlack] ];` — the leading `"Main"` string is required by YAPP v3
+8. **`pcbStands`** — ESP32 DevKit pattern, **always use `yappBaseOnly`** (not `yappBoth`) so the lid stays clean
+9. **`connectors = [];`** and **`snapJoins = [ [40, 15, yappLeft, yappRight, yappCenter, yappSymmetric] ];`** — snap-on lid is the default. Only fill `connectors[]` if the user explicitly requested screws
+10. All six cutout arrays (`cutoutsFront`, `cutoutsBack`, `cutoutsLeft`, `cutoutsRight`, `cutoutsLid`, `cutoutsBase`) — keep empty arrays for unused faces; use `yappCoordBoxInside, yappCenter` throughout
+11. **`labelsPlane`** with two mandatory groups:
+    - **Project title on lid** (1–3 centred lines):
+      - Line 1: project name, size 10, `"Liberation Sans:style=Bold"`, `depth = -0.6` (raised)
+      - Line 2 (optional): subtitle, size 6, `depth = -0.4`
+      - Line 3 (optional): version/date, size 4, `depth = -0.3`
+      - Lid centre: `posx = outerL/2`, `posy = outerW/2` where `outerL = pcbLength + 2 × wallThickness`
+      - Line spacing: `1.6 × largest_font_size` mm
+      - All centred (`yappTextHAlignCenter, yappTextVAlignCenter`)
+    - **Cutout identification labels** — one per external connector:
+      - Same face constant as the cutout
+      - Horizontal: `posx = cutout_p0 + wallThickness`
+      - Above cutout: `posy = (cutout_p1 + hole_half_height + 2 + 2) + basePlaneThickness`
+      - Below cutout: `posy = (cutout_p1 − hole_half_height − 2 − 2) + basePlaneThickness`
+      - For circles: `hole_half_height = radius`
+      - Size 4–5 mm, ALLCAPS text (`"POWER IN"`, `"OTA"`, `"LAMP 1"`)
+      - Raised: `depth = -0.4`
+12. Empty arrays for unused features: `boxMounts = []; lightTubes = []; pushButtons = []; displayMounts = [];`
+13. **Last line:** `YAPPgenerate();` — explicit call required to bypass the library's `if(debug)` guard
 
----
-
-### 5. Download YAPP library
-
-If `$PROJECT_NAME/mechanical/enclosure/YAPPgenerator_v3.scad` does not exist,
-print the following instruction:
-
-```
-Download YAPPgenerator_v3.scad and place it alongside the enclosure .scad:
-
-  Releases: https://github.com/mrWheel/YAPP_Box/releases/latest
-  Direct (latest main):
-  https://raw.githubusercontent.com/mrWheel/YAPP_Box/main/YAPPgenerator_v3.scad
-
-  Save to: $PROJECT_NAME/mechanical/enclosure/YAPPgenerator_v3.scad
+**File encoding:** save as **UTF-8 without BOM**. In PowerShell:
+```powershell
+[System.IO.File]::WriteAllText($path, $content, (New-Object System.Text.UTF8Encoding $false))
 ```
 
----
+### 5. Render STLs + previews
 
-### 6. Update `MODELS.md`
+The repo provides a one-shot helper that produces both shells **and** 4 preview PNGs:
 
-Create or replace `$PROJECT_NAME/mechanical/enclosure/MODELS.md` with:
-
-```markdown
-# $PROJECT_NAME — Enclosure
-
-## Control Box
-
-| Parameter | Value |
-|-----------|-------|
-| Outer dimensions | L×W×Hmm |
-| Inner dimensions | L×W×Hmm |
-| Wall thickness | Xmm |
-| Base wall height | Xmm |
-| Lid wall height | Xmm |
-| Corner style | Rounded / radius Xmm |
-| Box type (YAPP boxType) | 0 |
-
-## Print Settings
-
-| Parameter | Value |
-|-----------|-------|
-| Material | PETG |
-| Layer height | 0.2mm |
-| Infill | 20% Gyroid |
-| Perimeters | 3 |
-| Supports | None |
-
-## Cutouts & Features
-
-| Face | Component | Cutout | Coordinates |
-|------|-----------|--------|-------------|
-| (list each cutout from the .scad file) | | | |
-
-## PCB Standoffs
-
-| Component | Mount type | Hole pattern |
-|-----------|-----------|-------------|
-| ESP32 DevKit | M3 self-threading | 23×45mm |
-
-## Render Instructions
-
-```bash
-# Download library (once)
-curl -L https://raw.githubusercontent.com/mrWheel/YAPP_Box/main/YAPPgenerator_v3.scad \
-     -o mechanical/enclosure/YAPPgenerator_v3.scad
-
-# Base only
-openscad --render -o mechanical/enclosure/$PROJECT_NAME-box.stl \
-         mechanical/enclosure/$PROJECT_NAME-enclosure.scad \
-         -D printLidShell=false
-
-# Lid only
-openscad --render -o mechanical/enclosure/$PROJECT_NAME-lid.stl \
-         mechanical/enclosure/$PROJECT_NAME-enclosure.scad \
-         -D printBaseShell=false
+```powershell
+pwsh tools/render_enclosure.ps1 -Project $PROJECT_NAME -ScadName $PROJECT_NAME-enclosure
 ```
 
-## Files
+Outputs (committed alongside the SCAD):
 
 | File | Purpose |
 |------|---------|
-| `$PROJECT_NAME-enclosure.scad` | YAPP_Box source config — version controlled |
-| `YAPPgenerator_v3.scad` | YAPP library (MIT) — version controlled |
-| `*.stl` | Rendered output — NOT committed (add to .gitignore) |
+| `$PROJECT_NAME-base.stl` | Base shell, print-ready |
+| `$PROJECT_NAME-lid.stl` | Lid shell, print-ready |
+| `$PROJECT_NAME-base-iso.png` | Isometric preview of base |
+| `$PROJECT_NAME-base-top.png` | Top-down preview of base |
+| `$PROJECT_NAME-lid-iso.png` | Isometric preview of lid |
+| `$PROJECT_NAME-lid-top.png` | Top-down preview of lid |
+
+Visually inspect the iso PNGs before committing: the lid must have **no floating
+PCB stems** (if it does, switch the relevant `pcbStands` entries to
+`yappBaseOnly`).
+
+### 6. Update `MODELS.md`
+
+Replace `$PROJECT_NAME/mechanical/enclosure/MODELS.md` with a section that
+includes:
+
+- Parameter table (outer/inner dims, wall thickness, base/lid wall heights, lid closure = snap-on)
+- Print settings table (PETG, 0.2 mm layer, 20 % gyroid, 3 perimeters, no supports)
+- Cutouts table (face, component, dimensions)
+- PCB standoffs row (ESP32 DevKit, M3 self-thread, 23 × 45 mm, `yappBaseOnly`)
+- Files table linking every artifact (SCAD, both STLs, all 4 PNGs, spec)
+- Render command (helper script call from §5)
+
+### 7. Report to the user
+
+Print exactly:
+
+```
+Enclosure generated and rendered.
+
+SCAD source:
+  $PROJECT_NAME/mechanical/enclosure/$PROJECT_NAME-enclosure.scad
+
+STLs (print-ready):
+  $PROJECT_NAME-base.stl
+  $PROJECT_NAME-lid.stl
+
+Previews (committed for review):
+  $PROJECT_NAME-base-iso.png   $PROJECT_NAME-base-top.png
+  $PROJECT_NAME-lid-iso.png    $PROJECT_NAME-lid-top.png
+
+Lid closure: snap-on (4 snap-joins, no screws).
+To re-render after edits:
+  pwsh tools/render_enclosure.ps1 -Project $PROJECT_NAME -ScadName $PROJECT_NAME-enclosure
 ```
 
 ---
 
-### 7. Print render instructions
+## Constraints
 
-After files are written, print this exact block to the user:
-
-```
-Enclosure files created:
-  mechanical/enclosure/$PROJECT_NAME-enclosure.scad
-  mechanical/enclosure/MODELS.md
-
-To render STL files:
-
-  1. Download YAPPgenerator_v3.scad into the same folder (see MODELS.md for URL)
-
-  2. Install OpenSCAD from https://openscad.org/downloads.html (if not installed)
-
-  3. Render base:
-     openscad --render -o $PROJECT_NAME-box.stl $PROJECT_NAME-enclosure.scad -D printLidShell=false
-
-  4. Render lid:
-     openscad --render -o $PROJECT_NAME-lid.stl $PROJECT_NAME-enclosure.scad -D printBaseShell=false
-
-  5. Or open the .scad in the OpenSCAD GUI to preview and adjust before rendering.
-
-Gitignore reminder — add to $PROJECT_NAME/.gitignore (or root .gitignore):
-  mechanical/enclosure/*.stl
-```
+- **Do not** download `YAPPgenerator_v3.scad` into the project folder — the shared library lives at `tools/yapp/YAPPgenerator_v3.scad` and is included via relative path
+- **Do not** default to screw-fastened lids — snap-on is the project standard
+- **Do not** use `yappBoth` for PCB standoffs — `yappBaseOnly` keeps the lid clean
+- **Do not** put the `include` line at the bottom of the file — OpenSCAD's "last assignment wins" will overwrite your project values
+- **Do not** omit the trailing `YAPPgenerate();` call — without it the STL will be empty
+- Always commit the STLs and preview PNGs alongside the SCAD
