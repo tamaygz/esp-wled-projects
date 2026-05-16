@@ -24,11 +24,12 @@ Then work through these steps **in order**:
 1. **`specs.md`** — fill out concept, requirements, constraints, acceptance criteria, and the **Home Assistant** section
 2. **`hardware/bom/bom.md`** — calculate current budget, select PSU, list all parts
 3. **`hardware/wiring/WIRING.md`** — document GPIO assignments, power rails, wire runs
-4. **`gen_diagrams_config.py`** — copy from `reefs/gen_diagrams_config.py`, update values
-5. **`gen_diagrams.py`** — copy from `reefs/gen_diagrams.py`, update project import path
-6. **`firmware/cfg.json`** — set a unique mDNS hostname: `"id": {"mdns": "<project-name>"}` and ensure `"nw": {"mdns": 1}`
-7. **`README.md`** (project level) — full project README following the **Project README Structure** standard below: concept images first, documentation index table, wiring diagrams, build checklist
-8. **`README.md`** (repo root) — add a row to the Projects table
+4. **Enclosure** — once wiring is finalised, run `/gen-enclosure` to generate `mechanical/enclosure/<project>-enclosure.scad` — see **Enclosure Generation** section below
+5. **`gen_diagrams_config.py`** — copy from `reefs/gen_diagrams_config.py`, update values
+6. **`gen_diagrams.py`** — copy from `reefs/gen_diagrams.py`, update project import path
+7. **`firmware/cfg.json`** — set a unique mDNS hostname: `"id": {"mdns": "<project-name>"}` and ensure `"nw": {"mdns": 1}`
+8. **`README.md`** (project level) — full project README following the **Project README Structure** standard below: concept images first, documentation index table, wiring diagrams, build checklist
+9. **`README.md`** (repo root) — add a row to the Projects table
 
 ## specs.md Structure
 
@@ -118,3 +119,54 @@ When adding a project, append a row to the table in the root `README.md`:
 ```
 
 Status values: `planning`, `wip`, `done`, `archived`.
+
+## Enclosure Generation
+
+Use **YAPP_Box** (MIT, 485⭐, actively maintained) as the standard enclosure design tool for all projects:
+<https://github.com/mrWheel/YAPP_Box>
+
+YAPP_Box produces parametric, command-line renderable OpenSCAD files. No MakerWorld login or browser required.
+
+### Workflow
+
+1. Run the `/gen-enclosure` slash command — it reads `specs.md`, `bom.md`, and `WIRING.md` to calculate dimensions and cutout positions
+2. A complete `mechanical/enclosure/<project>-enclosure.scad` config file is generated (YAPP_Box template filled with project data)
+3. Download `YAPPgenerator_v3.scad` (the library) from the YAPP_Box releases page and place it alongside the config file
+4. Render STL with OpenSCAD CLI:
+   ```bash
+   openscad --render -o <project>-box.stl <project>-enclosure.scad -D printLidShell=false
+   openscad --render -o <project>-lid.stl <project>-enclosure.scad -D printBaseShell=false
+   ```
+
+### Output files
+
+| File | Committed? |
+|------|-----------|
+| `mechanical/enclosure/<project>-enclosure.scad` | ✅ Yes (source) |
+| `mechanical/enclosure/YAPPgenerator_v3.scad` | ✅ Yes (pin to release) |
+| `mechanical/enclosure/MODELS.md` | ✅ Yes |
+| `mechanical/enclosure/*.stl` | ❌ No — add to `.gitignore` |
+
+### Key YAPP_Box design rules
+
+- Use the **virtual PCB approach**: set `pcbLength`/`pcbWidth` to the desired inner dimensions, set all padding to `0` — this is the simplest path for general enclosures
+- Always use `yappCoordBoxInside, yappCenter` for cutout positioning — most intuitive
+- Always commit the specific `YAPPgenerator_v3.scad` version that was used to design the enclosure — do NOT resolve the library from a URL at render time
+- Add `mechanical/enclosure/*.stl` to the project's `.gitignore`
+
+### MakerWorld alternative
+
+If you prefer a browser GUI or need the MrPractical aesthetic, the MakerWorld
+**Customizable Project Enclosure Box** (designId 952727) is an alternative.
+Requires Bambu Lab account. No CLI render path — browser download only.
+Use YAPP_Box for all new projects and automation scenarios.
+
+### Skill reference
+
+The `enclosure-gen` skill contains the complete YAPP_Box API reference including:
+- All dimension calculation formulas
+- Cutout array formats with shape constants
+- Standard component cutout dimensions table (IEC C14, PG9, USB-C, barrel jack, etc.)
+- ESP32 DevKit standoff dimensions
+- CLI render commands
+- Complete reefs project worked example
