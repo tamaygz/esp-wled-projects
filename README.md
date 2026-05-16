@@ -175,6 +175,7 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `ESP/WLED Project Planner` custom agent | Guided planning: requirements → LED → power → GPIO → HA → scaffold |
 | `ESP/WLED Project Reviewer` custom agent | Reviews scaffold/meta coherence, upgrades docs, and checks current customization conventions |
 | `ESP/WLED Realworld Hardware Debug` custom agent | Step-by-step real build triage: captures actual hardware, checks wiring/power/config assumptions, compares against project definitions, and guides the next diagnostic step |
+| `ESP/WLED Webcam Build Guide Planner` custom agent | Creates a PR-ready design/review plan for a webcam-guided assembly + debugging assistant using project docs and live camera context |
 | `enclosure-gen` skill | Reusable enclosure reference and YAPP_Box workflow support |
 | `.github/hooks/README.md` | Documents the repo hook policy and recommended first deterministic hook use cases |
 
@@ -183,6 +184,7 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 - Use **ESP/WLED Project Planner** when you are starting a new build or the requirements are still vague. Give it the project idea, LED goals, installation constraints, and Home Assistant expectations.
 - Use **ESP/WLED Project Reviewer** after scaffolding or broad meta changes. It is the cleanup and coherence pass that checks missing files, instruction drift, register-backed facts, and doc completeness.
 - Use **ESP/WLED Realworld Hardware Debug** when a physical setup is not working and you do not yet know whether the problem is power, wiring, GPIO choice, firmware config, part substitution, or Home Assistant. Start it with the project name and a symptom such as `reefs flickers`, `curtaincinemalights no Wi-Fi`, or `something isn't working`.
+- Use **ESP/WLED Webcam Build Guide Planner** when you want a dedicated PR proposal for building a webcam-guided assembly/debugging tool that combines live camera observations with project documentation checks.
 - Let the agents hand off where appropriate: planner for build definition, hardware-debug for real-world triage, reviewer for final doc and meta alignment.
 
 ### Which Doc To Read

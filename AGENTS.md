@@ -109,6 +109,14 @@ Use the `ESP/WLED Realworld Hardware Debug` agent when a physical setup is not w
 - Validate whether substitutions are acceptable, marginal, or fundamentally incompatible before telling the user to rebuild anything.
 - Debug in the right order: power → boot/GPIO → data path → LED config → Home Assistant / automation layer.
 
+### Planning A Webcam-Guided Build Assistant
+
+Use the `ESP/WLED Webcam Build Guide Planner` agent when the goal is to open a PR proposal for a camera-assisted assembly/debugging tool.
+
+- It should combine repo docs with browser webcam observations to guide build and triage steps.
+- It should include alternatives, component-level compatibility checks, and clear failure indicators.
+- It should output a PR-ready package: title, problem framing, architecture options, phased roadmap, and validation criteria.
+
 ### Home Assistant Integration
 
 Every project **must** be controllable from Home Assistant via the native WLED integration.

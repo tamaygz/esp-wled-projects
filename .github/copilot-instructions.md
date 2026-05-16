@@ -95,6 +95,7 @@ Every project mirrors the `_template/` skeleton:
 
 - Keep the main repo workflow intuitive: plan with the planner agent, then hand off to a reviewer agent before considering the scaffold or meta-layer update complete.
 - For physical build failures or unclear wiring/power/component issues, prefer a specialized debugging flow via the `ESP/WLED Realworld Hardware Debug` agent instead of treating the problem as a generic review.
+- For a PR-scoped concept/design of a webcam-guided assembly assistant, prefer the `ESP/WLED Webcam Build Guide Planner` agent so the output is a concrete, implementation-ready proposal tied to project docs and real build diagnostics.
 - For public-facing repo changes, make sure `README.md` explains the user-visible story while `AGENTS.md` and this file carry the operational detail.
 - When adding future agents, prefer a coordinator-and-reviewer structure over many overlapping general-purpose agents.
 - If a future agent should only be used internally, mark it `user-invocable: false`. If it should not be auto-selected as a subagent, use `disable-model-invocation: true` unless an explicit coordinator needs it.
