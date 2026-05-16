@@ -11,8 +11,6 @@ The meta main folder is there to make new project creation repeatable instead of
 
 Each actual project folder is then a self-contained build with its own firmware config, wiring docs, power budget, 3D models, and generated diagrams.
 
-I created this repository primarily for myself as a structured workspace for planning, building, documenting, and reusing WLED-based lighting projects. The goal is to keep my own process consistent first, while still making each finished project understandable and reusable for others.
-
 ## Meta Layer At A Glance
 
 If you want to create a new project from this repo, the root-level meta layer is the part that helps you.
@@ -24,7 +22,7 @@ If you want to create a new project from this repo, the root-level meta layer is
 | [tools/](./tools/) | Shared generators and helpers | Produces diagrams, renders enclosures, and uploads SPIFFS assets consistently |
 | [.github/instructions/](./.github/instructions/) | Scoped Copilot rules | Keeps edits to firmware, hardware, diagrams, and new-project docs aligned with repo conventions |
 | [.github/prompts/](./.github/prompts/) | Reusable slash-command workflows | Speeds up scaffolding, diagram generation, and enclosure generation |
-| [.github/agents/](./.github/agents/) | Planner and reviewer agents | Guides planning first, then checks the scaffold or meta change for coherence |
+| [.github/agents/](./.github/agents/) | Planner, reviewer, and hardware-debug agents | Guides planning, real-build debugging, and final coherence checks |
 | [AGENTS.md](./AGENTS.md) and [.github/copilot-instructions.md](./.github/copilot-instructions.md) | Always-on repo guidance | Explains how the meta layer is supposed to be used and what rules always apply |
 
 ### How The Meta Layer Helps
@@ -33,16 +31,8 @@ If you want to create a new project from this repo, the root-level meta layer is
 2. Use the parts register before looking up dimensions, pinouts, or PSU data again.
 3. Let the planner prompt or agent drive the first pass when requirements are still forming.
 4. Generate diagrams and enclosure artifacts from shared tools so outputs stay consistent across projects.
-5. Run the reviewer step before considering a new project scaffold or meta change complete.
-
----
-
-## Projects
-
-| Project | Status | LEDs | Controller | Description |
-|---------|--------|------|------------|-------------|
-| [reefs](./reefs/) | wip | SK6812 RGBW 60/m × 2 | ESP32-WROOM-32 | Driftwood ambient lamps, Home Assistant integrated |
-| [curtaincinemalights](./curtaincinemalights/) | wip | SK6812 RGBW 60/m, ~180 LEDs · 3 m | ESP8266 D1 Mini | Cinema curtain LED sync — center-fill mirrors curtain position, State Sync + Chase + Breathe via hacs-wledext-effects |
+5. Use the hardware-debug agent when a physical build fails and the fault is still unclear.
+6. Run the reviewer step before considering a new project scaffold or meta change complete.
 
 ---
 
@@ -188,6 +178,13 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `enclosure-gen` skill | Reusable enclosure reference and YAPP_Box workflow support |
 | `.github/hooks/README.md` | Documents the repo hook policy and recommended first deterministic hook use cases |
 
+### How To Use The Agents
+
+- Use **ESP/WLED Project Planner** when you are starting a new build or the requirements are still vague. Give it the project idea, LED goals, installation constraints, and Home Assistant expectations.
+- Use **ESP/WLED Project Reviewer** after scaffolding or broad meta changes. It is the cleanup and coherence pass that checks missing files, instruction drift, register-backed facts, and doc completeness.
+- Use **ESP/WLED Realworld Hardware Debug** when a physical setup is not working and you do not yet know whether the problem is power, wiring, GPIO choice, firmware config, part substitution, or Home Assistant. Start it with the project name and a symptom such as `reefs flickers`, `curtaincinemalights no Wi-Fi`, or `something isn't working`.
+- Let the agents hand off where appropriate: planner for build definition, hardware-debug for real-world triage, reviewer for final doc and meta alignment.
+
 ### Which Doc To Read
 
 | If you need to understand... | Read this first |
@@ -233,3 +230,14 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 - [r/WLED](https://reddit.com/r/WLED)
 - [WLED Discord](https://discord.gg/QAh7wJHrRM)
 - [QuinLED](https://quinled.info) — WLED-dedicated hardware
+
+---
+
+## Included Projects
+
+I built this repo mostly for myself as a structured workspace for planning, building, documenting, and reusing WLED-based lighting projects. The projects currently included are:
+
+| Project | Status | LEDs | Controller | Description |
+|---------|--------|------|------------|-------------|
+| [reefs](./reefs/) | wip | SK6812 RGBW 60/m × 2 | ESP32-WROOM-32 | Driftwood ambient lamps, Home Assistant integrated |
+| [curtaincinemalights](./curtaincinemalights/) | wip | SK6812 RGBW 60/m, ~180 LEDs · 3 m | ESP8266 D1 Mini | Cinema curtain LED sync — center-fill mirrors curtain position, State Sync + Chase + Breathe via hacs-wledext-effects |
