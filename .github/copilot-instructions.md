@@ -42,7 +42,8 @@ Every project mirrors the `_template/` skeleton:
 - **Diagrams**: Python 3 via `tools/diagram_gen/` (schemdraw ≥ 0.22, matplotlib, drawsvg ≥ 2.4)
 - **Schematics / PCB**: KiCad
 - **3D printing**: PETG / ASA enclosures in `.3mf`, `.stl`, `.step`
-- **Smart home**: Home Assistant via native WLED integration (no MQTT required)
+- **Smart home**: Home Assistant via native WLED integration (no MQTT required) — **mandatory for every project**
+- **Extended HA effects**: [hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) — context-aware LED effects driven by HA state (use when applicable, see rules below)
 
 ## Shared Tooling Rules
 
@@ -72,6 +73,62 @@ python tools/gen_diagrams.py <project> --type wiring # single type
 - Build-time overrides go in `platformio_override.ini` only — do not modify WLED upstream source files.
 - Usermods are declared in `custom_usermods` inside `platformio_override.ini`.
 
+## Home Assistant Integration Rules
+
+Every WLED project in this repo **must** be controllable from Home Assistant.
+
+- Enable the **native WLED integration** in HA (Settings → Devices & Services → Add → WLED). Auto-discovers via mDNS — ensure mDNS is enabled in WLED (`cfg.json: "nw": {"mdns": 1}`).
+- No MQTT required. Do not configure MQTT unless there is an explicit reason.
+- Each project's `firmware/cfg.json` must have a human-readable device name (`"id": {"mdns": "<project-name>"}`) so HA auto-discovers the correct device.
+- Document the expected HA entity IDs (light, switch, sensor) in the project's `specs.md` under a **"Home Assistant"** section.
+- Test HA control (on/off, brightness, color) before a project is considered complete.
+
+## hacs-wledext-effects
+
+[hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) is a HACS custom integration that adds context-aware, HA-state-driven LED effects on top of the native WLED integration.
+
+### What it provides
+
+| Effect | Use case |
+|--------|----------|
+| Rainbow Wave | Decoration, ambient lighting |
+| Segment Fade | Mood lighting, transitions |
+| Loading | Progress indicators |
+| State Sync | Map any sensor value → LED color/fill |
+| Breathe | Notifications, soft alerts |
+| Meter | CPU, battery, temperature gauges |
+| Sparkle | Activity indicators |
+| Chase | Processing, retro scanner |
+| Alert | Security / multi-severity warnings |
+
+Each effect creates Switch, Number, Select, Sensor, and Button entities in HA and can be driven by automations.
+
+### When to use it
+
+**Use hacs-wledext-effects when:**
+- A LED strip should visualize a HA sensor value (temperature, CPU, humidity, energy) in real-time.
+- You need notification-style alerts triggered by HA events (motion, door open, security alarm).
+- You want HA automations to control the *behaviour* of an effect (e.g. pulse rate driven by notification priority).
+- Multi-zone display of independent data channels on a single strip.
+- Any effect logic that would otherwise require a complex WLED preset + HA script combination.
+
+**Do NOT use it when:**
+- A static WLED preset or palette is sufficient.
+- The effect is purely decorative with no relationship to HA state.
+- The device is deployed without a Home Assistant instance.
+
+### Requirements
+- Home Assistant ≥ 2024.1.0
+- Native WLED integration already installed and device discovered in HA
+- WLED firmware ≥ 0.14.0 (WLED v0.15+ used in this repo satisfies this)
+
+### Installation checklist (per project)
+1. Add HACS custom repository `https://github.com/tamaygz/hacs-wledext-effects` (category: Integration)
+2. Install "WLED Effects" from HACS, restart HA
+3. Add Integration: Settings → Devices & Services → Add → "WLED Effects", select your WLED device
+4. Document installed effects and their entity IDs in `specs.md` → **"Home Assistant"** section
+5. Add example automations to a `design/effects/ha-automations.yaml` file in the project
+
 ## Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
@@ -80,6 +137,8 @@ python tools/gen_diagrams.py <project> --type wiring # single type
 4. Document wiring in `hardware/wiring/WIRING.md`
 5. Create `gen_diagrams_config.py` from the `reefs/` example
 6. Add a row to the Projects table in `README.md`
+7. Add a **"Home Assistant"** section to `specs.md` listing expected HA entities and whether `hacs-wledext-effects` effects are needed
+8. Set a unique mDNS hostname in `firmware/cfg.json` so HA auto-discovers the device
 
 ## Commit Convention
 

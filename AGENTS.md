@@ -28,7 +28,43 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 4. Create `<project-name>/gen_diagrams_config.py` following `reefs/gen_diagrams_config.py`
 5. Create `<project-name>/gen_diagrams.py` following `reefs/gen_diagrams.py`
 6. Add a row to the Projects table in `README.md`
-7. Open a PR from a branch named `project/<project-name>`
+7. Add a **"Home Assistant"** section to `specs.md` — list expected entity IDs and note whether `hacs-wledext-effects` is applicable
+8. Set a unique mDNS hostname in `firmware/cfg.json` so HA auto-discovers the device
+9. Open a PR from a branch named `project/<project-name>`
+
+### Home Assistant Integration
+
+Every project **must** be controllable from Home Assistant via the native WLED integration.
+
+- Native WLED integration auto-discovers via mDNS — mDNS must be enabled in `firmware/cfg.json` (`"nw": {"mdns": 1}`)
+- No MQTT. Do not add MQTT unless explicitly required.
+- Verify on/off, brightness, and color control work in HA before marking a project complete.
+- Document all HA entity IDs in the project's `specs.md` under a **"Home Assistant"** section.
+
+### hacs-wledext-effects
+
+[hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) is a HACS custom integration for context-aware LED effects driven by HA state.
+
+**9 built-in effects:** Rainbow Wave, Segment Fade, Loading, State Sync, Breathe, Meter, Sparkle, Chase, Alert.
+
+Each effect creates controllable HA entities (Switch / Number / Select / Sensor / Button).
+
+**Use it when the project needs:**
+- Real-time sensor visualization (temperature, CPU, energy, humidity → LED color/fill)
+- HA-event-driven notifications (motion, door, security alarm → Alert / Breathe)
+- Multi-zone independent data display on one strip
+- Automation-controlled effect behavior (pulse rate, color, intensity driven by HA state)
+
+**Skip it when:**
+- A static WLED preset or palette is sufficient
+- The effect is purely decorative with no HA state dependency
+
+**Setup steps (per project):**
+1. Add HACS custom repo `https://github.com/tamaygz/hacs-wledext-effects` (category: Integration)
+2. Install "WLED Effects" from HACS → restart HA
+3. Settings → Devices & Services → Add → "WLED Effects" → select WLED device
+4. Document installed effects and entity IDs in `specs.md` → "Home Assistant"
+5. Store example automations in `design/effects/ha-automations.yaml`
 
 ### Modifying Shared Diagram Generation
 
