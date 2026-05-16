@@ -143,6 +143,33 @@ Each effect creates Switch, Number, Select, Sensor, and Button entities in HA an
 4. Document installed effects and their entity IDs in `specs.md` → **"Home Assistant"** section
 5. Add example automations to a `design/effects/ha-automations.yaml` file in the project
 
+## Parts Dimensions Register
+
+`tools/parts-register/parts.json` is the authoritative source for physical component dimensions used across all projects in this repo.
+
+**Always check the register before specifying dimensions in:**
+- `hardware/bom/bom.md` — component footprint sizes and current budgets
+- `mechanical/enclosure/*-enclosure.scad` — cutout sizes, board height, standoff positions
+- `hardware/wiring/WIRING.md` — connector body dimensions and panel-mount pocket sizes
+
+**Workflow:** check register → if not found, web-search the datasheet → add a new `parts.json` entry (set `"verified": false` if estimated) → use dimensions in project files.
+
+**Key parts in the register:**
+
+| PART_ID | Part | L × W × H (mm) | Verified |
+|---------|------|-----------------|----------|
+| `D1_MINI_V4` | Wemos LOLIN D1 Mini v4 | 34.2 × 25.6 × 10.0 | ✅ |
+| `HLK_30M05` | Hi-Link HLK-30M05 30W 5V 6A | 57.5 × 33.6 × 22.5 | ⚠️ |
+| `HLK_20M05` | Hi-Link HLK-20M05 20W 5V 4A | 56.0 × 32.0 × 22.5 | ✅ |
+| `HLK_5M05` | Hi-Link HLK-5M05 5W 5V 1A | 38.0 × 23.0 × 18.0 | ✅ |
+| `IC_74AHCT125_DIP14` | 74AHCT125 Quad Buffer DIP-14 | 19.05 × 6.35 × 4.57 | ✅ |
+| `JST_SM_2P5_3PIN` | JST SM 2.5mm 3-pin Connector | 9.5 × 6.0 × 6.0 | ⚠️ |
+| `SK6812_RGBW_60` | SK6812 RGBW LED strip 60 LED/m | 1000 × 10 × 1.5 per m | ✅ |
+
+⚠️ = `verified: false` — dimensions estimated; confirm from datasheet before manufacturing.
+
+See `tools/parts-register/README.md` for field definitions and instructions for adding new parts.
+
 ## Adding a New Project
 
 1. Copy `_template/` → `<project-name>/`
