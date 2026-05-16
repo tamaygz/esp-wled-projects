@@ -21,6 +21,28 @@ Both lamps run from one control box: a Honeywell 5 V / 10 A PSU and an ESP32 run
 
 ---
 
+## Concept
+
+### Side View — How the wall-wash works
+
+The LED strip sits in an aluminium channel on the **rear face** of the driftwood, pressed against the wall. Light spills between the wood and the wall surface, creating a diffused amber halo. The room-facing side of the wood stays dark.
+
+![Side-view cross-section](docs/concept-side-view.png)
+
+### Top-Down Floor Plan — Two lamps, one control box
+
+Both driftwood lamps mount along the same wall. Two 2 m cable runs (5 V + GND + DATA) route along the baseboard to the control box tucked in the corner.
+
+![Top-down floor plan](docs/concept-top-view.png)
+
+### System Block Diagram
+
+Power and data flow from mains → PSU → ESP32 + level shifter → both lamps, with Home Assistant reachable over Wi-Fi.
+
+![System block diagram](docs/concept-system.png)
+
+---
+
 ## Control Box Enclosure
 
 The 3D project file is at [`3d/CustomProjectEnclosureV1.7.8b.3mf`](3d/CustomProjectEnclosureV1.7.8b.3mf).
@@ -75,8 +97,13 @@ Full PRD with wiring diagrams, BOM, power budget, and WLED config: **[specs.md](
 reefs/
 ├── README.md          ← this file
 ├── specs.md           ← full PRD (wiring, BOM, WLED config)
+├── docs/
+│   ├── concept-side-view.png   ← cross-section lighting concept
+│   ├── concept-top-view.png    ← floor plan with cable runs
+│   └── concept-system.png      ← system block diagram
 └── 3d/
     ├── CustomProjectEnclosureV1.7.8b.3mf   ← BambuStudio project
     ├── case-preview.png                     ← isometric render
-    └── case-top.png                         ← top-view render
+    ├── case-top.png                         ← top-view render
+    └── gen_diagrams.py                      ← generates docs/ concept PNGs
 ```
