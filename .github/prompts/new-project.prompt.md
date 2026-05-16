@@ -50,7 +50,9 @@ Scaffold a new WLED project in this repository.
    # Add example automations here once hacs-wledext-effects effects are configured
    ```
 
-8. Edit `$PROJECT_NAME/README.md` with the correct project README structure:
+8. **Enclosure stub** — leave `$PROJECT_NAME/mechanical/enclosure/MODELS.md` as the template stub. Do **not** generate the SCAD now; run `/gen-enclosure` after BOM and wiring are finalised so the cutout dimensions and PCB standoff layout are correct.
+
+9. Edit `$PROJECT_NAME/README.md` with the correct project README structure:
 
    **Section order (required):**
    1. `# $PROJECT_NAME` title and `>` one-liner tagline
@@ -71,7 +73,7 @@ Scaffold a new WLED project in this repository.
    6. **Build Checklist** — project-specific MVP steps (flash, bench-test, assemble, configure WLED, add to HA, mount, thermal soak)
    7. **Resources** — link `specs.md`, WLED Docs, WLED GitHub
 
-9. Update root `README.md`:
+10. Update root `README.md`:
    - Add a row to the Projects table: `| [$PROJECT_NAME](./$PROJECT_NAME/) | planning | $LED_TYPE × $LED_COUNT | $DESCRIPTION |`
 
 ## Constraints

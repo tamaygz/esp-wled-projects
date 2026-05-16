@@ -107,7 +107,7 @@ entry and drop `ridgeHeight` back to 5.0 mm.
 | Text | Face | Position | Size |
 |------|------|----------|------|
 | `REEFS` (bold) | Lid | centre | 10 mm |
-| `WLED v0.15 \| SK6812 RGBW` | Lid | centre | 6 mm |
+| `WLED v16 \| SK6812 RGBW` | Lid | centre | 6 mm |
 | `2x 60-LED Lamps \| 5V 10A PSU` | Lid | centre | 4 mm |
 | `POWER IN` (bold) | Back | above IEC cutout | 4 mm |
 | `OTA` | Front | above USB-C cutout | 4 mm |

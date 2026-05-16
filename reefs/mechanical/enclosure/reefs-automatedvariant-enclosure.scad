@@ -118,7 +118,7 @@ labelsPlane = [
    "Liberation Sans:style=Bold", 10, "REEFS",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   [75, 50, 0, -0.4, yappLid,
-   "Liberation Sans", 6, "WLED v0.15  |  SK6812 RGBW",
+   "Liberation Sans", 6, "WLED v16  |  SK6812 RGBW",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   [75, 36, 0, -0.3, yappLid,
    "Liberation Sans", 4, "2x 60-LED Lamps  |  5V 10A PSU",

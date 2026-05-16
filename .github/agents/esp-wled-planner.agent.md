@@ -112,6 +112,23 @@ If yes, use the `new-project` prompt to scaffold the folder structure. Fill in:
 - mDNS hostname = project name slug
 - hacs-wledext-effects decision from Phase 6.5
 
+## Phase 7.5 — Enclosure Planning
+
+Once BOM and wiring are finalised, plan the enclosure:
+
+- Identify components that determine inner volume (PSU, ESP32 DevKit, terminal blocks, fuses, level shifter)
+- Identify connectors that need cutouts (IEC C14 inlet, USB-C OTA port, cable glands for LED runs)
+- Confirm lid closure preference — **snap-on by default**; only switch to screw connectors if explicitly requested
+- Add a row to the Mechanical section of `specs.md` with the target outer size
+
+Then invoke `/gen-enclosure` to generate `<project>-enclosure.scad`, both STLs, and 4 preview PNGs in `mechanical/enclosure/`. The render helper:
+
+```powershell
+pwsh tools/render_enclosure.ps1 -Project <project> -ScadName <project>-enclosure
+```
+
+Authoritative API reference: [`.github/skills/enclosure-gen/SKILL.md`](../skills/enclosure-gen/SKILL.md).
+
 ## Phase 8 — Diagram Generation
 
 Once the scaffold is created and hardware config is finalised, generate all diagrams:

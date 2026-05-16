@@ -12,7 +12,7 @@ DIAGRAM_CONFIG: dict = {
 
     # Power / control hardware
     "psu":        "Honeywell PSU\n5V / 10A",
-    "controller": "ESP32-WROOM-32\nWLED v0.15+",
+    "controller": "ESP32-WROOM-32\nWLED v16+",
     "shifter":    "74AHCT125\n3.3 → 5V",
     "power_label": "5V / 10A PSU",
 

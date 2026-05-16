@@ -389,7 +389,7 @@ labelsPlane = [
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   // Line 2: subtitle — smaller
   [75, 42, 0, -0.4, yappLid,
-   "Liberation Sans", 6, "WLED v0.15 | SK6812 RGBW",
+   "Liberation Sans", 6, "WLED v16 | SK6812 RGBW",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
 ];
 ```
@@ -661,7 +661,7 @@ labelsPlane = [
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   // Lid — subtitle
   [75, 42, 0, -0.4, yappLid,
-   "Liberation Sans", 6, "WLED v0.15 | SK6812 RGBW",
+   "Liberation Sans", 6, "WLED v16 | SK6812 RGBW",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
 
   // Back wall — IEC C14 label (cutout center BoxInside (47,30), h=48)

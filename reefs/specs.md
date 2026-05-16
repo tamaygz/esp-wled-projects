@@ -320,7 +320,7 @@ Pin 3  (26 AWG white) ──▶ LED strip DIN pad
 | Segment | Segment 0 | Segment 1 |
 | mDNS name | `reefs.local` | — (same device) |
 
-> **WLED build note**: use WLED v0.15 or later for reliable SK6812 RGBW white-channel support and the WLED Home Assistant integration auto-discovery.
+> **WLED build note**: use WLED v16.0 or later (the v16 series introduced major effect, segment, and color-handling improvements and ships the native Home Assistant integration auto-discovery).
 
 **Startup preset recommendations:**
 - Preset 1 "Warm Ambient": Effect = Solid, Colour = CCT 3000 K at 40 % brightness, applied to both segments.

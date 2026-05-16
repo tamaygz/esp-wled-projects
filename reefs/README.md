@@ -16,7 +16,7 @@ Both lamps run from one control box: a Honeywell 5 V / 10 A PSU and an ESP32 run
 | **LED Type** | SK6812 RGBW, 5 V, 60 LED/m |
 | **LED Count** | 120 total (60 per lamp × 2) |
 | **Power Supply** | Honeywell 5 V / 10 A (50 W) |
-| **WLED Version** | v0.15+ |
+| **WLED Version** | v16+ |
 | **Smart home** | Home Assistant (native WLED integration) |
 | **Enclosure** | 3D-printed PETG box (~150 × 100 × 60 mm) |
 

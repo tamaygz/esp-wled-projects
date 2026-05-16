@@ -57,7 +57,7 @@ Use hacs-wledext-effects when the strip should visualize a HA sensor value, fire
 | `project` | str | all | Folder name of the project |
 | `title` | str | all | Display title for diagram headers |
 | `psu` | str | blocks, wiring | PSU label (e.g. `"Brand 5V / 10A"`) |
-| `controller` | str | blocks, wiring | Controller label (e.g. `"ESP32-WROOM-32\nWLED v0.15+"`) |
+| `controller` | str | blocks, wiring | Controller label (e.g. `"ESP32-WROOM-32\nWLED v16+"`) |
 | `shifter` | str \| None | blocks, wiring | Level shifter label, or `None` to omit |
 | `integration` | str \| None | blocks | Smart-home block label (e.g. `"Home\nAssistant"`) |
 | `outputs` | list[dict] | blocks, wiring | Each has `name` and `strip` keys |
@@ -130,29 +130,32 @@ YAPP_Box produces parametric, command-line renderable OpenSCAD files. No MakerWo
 ### Workflow
 
 1. Run the `/gen-enclosure` slash command — it reads `specs.md`, `bom.md`, and `WIRING.md` to calculate dimensions and cutout positions
-2. A complete `mechanical/enclosure/<project>-enclosure.scad` config file is generated (YAPP_Box template filled with project data)
-3. Download `YAPPgenerator_v3.scad` (the library) from the YAPP_Box releases page and place it alongside the config file
-4. Render STL with OpenSCAD CLI:
-   ```bash
-   openscad --render -o <project>-box.stl <project>-enclosure.scad -D printLidShell=false
-   openscad --render -o <project>-lid.stl <project>-enclosure.scad -D printBaseShell=false
+2. A complete `mechanical/enclosure/<project>-enclosure.scad` config file is generated. The SCAD includes the shared YAPP library via relative path `../../../tools/yapp/YAPPgenerator_v3.scad` — **do not** copy the library into the project folder
+3. Render the base, the lid, and 4 preview PNGs with the helper:
+   ```powershell
+   pwsh tools/render_enclosure.ps1 -Project <project> -ScadName <project>-enclosure
    ```
+4. Inspect the iso PNGs — lid must be clean (no floating standoff stems). If stems appear, change the offending `pcbStands` entry to `yappBaseOnly` and re-render.
 
 ### Output files
 
 | File | Committed? |
 |------|-----------|
 | `mechanical/enclosure/<project>-enclosure.scad` | ✅ Yes (source) |
-| `mechanical/enclosure/YAPPgenerator_v3.scad` | ✅ Yes (pin to release) |
-| `mechanical/enclosure/MODELS.md` | ✅ Yes |
-| `mechanical/enclosure/*.stl` | ❌ No — add to `.gitignore` |
+| `mechanical/enclosure/<project>-enclosure-spec.md` | ✅ Yes (parameter sheet) |
+| `mechanical/enclosure/<project>-base.stl` | ✅ Yes |
+| `mechanical/enclosure/<project>-lid.stl` | ✅ Yes |
+| `mechanical/enclosure/<project>-{base,lid}-{iso,top}.png` | ✅ Yes (4 previews) |
+| `tools/yapp/YAPPgenerator_v3.scad` | Shared — lives in `tools/yapp/`, **not** in the project folder |
 
 ### Key YAPP_Box design rules
 
-- Use the **virtual PCB approach**: set `pcbLength`/`pcbWidth` to the desired inner dimensions, set all padding to `0` — this is the simplest path for general enclosures
-- Always use `yappCoordBoxInside, yappCenter` for cutout positioning — most intuitive
-- Always commit the specific `YAPPgenerator_v3.scad` version that was used to design the enclosure — do NOT resolve the library from a URL at render time
-- Add `mechanical/enclosure/*.stl` to the project's `.gitignore`
+- **Snap-on lid is the default** (`snapJoins = [[40, 15, yappLeft, yappRight, yappCenter, yappSymmetric]]`, `connectors = []`). Only use screw connectors if the user explicitly requests them.
+- **`ridgeHeight = 6.0`** (must satisfy `ridgeHeight >= wallThickness * 1.8` whenever `snapJoins` is non-empty — YAPP asserts this at render time).
+- **`pcbStands` must use `yappBaseOnly`** — lid stays clean, no floating posts.
+- Use the **virtual PCB approach**: set `pcbLength`/`pcbWidth` to the desired inner dimensions, set all padding to `0`.
+- Always use `yappCoordBoxInside, yappCenter` for cutout positioning.
+- The `include <...>` line must be the **first** executable line; explicit `YAPPgenerate();` is the **last** line.
 
 ### MakerWorld alternative
 
