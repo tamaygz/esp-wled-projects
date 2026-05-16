@@ -4,24 +4,26 @@
 
 ## Components
 
-| # | Component | Spec | Qty | Source | Notes |
-|---|-----------|------|-----|--------|-------|
-| 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin (GRBW) | 2 × 1 m (60 LEDs each) | AliExpress / local | Order 1.1 m per lamp; trim to fit |
-| 2 | ESP32 DevKit (38-pin) | ESP32-WROOM-32, USB-C preferred | 1 | LCSC C701341 / AliExpress | Any 38-pin pinout works |
-| 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | User-specified | Verify nameplate rating ≥ 10 A |
-| 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ 1 m | 2 | e.g., LUMINES Type-Z | Conducts heat away from wood |
-| 5 | 3-conductor cable | 18 AWG power + 26 AWG data, or 3-core 20 AWG flex | 2 × 2.5 m | — | 0.5 m slack; one cable per lamp |
-| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | — | Series on GPIO data line at ESP32 side |
-| 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | — | 3.3 V → 5 V for SK6812 data; 2 channels used |
-| 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | — | One per lamp 5 V power run |
-| 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | — | 2 installed + 2 spare |
-| 10 | JST SM 3-pin connector (M+F pair) | 5 A rated | 2 pairs | — | Detachable lamp connection point |
-| 11 | Screw terminal block | 5 mm pitch, 4-pos | 1 | — | PSU → bus distribution inside control box |
-| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm PETG/ASA | 1 | Self-printed | See `mechanical/enclosure/MODELS.md` |
-| 13 | M3 × 8 mm screws + brass inserts | — | 8 | — | Mount ESP32 and PSU bracket |
-| 14 | IEC C14 inlet with switch + fuse | Chassis mount, 2 A slow-blow | 1 | — | Mains entry to control box |
-| 15 | Heat-shrink tubing | 2 mm, 4 mm, 6 mm assorted | 1 pack | — | Insulate all solder joints |
-| 16 | Cable gland PG9 | Nylon, IP54 | 2 | — | One per lamp cable entry into enclosure |
+| # | Component | Spec | Qty | Unit Price | Supplier | Part No. | Notes |
+|---|-----------|------|-----|------------|----------|----------|-------|
+| 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin (GRBW) | 2 × 1 m (60 LEDs each) | ~€8/m | AliExpress / BTF-Lighting | — | Order 1.1 m per lamp; trim to fit |
+| 2 | ESP32 DevKit (38-pin) | ESP32-WROOM-32, USB-C preferred | 1 | ~€4 | LCSC | C701341 | Any 38-pin pinout works |
+| 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | (user-owned) | — | — | Verify nameplate rating ≥ 10 A |
+| 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ 1 m | 2 | ~€5 ea | Local / LUMINES | Type-Z or equiv. | Conducts heat away from wood |
+| 5 | 3-conductor cable | 18 AWG power + 26 AWG data, or 3-core 20 AWG flex | 2 × 2.5 m | ~€2/m | Local electrical | — | 0.5 m slack; one cable per lamp |
+| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | <€0.01 ea | LCSC | C57436 | Series on GPIO data line at ESP32 side |
+| 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | ~€0.30 | LCSC | C12494 | 3.3 V → 5 V for SK6812 data; 2 channels used |
+| 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | ~€0.50 ea | LCSC / local | — | One per lamp 5 V power run |
+| 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | <€0.20 ea | Local | — | 2 installed + 2 spare |
+| 10 | JST SM 3-pin connector (M+F pair) | 5 A rated | 2 pairs | ~€0.30/pair | LCSC | — | Detachable lamp connection point |
+| 11 | Screw terminal block | 5 mm pitch, 4-pos | 1 | ~€0.40 | LCSC | C396798 | PSU → bus distribution inside control box |
+| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm PETG/ASA | 1 | ~€2 filament | Self-printed | — | See `mechanical/enclosure/MODELS.md` |
+| 13 | M3 × 8 mm screws + brass inserts | — | 8 | ~€0.10 ea | Local | — | Mount ESP32 and PSU bracket |
+| 14 | IEC C14 inlet with switch + fuse | Chassis mount, 2 A slow-blow | 1 | ~€3 | LCSC / local | — | Mains entry to control box |
+| 15 | Heat-shrink tubing | 2 mm, 4 mm, 6 mm assorted | 1 pack | ~€2 | Local / AliExpress | — | Insulate all solder joints |
+| 16 | Cable gland PG9 | Nylon, IP54 | 2 | ~€0.50 ea | LCSC / local | — | One per lamp cable entry into enclosure |
+
+> **Total estimated cost (excluding PSU):** ~€45–55 depending on local LED strip pricing. PSU is user-owned.
 
 ---
 

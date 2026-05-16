@@ -447,7 +447,24 @@ Example automations are in [`design/effects/ha-automations.yaml`](design/effects
 
 ---
 
-## 10. Appendix — User Stories
+## 10. Open Questions
+
+- Which exact driftwood piece dimensions (length × depth) determine the final strip length per lamp?
+- Is the Honeywell PSU model confirmed as ≥ 10 A, or does it need replacement?
+- Should the control box mount inside a shelf or on the wall behind it?
+- Is cable management via baseboard trunking sufficient, or does the installation need in-wall conduit?
+
+---
+
+## 11. Changelog
+
+| Date | Change |
+|------|--------|
+| 2026-05-16 | Initial spec (v1.0 draft) |
+
+---
+
+## 12. Appendix — User Stories
 
 | ID | User Story | Priority | Acceptance Criteria |
 |---|---|---|---|

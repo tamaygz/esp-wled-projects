@@ -4,20 +4,21 @@
 
 ---
 
-## Overview
+## Quick Facts
 
 Each piece of driftwood is a self-contained lamp. An SK6812 RGBW LED strip (60 LEDs, 1 m) is mounted in an aluminium channel on the **rear face** of the wood, casting diffused wall-wash light behind it. The room-facing side stays dark, framing the glow through the wood grain.
 
 Both lamps run from one control box: a Honeywell 5 V / 10 A PSU and an ESP32 running WLED, enclosed in a custom 3D-printed case. WLED exposes each lamp as an independent segment — individually controllable from Home Assistant or the WLED web UI.
 
-| | |
+| Property | Value |
 |---|---|
-| **Lamps** | 2 × driftwood pieces |
-| **LED strip** | SK6812 RGBW, 5 V, 60 LED/m, 1 m each |
-| **Controller** | ESP32-WROOM-32 + WLED |
-| **PSU** | Honeywell 5 V / 10 A (50 W) |
-| **Smart home** | Home Assistant via native WLED integration |
-| **Enclosure** | 3D-printed custom box (~150 × 100 × 60 mm) |
+| **Board** | ESP32-WROOM-32 |
+| **LED Type** | SK6812 RGBW, 5 V, 60 LED/m |
+| **LED Count** | 120 total (60 per lamp × 2) |
+| **Power Supply** | Honeywell 5 V / 10 A (50 W) |
+| **WLED Version** | v0.15+ |
+| **Smart home** | Home Assistant (native WLED integration) |
+| **Enclosure** | 3D-printed PETG box (~150 × 100 × 60 mm) |
 
 ---
 
@@ -54,26 +55,31 @@ The BambuStudio project file is at [`mechanical/enclosure/CustomProjectEnclosure
 
 ---
 
-## Spec Document
+## Documentation Index
 
-Full PRD with wiring diagrams, BOM, power budget, and WLED config: **[specs.md](specs.md)**
-
-### Quick-links to spec sections
-
-| Section | Description |
+| Document | What's inside |
 |---|---|
-| [§1 — Product Overview](specs.md#1-product-overview) | Summary, executive overview, success criteria |
-| [§2 — Goals & Non-Goals](specs.md#2-goals) | What is and isn't being built |
-| [§4 — Functional Requirements](specs.md#4-functional-requirements) | User stories GH-001 through GH-010 |
-| [§8.1 — System Architecture](specs.md#81-system-architecture) | Full ASCII wiring diagram |
-| [§8.2 — Bill of Materials](specs.md#82-bill-of-materials) | 16-item BOM with specs |
-| [§8.3 — Power Budget](specs.md#83-power-budget) | Per-lamp current draw, PSU sizing |
-| [§8.4 — Wiring Detail](specs.md#84-wiring-detail) | Control box internals, cable spec, voltage drop |
-| [§8.5 — WLED Configuration](specs.md#85-wled-configuration) | GPIO assignments, LED count, colour order |
-| [§8.6 — GPIO Pin Assignment](specs.md#86-gpio-pin-assignment-esp32) | Safe pins, strapping pin warnings |
-| [§8.7 — Enclosure Design](specs.md#87-3d-printed-enclosure-design-spec) | Print spec, dimensions, cutouts |
-| [§8.8 — Home Assistant](specs.md#88-home-assistant-integration) | HA entity IDs, mDNS config, automation examples |
-| [§9 — Milestones](specs.md#9-milestones--roadmap) | 11-step MVP checklist + v1.1/v2 roadmap |
+| [specs.md](specs.md) | Full PRD: concept, requirements, power budget, BOM, WLED config, HA integration |
+| [hardware/bom/bom.md](hardware/bom/bom.md) | Bill of materials, current budget, PSU sizing |
+| [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) | GPIO assignments, power rails, cable runs |
+| [design/led-map/LED-DESIGN.md](design/led-map/LED-DESIGN.md) | Segment plan, preset design, colour strategy |
+| [design/effects/ha-automations.yaml](design/effects/ha-automations.yaml) | Home Assistant automation examples |
+| [mechanical/enclosure/MODELS.md](mechanical/enclosure/MODELS.md) | 3D print settings, cutout dimensions |
+| [firmware/platformio_override.ini](firmware/platformio_override.ini) | WLED build config (env, usermods, build flags) |
+| [firmware/cfg.json](firmware/cfg.json) | WLED device config (mDNS, outputs, boot preset) |
+| [firmware/presets.json](firmware/presets.json) | Exported WLED presets |
+
+---
+
+## Wiring & Schematics
+
+![Physical wiring](docs/wiring-physical.svg)
+
+See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO table and wiring notes.
+
+| Level-shifter circuit | Power distribution |
+|---|---|
+| ![Level-shifter schematic](docs/schematic-level-shifter.png) | ![Power schematic](docs/schematic-power.png) |
 
 ---
 
@@ -98,7 +104,7 @@ Full PRD with wiring diagrams, BOM, power budget, and WLED config: **[specs.md](
 ```
 reefs/
 ├── firmware/
-│   ├── platformio_override.ini   ← WLED build config (env:reefs)
+│   ├── platformio_override.ini   ← WLED build config (env:esp32dev_reefs)
 │   ├── cfg.json                  ← WLED device config (mDNS, outputs, boot preset)
 │   └── presets.json              ← Exported WLED presets
 ├── hardware/
@@ -129,3 +135,12 @@ reefs/
 ├── README.md                     ← this file
 └── specs.md                      ← Full PRD (wiring, BOM, WLED config, HA integration)
 ```
+
+---
+
+## Resources
+
+- [specs.md](specs.md) — full project spec
+- [WLED Docs](https://kno.wled.ge)
+- [WLED GitHub](https://github.com/wled/WLED)
+- [WLED Discord](https://discord.gg/QAh7wJHrRM)
