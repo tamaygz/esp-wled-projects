@@ -73,3 +73,18 @@ Export from WLED UI:
 - `presets.json`: same backup page, or export individual presets
 
 Do not hand-edit these JSON files for simple changes — use the WLED web UI and re-export.
+
+## Home Assistant / mDNS
+
+Every project must be discoverable by Home Assistant via mDNS. Two required keys in `cfg.json`:
+
+```json
+{
+  "id": { "mdns": "<project-name>" },
+  "nw": { "mdns": 1 }
+}
+```
+
+- `mdns` hostname must be unique across all devices on the network.
+- HA native WLED integration auto-discovers the device once mDNS is active.
+- Do not configure MQTT unless there is an explicit reason — the native integration is sufficient.

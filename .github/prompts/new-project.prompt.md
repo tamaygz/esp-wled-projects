@@ -23,6 +23,7 @@ Scaffold a new WLED project in this repository.
    - Replace `[Project Name]` with the human-readable project name
    - Set Status to `planning`
    - Fill the Requirements section with LED type, count, and power from inputs above
+   - Add a **Home Assistant** section listing: expected HA entity IDs, mDNS device name (`<project-name>`), and whether hacs-wledext-effects is applicable
    - Leave Open Questions with at least one placeholder
 
 3. Edit `$PROJECT_NAME/hardware/bom/bom.md`:
@@ -39,7 +40,17 @@ Scaffold a new WLED project in this repository.
    - Copy from `reefs/gen_diagrams.py`
    - The `sys.path` insert must point to `../tools` relative to the project folder
 
-6. Update root `README.md`:
+6. Set mDNS hostname in `$PROJECT_NAME/firmware/cfg.json`:
+   - Add/update `"id": {"mdns": "$PROJECT_NAME"}` and `"nw": {"mdns": 1}`
+   - The hostname must be unique on the network — use the project slug
+
+7. Create `$PROJECT_NAME/design/effects/ha-automations.yaml` with a placeholder comment:
+   ```yaml
+   # Home Assistant automations for $PROJECT_NAME
+   # Add example automations here once hacs-wledext-effects effects are configured
+   ```
+
+8. Update root `README.md`:
    - Add a row to the Projects table: `| [$PROJECT_NAME](./$PROJECT_NAME/) | planning | $LED_TYPE × $LED_COUNT | $DESCRIPTION |`
 
 ## Constraints

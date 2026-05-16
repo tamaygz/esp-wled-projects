@@ -28,6 +28,7 @@ Ask the user:
 4. **Colour capability needed?** RGB only, RGBW (warm white), single colour?
 5. **Sound reactive?** Yes / no
 6. **Smart home integration?** Home Assistant / MQTT / none
+   - If HA: will the strip need to **react to HA sensor values or events** (temperature, motion, alerts, CPU load)? This determines whether [hacs-wledext-effects](https://github.com/tamaygz/hacs-wledext-effects) is needed.
 7. **Power source available?** USB 5 V / 12 V DC adapter / mains (via PSU)
 8. **Enclosure constraint?** Max size, or open installation?
 
@@ -87,6 +88,19 @@ Summarise:
 
 Note level shifter requirement: always required when driving 5 V data from 3.3 V ESP32.
 
+## Phase 6.5 — Home Assistant Effect Planning
+
+If the user chose Home Assistant integration, determine whether **hacs-wledext-effects** is needed:
+
+| Scenario | Recommendation |
+|----------|---------------|
+| Static presets / scenes only | Native WLED integration is sufficient — skip hacs |
+| Visualise a sensor value (temp, CPU, energy) | Use **Meter** or **State Sync** effect |
+| Alert on motion / door / alarm | Use **Alert** or **Breathe** effect |
+| Multi-zone independent data per segment | Use multiple effects, one per segment |
+
+If hacs is applicable, list the specific effects to install and note they go in `design/effects/ha-automations.yaml`.
+
 ## Phase 7 — Project Scaffold
 
 Ask: "Ready to create the project files?"
@@ -95,6 +109,8 @@ If yes, use the `new-project` prompt to scaffold the folder structure. Fill in:
 - LED type, count, output count from Phase 2–3
 - GPIO assignments from Phase 5
 - Project name and description from Phase 1
+- mDNS hostname = project name slug
+- hacs-wledext-effects decision from Phase 6.5
 
 ## Reference Files
 
