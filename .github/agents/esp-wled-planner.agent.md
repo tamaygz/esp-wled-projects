@@ -112,6 +112,32 @@ If yes, use the `new-project` prompt to scaffold the folder structure. Fill in:
 - mDNS hostname = project name slug
 - hacs-wledext-effects decision from Phase 6.5
 
+## Phase 8 — Diagram Generation
+
+Once the scaffold is created and hardware config is finalised, generate all diagrams:
+
+```bash
+python tools/gen_diagrams.py <project-name>
+```
+
+Expected outputs in `<project>/docs/`:
+
+| File | What it shows |
+|------|---------------|
+| `concept-system.png` | System block: PSU → ESP32 → level shifter → LED strips → HA |
+| `concept-side-view.png` | Real-world cross-section of a lamp against the wall |
+| `concept-top-view.png` | Top-down floor plan with lamp positions and cable run |
+| `wiring-physical.svg` | Color-coded physical wiring diagram |
+| `schematic-level-shifter.png` | Level-shifter gate circuit |
+| `schematic-power.png` | Power distribution schematic |
+
+If any diagram fails, check:
+- `pip install -r tools/diagram_gen/requirements.txt`
+- `schemdraw ≥ 0.22`, `drawsvg ≥ 2.4`, `matplotlib` installed
+- `gen_diagrams_config.py` has all required keys (`lamps`, `gpio_map`, `outputs`, `wood_label`, `box_pos`)
+
+Commit generated outputs alongside the config change.
+
 ## Reference Files
 
 Read these files for context before answering hardware questions:

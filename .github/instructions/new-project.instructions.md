@@ -51,17 +51,33 @@ Use hacs-wledext-effects when the strip should visualize a HA sensor value, fire
 
 `gen_diagrams_config.py` must export `DIAGRAM_CONFIG` with at minimum:
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `project` | str | Folder name of the project |
-| `title` | str | Display title for diagram headers |
-| `psu` | str | PSU label (e.g. `"Brand 5V / 10A"`) |
-| `controller` | str | Controller label (e.g. `"ESP32-WROOM-32\nWLED v0.15+"`) |
-| `outputs` | list[dict] | Each has `name` and `strip` keys |
-| `gpio_map` | list[dict] | Each has `gpio`, `label`, `color` |
-| `lamps` | list[dict] | Each has `label`, `cx` (x position) |
+| Key | Type | Used by | Description |
+|-----|------|---------|-------------|
+| `project` | str | all | Folder name of the project |
+| `title` | str | all | Display title for diagram headers |
+| `psu` | str | blocks, wiring | PSU label (e.g. `"Brand 5V / 10A"`) |
+| `controller` | str | blocks, wiring | Controller label (e.g. `"ESP32-WROOM-32\nWLED v0.15+"`) |
+| `shifter` | str \| None | blocks, wiring | Level shifter label, or `None` to omit |
+| `integration` | str \| None | blocks | Smart-home block label (e.g. `"Home\nAssistant"`) |
+| `outputs` | list[dict] | blocks, wiring | Each has `name` and `strip` keys |
+| `gpio_map` | list[dict] | wiring | Each has `gpio`, `label`, `color` |
+| `lamps` | list[dict] | concept | Each has `label`, `cx` (x-position along wall) |
+| `wood_label` | str | concept | Label inside the driftwood / object silhouette in the side-view |
+| `box_pos` | tuple(float,float) | concept | (x, y) position of the control box in the top-down floor plan |
+| `power_label` | str | wiring | PSU label shown on the wiring diagram power block |
 
 Copy `reefs/gen_diagrams_config.py` and update all values for the new project.
+
+## Diagram Types
+
+Four types are produced by `python tools/gen_diagrams.py <project>`:
+
+| Type flag | Module | Output file(s) | What it shows |
+|-----------|--------|----------------|---------------|
+| `blocks` | `blocks.py` | `concept-system.png` | System block diagram: PSU → ESP32 → level shifter → LED strips → HA integration |
+| `concept` | `concept.py` | `concept-side-view.png`, `concept-top-view.png` | Real-world visualisation: cross-section of lamp on wall (side), floor-plan with lamp positions and cable run (top) |
+| `wiring` | `wiring.py` | `wiring-physical.svg` (+ `.png`) | Color-coded physical wiring: ESP32 pins → level shifter → JST connectors |
+| `schematic` | `schematic.py` | `schematic-level-shifter.png`, `schematic-power.png` | Electrical schematics: level-shifter gate circuit and power distribution |
 
 ## README.md Projects Table
 

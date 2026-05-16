@@ -54,9 +54,21 @@ Every project mirrors the `_template/` skeleton:
 
 Run diagrams from repo root:
 ```bash
-python tools/gen_diagrams.py <project>               # all diagram types
-python tools/gen_diagrams.py <project> --type wiring # single type
+python tools/gen_diagrams.py <project>                  # all 4 types
+python tools/gen_diagrams.py <project> --type concept   # real-world visualisation only
+python tools/gen_diagrams.py <project> --type wiring    # physical wiring only
+python tools/gen_diagrams.py <project> --type blocks    # system block diagram only
+python tools/gen_diagrams.py <project> --type schematic # electrical schematics only
 ```
+
+Four diagram types and their outputs:
+
+| `--type` | Output files | What it shows |
+|----------|-------------|---------------|
+| `blocks` | `concept-system.png` | PSU → ESP32 → level shifter → LED strips → HA block diagram |
+| `concept` | `concept-side-view.png`, `concept-top-view.png` | Real-world visualisation: wall cross-section and top-down floor plan |
+| `wiring` | `wiring-physical.svg` (+ `.png`) | Color-coded physical wiring with pin labels |
+| `schematic` | `schematic-level-shifter.png`, `schematic-power.png` | Electrical schematics |
 
 ## Hardware Rules
 

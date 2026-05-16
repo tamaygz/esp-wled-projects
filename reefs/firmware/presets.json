@@ -1,0 +1,33 @@
+{
+  "0": {
+    "n": "Warm Ambient",
+    "ps": 0,
+    "on": true,
+    "bri": 102,
+    "nl": {"on": false},
+    "seg": [
+      {"id": 0, "start": 0, "stop": 60, "fx": 0, "col": [[255, 180, 100, 200]], "bri": 255},
+      {"id": 1, "start": 60, "stop": 120, "fx": 0, "col": [[255, 180, 100, 200]], "bri": 255}
+    ]
+  },
+  "1": {
+    "n": "Reef Calm",
+    "ps": 1,
+    "on": true,
+    "bri": 77,
+    "seg": [
+      {"id": 0, "start": 0, "stop": 60, "fx": 65, "speed": 30, "ix": 128, "pal": 11},
+      {"id": 1, "start": 60, "stop": 120, "fx": 65, "speed": 25, "ix": 128, "pal": 11}
+    ]
+  },
+  "2": {
+    "n": "Night Glow",
+    "ps": 2,
+    "on": true,
+    "bri": 26,
+    "seg": [
+      {"id": 0, "start": 0, "stop": 60, "fx": 0, "col": [[255, 140, 40, 255]]},
+      {"id": 1, "start": 60, "stop": 120, "fx": 0, "col": [[255, 140, 40, 255]]}
+    ]
+  }
+}

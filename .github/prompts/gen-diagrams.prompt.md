@@ -29,11 +29,12 @@ Regenerate the visual documentation for a project.
    ```
 
 4. Confirm output files were written to `$PROJECT/docs/`:
-   - `concept-side-view.png`
-   - `concept-top-view.png`
-   - `concept-system.png`
-   - `wiring-diagram.svg` (and `.png` if cairo is available)
-   - `schematic-*.png`
+   - `concept-side-view.png` — real-world side-view cross-section (concept type)
+   - `concept-top-view.png` — top-down floor-plan with lamp positions (concept type)
+   - `concept-system.png` — system block diagram: PSU → ESP32 → level shifter → strips (blocks type)
+   - `wiring-physical.svg` — color-coded physical wiring diagram (and `.png` if cairosvg available) (wiring type)
+   - `schematic-level-shifter.png` — level shifter circuit (schematic type)
+   - `schematic-power.png` — power distribution circuit (schematic type)
 
 5. If the run fails, check for:
    - Missing pip packages → `pip install -r tools/diagram_gen/requirements.txt`

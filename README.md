@@ -48,11 +48,20 @@ Or use the **`/new-project`** prompt in Copilot chat to scaffold automatically.
 ### 3 · Generate Diagrams
 
 ```bash
-python tools/gen_diagrams.py my-project
-# outputs: my-project/docs/*.png / *.svg
+python tools/gen_diagrams.py my-project       # all 4 types
+python tools/gen_diagrams.py my-project --type concept   # real-world views only
 ```
 
-Or use the **`/gen-diagrams`** prompt in Copilot chat.
+Four diagram types are produced:
+
+| Type | Output | What it shows |
+|------|--------|---------------|
+| `blocks` | `concept-system.png` | System block: PSU → ESP32 → level shifter → LED strips → HA |
+| `concept` | `concept-side-view.png` · `concept-top-view.png` | Real-world: wall cross-section + floor-plan with lamp positions |
+| `wiring` | `wiring-physical.svg` | Color-coded physical wiring with pin labels |
+| `schematic` | `schematic-*.png` | Electrical schematics (level shifter + power) |
+
+All outputs land in `my-project/docs/` — never hand-edit them. Or use the **`/gen-diagrams`** prompt in Copilot chat.
 
 ### 4 · Build & Flash
 

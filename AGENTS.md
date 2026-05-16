@@ -73,6 +73,19 @@ Each effect creates controllable HA entities (Switch / Number / Select / Sensor 
 - Validate changes by running: `python tools/gen_diagrams.py reefs`
 - Commit generated outputs to `<project>/docs/` alongside the code change
 
+### Diagram Types
+
+Four `--type` flags are available:
+
+| `--type` | Module | Output file(s) | Description |
+|----------|--------|----------------|-------------|
+| `blocks` | `blocks.py` | `concept-system.png` | System block diagram: PSU → ESP32 → level shifter → LED strips → HA |
+| `concept` | `concept.py` | `concept-side-view.png`, `concept-top-view.png` | Real-world visualisation: side-view cross-section and top-down floor plan |
+| `wiring` | `wiring.py` | `wiring-physical.svg` (+ `.png`) | Color-coded physical wiring diagram with pin labels |
+| `schematic` | `schematic.py` | `schematic-level-shifter.png`, `schematic-power.png` | Electrical schematics |
+
+Key `DIAGRAM_CONFIG` fields for concept/real-world diagrams: `lamps` (list with `label`, `cx`), `wood_label`, `box_pos`. See `reefs/gen_diagrams_config.py` for a working example.
+
 ### Updating Firmware Config
 
 - `platformio_override.ini` — build-time overrides only; do not touch WLED upstream sources

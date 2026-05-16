@@ -1,0 +1,46 @@
+{
+  "id": {
+    "mdns": "reefs",
+    "name": "Reef Lamps",
+    "comment": "ESP32 WLED — driftwood ambient lamps"
+  },
+  "nw": {
+    "mdns": 1,
+    "_note": "mDNS must be enabled for Home Assistant auto-discovery. Hostname: reefs.local"
+  },
+  "ap": {
+    "ssid": "WLED-reefs",
+    "_note": "AP SSID shown on first boot. Configure Wi-Fi via captive portal — never commit credentials here."
+  },
+  "leds": {
+    "ins": [
+      {
+        "pin": [16],
+        "type": 30,
+        "_type_note": "30 = SK6812 RGBW",
+        "order": 6,
+        "_order_note": "6 = GRBW",
+        "start": 0,
+        "len": 60,
+        "skip": 0,
+        "rev": false,
+        "name": "Lamp 1"
+      },
+      {
+        "pin": [17],
+        "type": 30,
+        "order": 6,
+        "start": 60,
+        "len": 60,
+        "skip": 0,
+        "rev": false,
+        "name": "Lamp 2"
+      }
+    ],
+    "maxpwr": 10000,
+    "_maxpwr_note": "PSU rated 10A (50W). Hard limit per output set in WLED web UI to 4000mA each.",
+    "bri": 128,
+    "bp": 1,
+    "_bp_note": "Boot preset 1 — warm ambient. Set in WLED: LED Preferences → Boot Preset."
+  }
+}
