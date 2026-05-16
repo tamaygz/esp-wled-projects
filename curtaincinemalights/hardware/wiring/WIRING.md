@@ -1,0 +1,135 @@
+# WIRING — curtaincinemalights
+
+> Status: design (not yet built)
+> All pin assignments are for **ESP8266 LOLIN D1 Mini v4** with WLED v0.15 (ESP8266 branch).
+
+---
+
+## Pin Allocation
+
+| GPIO | D1 Mini Pin | Function | Notes |
+|------|-------------|----------|-------|
+| GPIO2 | D4 | SK6812 RGBW data output | Active HIGH after boot; avoids boot-mode pin (GPIO0=D3) |
+
+> **GPIO2 (D4) is safe for WLED output** — it is pulled HIGH by default (on-board LED via
+> 10 kΩ to 3.3 V). WLED drives it LOW during data bursts. Always use a 330 Ω series resistor
+> between GPIO2 and the level shifter input to limit ringing on the stub.
+
+---
+
+## Block Description
+
+```
+230 V AC mains lead
+        │
+        ▼
+┌──────────────┐
+│  HLK-20M05   │  5V / 4A
+│  AC-DC PSU   │──────────────────────────────────────┐
+└──────────────┘                                       │
+        │                                              │
+   5V rail ──┬──────────────────────────────────────── ┤ (common GND)
+             │                                         │
+             ▼                                         │
+      ┌────────────┐  3.3V                             │
+      │ D1 Mini    │──(internal LDO, 5V→3.3V)          │
+      │ ESP8266    │                                   │
+      │  GPIO2(D4) │──[330 Ω]──▶ 74AHCT125 OE+A ──────┤
+      └────────────┘             74AHCT125 Y          │
+                              (Vcc = 5V rail)          │
+                                     │                 │
+                                     ▼                 ▼
+                              5V DATA ────────────────► SK6812 RGBW strip
+                              5V VCC  ──────────────► strip +5V (× 2 injection points)
+                              GND     ──────────────► strip GND (common with PSU GND)
+```
+
+---
+
+## Wiring Details
+
+### 5V Power Rail
+
+| From | To | Wire | Notes |
+|------|----|------|-------|
+| HLK-20M05 VO+ | PSU output bus / terminal block | 18 AWG red | 4A continuous; short lead |
+| HLK-20M05 VO− | PSU output bus GND / terminal block | 18 AWG black | |
+| PSU 5V bus | D1 Mini **5V** pin | 22 AWG red | Powers D1 Mini via VIN; WLED disables ESP deep-sleep |
+| PSU GND bus | D1 Mini **GND** pin | 22 AWG black | Common GND with strip |
+| PSU 5V bus | SK6812 strip VCC — **injection point 1** (LED 0, start) | 20 AWG red | 1.5 m run → 0.16 V drop at 1.6A |
+| PSU GND bus | SK6812 strip GND — injection point 1 | 20 AWG black | |
+| PSU 5V bus | SK6812 strip VCC — **injection point 2** (LED 90, midpoint) | 20 AWG red | ← critical; prevents far-end sag |
+| PSU GND bus | SK6812 strip GND — injection point 2 | 20 AWG black | |
+| PSU 5V bus | 74AHCT125 Vcc pin (pin 14) | 22 AWG red | Level shifter supply |
+| PSU GND bus | 74AHCT125 GND pin (pin 7) | 22 AWG black | |
+
+### AC Mains
+
+| From | To | Notes |
+|------|----|-------|
+| Schuko plug → L (brown) | HLK-20M05 **AC/L** | Use 0.75 mm² H05VV-F 3G; heat-shrink all joints |
+| Schuko plug → N (blue) | HLK-20M05 **AC/N** | |
+| Schuko plug → PE (yellow/green) | Enclosure screw terminal or metal body if used | Connect PE even if enclosure is plastic — future-proof |
+
+> ⚠️ **Mains safety:** All mains wiring must be terminated with heat-shrink or appropriate
+> terminals before closing the enclosure. Verify no bare conductors are exposed near low-voltage
+> circuits inside the box.
+
+### Data Signal Path
+
+| From | To | Wire | Notes |
+|------|----|------|-------|
+| D1 Mini GPIO2 (D4) | 330 Ω resistor in-line | 26 AWG | Keep short (< 5 cm) |
+| 330 Ω output | 74AHCT125 **A1** (pin 2) | 26 AWG | Gate 1 input |
+| 74AHCT125 **~OE1** (pin 1) | GND | — | Active-LOW enable; tie LOW to permanently enable gate 1 |
+| 74AHCT125 **Y1** (pin 3) | JST SM 3-pin female "DATA" pin | 26 AWG | 5V output → strip data in |
+| JST SM female "VCC" | 5V bus (via short bridge) | 22 AWG red | Convenience power at connector |
+| JST SM female "GND" | GND bus | 22 AWG black | |
+
+### LED Strip Header (SK6812)
+
+| LED Strip Solder Pad | Connects To | Notes |
+|---------------------|-------------|-------|
+| +5V (injection 1) | PSU 5V bus | At strip start (LED 0) |
+| GND (injection 1) | PSU GND bus | |
+| DATA IN | JST SM "DATA" wire | From level shifter Y1 output |
+| +5V (injection 2) | PSU 5V bus | At strip midpoint (LED 90) — solder to back of strip at ~1.5 m mark |
+| GND (injection 2) | PSU GND bus | |
+
+---
+
+## 74AHCT125 DIP-14 Pinout (Gate 1 used)
+
+```
+       ┌──── USB notch ────┐
+~OE1 1 │·                 │ 14  Vcc (5V)
+   A1 2 │                 │ 13  ~OE4
+   Y1 3 │   74AHCT125     │ 12  A4
+~OE2 4 │                 │ 11  Y4
+   A2 5 │                 │ 10  ~OE3
+   Y2 6 │                 │  9  A3
+  GND 7 │·                │  8  Y3
+       └─────────────────┘
+```
+
+> Use only Gate 1 (pins 1–3); tie ~OE2, ~OE3, ~OE4 (pins 4, 10, 13) HIGH to disable unused gates.
+> Leave A2, A3, A4 (pins 5, 9, 12) floating (pulled HIGH internally when OE disabled).
+
+---
+
+## Wiring Diagram
+
+See `docs/wiring-physical.svg` (generated by `python tools/gen_diagrams.py curtaincinemalights --type wiring`).
+
+---
+
+## WLED LED Output Summary
+
+| WLED Output | GPIO | Strip Type | LED Count | Segment 0 (Left Panel) | Segment 1 (Right Panel) |
+|-------------|------|------------|-----------|-------------------------|--------------------------|
+| Output 0 | GPIO2 (D4) | SK6812 RGBW (type 30) | 180 (adjust to 60×width_m) | LEDs 0–89, `rev=true` (center-fill → left) | LEDs 90–179, `rev=false` (center-fill → right) |
+
+**Color order:** GRBW (order=6) — mandatory for SK6812 strips with 4-pin white channel.
+
+**Mid-inject at LED 90:** Does not require separate data signal — it is a power-only injection.
+Solder a wire from PSU 5V/GND directly to the 5V/GND pads at the midpoint of the strip.

@@ -1,0 +1,67 @@
+{
+  "0": {
+    "n": "Default",
+    "ql": "D",
+    "win": "T=1&FP=1&SI=1&ST=1&SV=1&SR=1&SA=1&SB=1&SC=1&SD=1&SE=1"
+  },
+  "1": {
+    "n": "Warm Amber Boot",
+    "bri": 128,
+    "transition": 7,
+    "mainseg": 0,
+    "seg": [
+      {
+        "id": 0, "start": 0, "stop": 89,
+        "on": true, "bri": 200, "rev": true,
+        "col": [[255, 147, 41, 30], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 0, "sx": 128, "ix": 128, "pal": 0
+      },
+      {
+        "id": 1, "start": 90, "stop": 179,
+        "on": true, "bri": 200, "rev": false,
+        "col": [[255, 147, 41, 30], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 0, "sx": 128, "ix": 128, "pal": 0
+      }
+    ]
+  },
+  "2": {
+    "n": "Cinema Dim Red",
+    "bri": 40,
+    "transition": 20,
+    "mainseg": 0,
+    "seg": [
+      {
+        "id": 0, "start": 0, "stop": 89,
+        "on": true, "bri": 40, "rev": true,
+        "col": [[180, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 65, "sx": 64, "ix": 64, "pal": 0
+      },
+      {
+        "id": 1, "start": 90, "stop": 179,
+        "on": true, "bri": 40, "rev": false,
+        "col": [[180, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 65, "sx": 64, "ix": 64, "pal": 0
+      }
+    ]
+  },
+  "3": {
+    "n": "Ambient Wave",
+    "bri": 160,
+    "transition": 10,
+    "mainseg": 0,
+    "seg": [
+      {
+        "id": 0, "start": 0, "stop": 89,
+        "on": true, "bri": 160, "rev": true,
+        "col": [[255, 147, 41, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 66, "sx": 60, "ix": 128, "pal": 54
+      },
+      {
+        "id": 1, "start": 90, "stop": 179,
+        "on": true, "bri": 160, "rev": false,
+        "col": [[255, 147, 41, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        "fx": 66, "sx": 60, "ix": 128, "pal": 54
+      }
+    ]
+  }
+}

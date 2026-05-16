@@ -1,0 +1,114 @@
+{
+  "id": {
+    "mdns": "curtaincinemalights",
+    "name": "Curtain Cinema Lights",
+    "comment": "ESP8266 D1 Mini — SK6812 RGBW 180-LED curtain strip — WLED v0.15"
+  },
+  "nw": {
+    "mdns": 1,
+    "wifis": []
+  },
+  "ap": {
+    "ssid": "WLED-curtaincinemalights",
+    "psk": "",
+    "chan": 1,
+    "hide": 0,
+    "behav": 0
+  },
+  "leds": {
+    "ins": [
+      {
+        "pin": [2],
+        "type": 30,
+        "order": 6,
+        "start": 0,
+        "len": 180,
+        "skip": 0,
+        "rev": false,
+        "name": "Curtain Strip"
+      }
+    ],
+    "maxpwr": 4000,
+    "fla": -1,
+    "lc": 180,
+    "bri": 128,
+    "bp": 1,
+    "gb": 1,
+    "tb": 0,
+    "rgbwm": 3
+  },
+  "hw": {
+    "led": {
+      "fixSize": 0,
+      "aw": 3,
+      "cct-min": 153,
+      "cct-max": 500
+    }
+  },
+  "light": {
+    "scale-bri": 100,
+    "pal-mode": 0,
+    "aseg": 0
+  },
+  "def": {
+    "ps": 1,
+    "on": true,
+    "bri": 128
+  },
+  "if": {
+    "live": {
+      "en": false
+    }
+  },
+  "ol": {
+    "clock": 0
+  },
+  "timers": {
+    "cntdwn": {
+      "macro": 0
+    },
+    "ins": []
+  },
+  "ota": {
+    "lock": false,
+    "pskl": false,
+    "aota": 1
+  },
+  "um": {},
+  "seg": [
+    {
+      "id": 0,
+      "start": 0,
+      "stop": 89,
+      "grp": 1,
+      "spc": 0,
+      "on": true,
+      "bri": 255,
+      "name": "Left Panel",
+      "col": [[255, 147, 41, 30], [0, 0, 0, 0], [0, 0, 0, 0]],
+      "fx": 0,
+      "sx": 128,
+      "ix": 128,
+      "pal": 0,
+      "rev": true,
+      "mi": false
+    },
+    {
+      "id": 1,
+      "start": 90,
+      "stop": 179,
+      "grp": 1,
+      "spc": 0,
+      "on": true,
+      "bri": 255,
+      "name": "Right Panel",
+      "col": [[255, 147, 41, 30], [0, 0, 0, 0], [0, 0, 0, 0]],
+      "fx": 0,
+      "sx": 128,
+      "ix": 128,
+      "pal": 0,
+      "rev": false,
+      "mi": false
+    }
+  ]
+}

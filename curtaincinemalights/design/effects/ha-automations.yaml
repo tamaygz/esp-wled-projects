@@ -1,0 +1,259 @@
+## HA Automations — curtaincinemalights
+# Cinema Curtain LED Sync — Home Assistant Automation YAML
+#
+# Prerequisites:
+#   1. curtaincinemalights WLED device discovered in HA (mDNS: curtaincinemalights.local)
+#   2. hacs-wledext-effects installed and configured (see specs.md §6.3)
+#   3. Template sensor created (see specs.md §6.2) -- sensor.cinema_curtain_position
+#   4. Replace entity IDs below with your actual HA entity IDs:
+#      - cover.cinema_curtain  → your motorized curtain cover entity
+#      - media_player.projector → your projector/TV media player entity
+#
+# Install: add to configuration.yaml automation: section  OR  import via HA UI automation editor
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Template sensor (add to configuration.yaml or Template integration)
+# ─────────────────────────────────────────────────────────────────────────────
+template:
+  - sensor:
+      - name: "Cinema Curtain Position"
+        unique_id: cinema_curtain_position_sensor
+        state: "{{ state_attr('cover.cinema_curtain', 'current_position') | int(0) }}"
+        unit_of_measurement: "%"
+        state_class: measurement
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Helpers (create via HA UI or add here)
+# ─────────────────────────────────────────────────────────────────────────────
+input_boolean:
+  cinema_mode_active:
+    name: "Cinema Mode Active"
+    icon: mdi:movie
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Automations
+# ─────────────────────────────────────────────────────────────────────────────
+automation:
+
+  # 1. Curtain starts OPENING — stop State Sync, start Chase (outward)
+  - id: ccl_curtain_opening
+    alias: "CCL – Curtain Opening Chase"
+    description: "Start Chase effect on both curtain LED panels when curtain is opening."
+    trigger:
+      - platform: state
+        entity_id: cover.cinema_curtain
+        to: "opening"
+    condition:
+      - condition: state
+        entity_id: input_boolean.cinema_mode_active
+        state: "off"
+    action:
+      # Disable State Sync on both segments
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+      # Enable Chase on both segments
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+
+  # 2. Curtain starts CLOSING — stop State Sync, start Chase (inward)
+  - id: ccl_curtain_closing
+    alias: "CCL – Curtain Closing Chase"
+    description: "Start Chase effect (reversed) on both panels when curtain is closing."
+    trigger:
+      - platform: state
+        entity_id: cover.cinema_curtain
+        to: "closing"
+    condition:
+      - condition: state
+        entity_id: input_boolean.cinema_mode_active
+        state: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+
+  # 3. Curtain becomes OPEN (100 %) — stop Chase, start Rainbow Wave ambient
+  - id: ccl_curtain_fully_open
+    alias: "CCL – Curtain Fully Open → Rainbow Wave"
+    description: "Switch to ambient rainbow wave when the curtain is fully open."
+    trigger:
+      - platform: state
+        entity_id: cover.cinema_curtain
+        to: "open"
+    condition:
+      - condition: state
+        entity_id: input_boolean.cinema_mode_active
+        state: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+      - service: switch.turn_on
+        target:
+          entity_id: switch.wled_context_effects_ccl_ambient_rainbow
+
+  # 4. Curtain becomes CLOSED — stop all effects, turn LEDs off or to very dim
+  - id: ccl_curtain_fully_closed
+    alias: "CCL – Curtain Fully Closed → Lights Off"
+    description: "Turn off curtain LEDs when the curtain is fully closed."
+    trigger:
+      - platform: state
+        entity_id: cover.cinema_curtain
+        to: "closed"
+    condition:
+      - condition: state
+        entity_id: input_boolean.cinema_mode_active
+        state: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+            - switch.wled_context_effects_ccl_ambient_rainbow
+      # State Sync with 0 % fill will darken LEDs automatically;
+      # or explicitly dim the light entity:
+      - service: light.turn_on
+        target:
+          entity_id: light.curtaincinemalights
+        data:
+          brightness_pct: 5
+
+  # 5. Curtain stops mid-travel (open/close stops at partial position)
+  #    → re-enable State Sync so position fill is shown
+  - id: ccl_curtain_stopped_partial
+    alias: "CCL – Curtain Stopped at Partial Position → State Sync"
+    description: "Resume State Sync fill when curtain stops at a partial position."
+    trigger:
+      - platform: state
+        entity_id: cover.cinema_curtain
+        to: "stopped"
+    condition:
+      - condition: state
+        entity_id: input_boolean.cinema_mode_active
+        state: "off"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+
+  # 6. Projector starts PLAYING — enable cinema dim Breathe on master
+  - id: ccl_projector_starts_playing
+    alias: "CCL – Projector Playing → Cinema Breathe"
+    description: "Switch to dim red Breathe effect when the projector starts a movie."
+    trigger:
+      - platform: state
+        entity_id: media_player.projector
+        to: "playing"
+    action:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.cinema_mode_active
+      # Disable all curtain effects
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+            - switch.wled_context_effects_ccl_ambient_rainbow
+      # Enable cinema Breathe (dim red, 0.3 Hz)
+      - service: switch.turn_on
+        target:
+          entity_id: switch.wled_context_effects_ccl_cinema_breathe
+
+  # 7. Projector stops — resume curtain position tracking
+  - id: ccl_projector_stops
+    alias: "CCL – Projector Stopped → Resume Curtain Sync"
+    description: "When the projector stops, disable cinema breathe and resume position sync."
+    trigger:
+      - platform: state
+        entity_id: media_player.projector
+        to:
+          - "idle"
+          - "off"
+          - "paused"
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.cinema_mode_active
+      - service: switch.turn_off
+        target:
+          entity_id: switch.wled_context_effects_ccl_cinema_breathe
+      # Resume appropriate effect based on curtain state
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: cover.cinema_curtain
+                state: "open"
+            sequence:
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.wled_context_effects_ccl_ambient_rainbow
+          - conditions:
+              - condition: not
+                conditions:
+                  - condition: state
+                    entity_id: cover.cinema_curtain
+                    state: "closed"
+            sequence:
+              - service: switch.turn_on
+                target:
+                  entity_id:
+                    - switch.wled_context_effects_ccl_left_state_sync
+                    - switch.wled_context_effects_ccl_right_state_sync
+
+  # 8. Manual cinema mode override (input_boolean toggle)
+  - id: ccl_manual_cinema_on
+    alias: "CCL – Manual Cinema Mode On"
+    description: "Force cinema Breathe via the manual input_boolean toggle."
+    trigger:
+      - platform: state
+        entity_id: input_boolean.cinema_mode_active
+        to: "on"
+    condition:
+      # Only if projector is not already playing (would duplicate automation 6)
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: media_player.projector
+            state: "playing"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.wled_context_effects_ccl_left_state_sync
+            - switch.wled_context_effects_ccl_right_state_sync
+            - switch.wled_context_effects_ccl_chase_left
+            - switch.wled_context_effects_ccl_chase_right
+            - switch.wled_context_effects_ccl_ambient_rainbow
+      - service: switch.turn_on
+        target:
+          entity_id: switch.wled_context_effects_ccl_cinema_breathe
