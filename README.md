@@ -184,6 +184,7 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `/gen-enclosure` prompt | Generates YAPP_Box SCAD + renders STLs and preview PNGs |
 | `ESP/WLED Project Planner` custom agent | Guided planning: requirements → LED → power → GPIO → HA → scaffold |
 | `ESP/WLED Project Reviewer` custom agent | Reviews scaffold/meta coherence, upgrades docs, and checks current customization conventions |
+| `ESP/WLED Realworld Hardware Debug` custom agent | Step-by-step real build triage: captures actual hardware, checks wiring/power/config assumptions, compares against project definitions, and guides the next diagnostic step |
 | `enclosure-gen` skill | Reusable enclosure reference and YAPP_Box workflow support |
 | `.github/hooks/README.md` | Documents the repo hook policy and recommended first deterministic hook use cases |
 

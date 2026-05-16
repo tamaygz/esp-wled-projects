@@ -99,6 +99,16 @@ When the task is about the repo root, `.github/`, shared tools, or the parts reg
 3. Keep public explanation in `README.md` and operational detail in `AGENTS.md` or `.github/copilot-instructions.md` instead of duplicating full sections in all three places.
 4. After broad meta edits, prefer a reviewer pass to catch drift between prompts, instructions, agents, and root docs.
 
+### Debugging A Real Build
+
+Use the `ESP/WLED Realworld Hardware Debug` agent when a physical setup is not working and the failure location is still unclear.
+
+- Start from the target project's `specs.md`, `hardware/bom/bom.md`, `hardware/wiring/WIRING.md`, and `firmware/cfg.json`.
+- Use the VS Code ask-question tool to capture the actual hardware used, the main symptom, and any substitutions or added parts.
+- Compare the documented design to the real build and produce a clear delta before recommending major fixes.
+- Validate whether substitutions are acceptable, marginal, or fundamentally incompatible before telling the user to rebuild anything.
+- Debug in the right order: power → boot/GPIO → data path → LED config → Home Assistant / automation layer.
+
 ### Home Assistant Integration
 
 Every project **must** be controllable from Home Assistant via the native WLED integration.
