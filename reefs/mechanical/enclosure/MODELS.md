@@ -1,6 +1,43 @@
 # 3D Models & Enclosure — Reefs
 
-## Control Box Enclosure
+## Automated Variant Enclosure (Parametric YAPP)
+
+Parametric PETG enclosure generated via the [`enclosure-gen`](../../../.github/skills/enclosure-gen/SKILL.md) skill, using shared YAPP library at `tools/yapp/YAPPgenerator_v3.scad`.
+
+**Snap-on lid — no screws, tool-free open/close.**
+
+| Property | Value |
+|----------|-------|
+| Source | [`reefs-automatedvariant-enclosure.scad`](reefs-automatedvariant-enclosure.scad) |
+| Spec | [`reefs-automatedvariant-enclosure-spec.md`](reefs-automatedvariant-enclosure-spec.md) |
+| Outer | 150 × 100 × 59 mm |
+| Inner | 144 × 94 × 56 mm |
+| Wall thickness | 3.0 mm |
+| Ridge height | 6.0 mm (≥ wallThickness × 1.8 for snapJoins) |
+| Lid closure | 4 × snap-joins on long walls (15 mm wide, posx = 40 & 110) |
+| PCB standoffs | 4 × M3, `yappBaseOnly` (no stems on lid) |
+
+### Files
+
+| File | Description |
+|------|-------------|
+| [`reefs-automatedvariant-base.stl`](reefs-automatedvariant-base.stl) | Base shell |
+| [`reefs-automatedvariant-lid.stl`](reefs-automatedvariant-lid.stl) | Lid shell |
+| [`reefs-automatedvariant-base-iso.png`](reefs-automatedvariant-base-iso.png) | Base — isometric preview |
+| [`reefs-automatedvariant-base-top.png`](reefs-automatedvariant-base-top.png) | Base — top-down preview |
+| [`reefs-automatedvariant-lid-iso.png`](reefs-automatedvariant-lid-iso.png) | Lid — isometric preview |
+| [`reefs-automatedvariant-lid-top.png`](reefs-automatedvariant-lid-top.png) | Lid — top-down preview |
+
+### Re-generate
+
+```powershell
+# From repo root — produces both STLs and all 4 preview PNGs
+pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-automatedvariant-enclosure
+```
+
+---
+
+## Control Box Enclosure (Legacy BambuStudio)
 
 Custom-designed PETG enclosure housing the ESP32, 74AHCT125 level shifter, screw terminal bus, inline fuses, and IEC C14 inlet.
 
