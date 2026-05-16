@@ -52,25 +52,50 @@ Or clone/download the YAPP release zip and copy the single file.
 
 ---
 
-## CLI Render Commands
+## CLI Render + Preview Pipeline
 
-Requires [OpenSCAD](https://openscad.org/downloads.html) installed and on PATH.
+Requires [OpenSCAD](https://openscad.org/downloads.html) installed at
+`C:\Program Files\OpenSCAD\openscad.exe` (or on PATH).
 
-```bash
-# Render complete enclosure (box + lid together, side-by-side preview)
-openscad --render -o reefs-box-full.stl reefs-enclosure.scad
+### One-shot helper (preferred)
 
-# Render base only
-openscad --render -o reefs-box.stl reefs-enclosure.scad \
-         -D printLidShell=false
+Always use the repo helper — it renders both shells **and** 2 preview PNGs per shell:
 
-# Render lid only
-openscad --render -o reefs-lid.stl reefs-enclosure.scad \
-         -D printBaseShell=false
+```powershell
+# From repo root
+pwsh tools/render_enclosure.ps1 -Project <project> -ScadName <stem>-enclosure
+```
 
-# Render at higher quality (slower)
-openscad --render -o reefs-box.stl reefs-enclosure.scad \
-         -D renderQuality=16 -D printLidShell=false
+Outputs into `<project>/mechanical/enclosure/`:
+
+| File | What it is |
+|------|------------|
+| `<stem>-base.stl` | Base shell, print-ready |
+| `<stem>-lid.stl`  | Lid shell, print-ready |
+| `<stem>-base-iso.png` | Isometric preview of base (perspective) |
+| `<stem>-base-top.png` | Top-down preview of base (orthogonal) |
+| `<stem>-lid-iso.png`  | Isometric preview of lid |
+| `<stem>-lid-top.png`  | Top-down preview of lid |
+
+The PNGs are committed alongside the STLs and referenced from `MODELS.md` /
+`README.md` so reviewers can sanity-check geometry without opening OpenSCAD.
+
+### Manual commands (when you need a custom render)
+
+```powershell
+# Base only
+& "C:\Program Files\OpenSCAD\openscad.exe" --render `
+    -o <stem>-base.stl <stem>-enclosure.scad -D "printLidShell=false"
+
+# Lid only
+& "C:\Program Files\OpenSCAD\openscad.exe" --render `
+    -o <stem>-lid.stl  <stem>-enclosure.scad -D "printBaseShell=false"
+
+# Preview PNG (isometric, perspective)
+& "C:\Program Files\OpenSCAD\openscad.exe" `
+    --imgsize=1400,1000 --viewall --autocenter --projection=perspective `
+    --camera=0,0,0,55,0,25,0 --colorscheme=Tomorrow `
+    -o <stem>-lid-iso.png <stem>-enclosure.scad -D "printBaseShell=false"
 ```
 
 > Tip: For complex enclosures with many cutouts, increase OpenSCAD's max elements:
@@ -121,8 +146,11 @@ baseWallHeight      = 28;   // typically ~55% of total inner height
 lidWallHeight       = 23;   // remaining ~45%; ridgeHeight must ≥ lidWallHeight
 
 // --- Lid connection ---
-ridgeHeight         = 5.0;  // ridge overlap between base and lid
-ridgeSlack          = 0.3;  // fit tolerance
+// IMPORTANT: ridgeHeight must be >= wallThickness * 1.8 if snapJoins are used
+// (YAPP `wallToRidgeRatio = 1.8`). For wallThickness=3.0 use ridgeHeight >= 5.4 mm
+// (we use 6.0 mm as the default).
+ridgeHeight         = 6.0;
+ridgeSlack          = 0.3;
 roundRadius         = 3.0;  // corner rounding (mm); 0 = sharp
 boxType             = 0;    // 0=all rounded, 1=all square, 2=chamfered
 
@@ -198,6 +226,11 @@ cutoutsFront = [
 
 ## PCB Standoffs
 
+**Use `yappBaseOnly` for ESP32/PCB standoffs.** The board sits in the base only;
+standoffs on the lid would either collide with the PCB or look like floating
+stems on the inside of the lid. Only use `yappBoth` if you genuinely want
+matching posts on both halves (rare).
+
 ```
 pcbStands = [
   // [posx, posy, optional: height, pcbGap, standoffDiam, pinDiam, holeSlack,
@@ -214,7 +247,7 @@ pcbStands = [
   // Use yappAllCorners to place one standoff at each corner of a rectangle
   // defined by (posx, posy) = one corner, measured from PCB origin
   [3, 3, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
-   standoffHoleSlack, yappBoth, yappPin, yappAllCorners, yappCoordPCB],
+   standoffHoleSlack, yappBaseOnly, yappPin, yappAllCorners, yappCoordPCB],
 ];
 // For explicit placement (4 individual standoffs):
 // [x1, y1, ...], [x1, y2, ...], [x2, y1, ...], [x2, y2, ...]
@@ -223,7 +256,42 @@ pcbStands = [
 
 ---
 
-## Lid Connectors (Screw Posts)
+## Lid Closure: Snap-On (Default)
+
+**Default for every new enclosure: snap-on lid.** No screws, no inserts, no
+lid posts. Tool-free open/close, faster prints, cleaner aesthetics.
+
+```
+snapJoins = [
+  // [pos, width, face(s), optional: yappCenter, yappSymmetric, yappRectangle]
+];
+```
+
+**4 snap-joins on the two long walls (recommended default):**
+```scad
+snapJoins = [
+  // pos=40 along each long wall, width=15 mm, mirrored about wall center
+  // via yappSymmetric => 4 snaps total (2 per long wall).
+  [40, 15, yappLeft, yappRight, yappCenter, yappSymmetric],
+];
+connectors = [];   // <- empty when using snap-on lids
+```
+
+**Constraints:**
+- `ridgeHeight >= wallThickness * 1.8` (YAPP asserts this when `snapJoins` is non-empty). With `wallThickness=3.0`, use `ridgeHeight >= 5.4` (default to 6.0).
+- Pick faces that have continuous wall length — don't place a snap across a cutout.
+- For very small boxes (< 80 mm long side), use a single snap per long wall (drop `yappSymmetric`).
+
+**When to fall back to screw connectors:** only when the user explicitly asks
+for screws, or the lid will be opened rarely and must withstand vibration/drop
+loads. In that case keep `connectors[]` filled and leave `snapJoins = []`.
+
+---
+
+## Lid Connectors (Screw Posts) — Fallback Only
+
+Use this section only when the user explicitly asks for a screw-fastened lid.
+**Default is snap-on (see above).**
 
 ```
 connectors = [
@@ -232,13 +300,15 @@ connectors = [
 ];
 ```
 
-**4×M3 lid connectors at box corners:**
+**4×M3 lid connectors at box corners (only if screws are required):**
 ```scad
 connectors = [
-  [5, 5,  10, 3, 6, 4, 8, yappAllCorners, yappCoordBoxInside],
-  // standHeight=10mm posts, M3 screw (Ø3), M3 flat head (Ø6), 
-  // insert hole Ø4 (self-thread), outside post Ø8
+  [5, 5,  5, 3, 6, 3.2, 8, yappAllCorners, yappCoordBoxInside],
+  // standHeight=5mm posts (small — too tall looks like floating stems inside
+  // the lid), M3 screw (Ø3), M3 flat head (Ø6), insert hole Ø3.2 (self-thread),
+  // outside post Ø8
 ];
+snapJoins = [];  // <- empty when using screw lid
 ```
 
 ---
@@ -458,12 +528,14 @@ Output a complete `<project>-enclosure.scad` that:
 1. Sets `pcbLength`, `pcbWidth`, wall heights per the dimensions above
 2. Sets all padding to 0 (virtual PCB approach)
 3. Fills `cutoutsFront`, `cutoutsBack`, `cutoutsLeft`, `cutoutsRight`, `cutoutsLid` per the component layout
-4. Fills `pcbStands` for the ESP32 DevKit standoff pattern
-5. Fills `connectors` for M3 lid screws at 4 corners
-6. Fills `labelsPlane` with:
+5. Fills `pcbStands` for the ESP32 DevKit standoff pattern, using `yappBaseOnly` (NOT `yappBoth`)
+6. Sets `connectors = []` and fills `snapJoins` for a snap-on lid (default). Only use `connectors[]` if the user explicitly requests screws.
+7. Ensures `ridgeHeight >= wallThickness * 1.8` when `snapJoins` is non-empty
+8. Fills `labelsPlane` with:
    - **Project title** on the lid: 1–3 lines, centered; line 1 = project name (size 10), optional line 2 = subtitle (size 6), optional line 3 = version/date (size 4); defaults to project name when no custom text is supplied
    - **Cutout labels**: one label per external connector/cutout entry on the same face; placed above or below the hole (whichever has more clearance), horizontally centred on the cutout; use size 4–5mm; text = connector purpose (e.g. `"POWER IN"`, `"OTA"`, `"LAMP 1"`, `"LAMP 2"`)
-7. Ends with `include <./YAPPgenerator_v3.scad>` — **this include must be the LAST line**
+9. **Starts** with `include <../../../tools/yapp/YAPPgenerator_v3.scad>` and **ends** with an explicit `YAPPgenerate();` call. The include must come FIRST so the project's variable assignments below override the library defaults (OpenSCAD "last assignment wins"); the explicit `YAPPgenerate()` call bypasses the library's `if (debug)` guard. Save as BOM-free UTF-8.
+10. After saving the SCAD, run `pwsh tools/render_enclosure.ps1 -Project <project> -ScadName <stem>-enclosure` to produce both STLs and the 4 preview PNGs in one go.
 
 ---
 
@@ -601,15 +673,18 @@ include <./YAPPgenerator_v3.scad>
 
 | File | Description | Committed? |
 |------|-------------|------------|
-| `<project>-enclosure.scad` | YAPP config (LLM-generated source) | ✅ Yes |
-| `YAPPgenerator_v3.scad` | YAPP library | ✅ Yes (pin to release) |
-| `enclosure-spec.md` | Human-readable parameter summary | ✅ Yes |
-| `<project>-box.stl` | Rendered base (from CLI) | ❌ `.gitignore` |
-| `<project>-lid.stl` | Rendered lid (from CLI) | ❌ `.gitignore` |
+| `<stem>-enclosure.scad` | YAPP config (LLM-generated source) | ✅ Yes |
+| `tools/yapp/YAPPgenerator_v3.scad` | YAPP library (shared, repo-root) | ✅ Yes (pin to release) |
+| `<stem>-enclosure-spec.md` | Human-readable parameter summary | ✅ Yes |
+| `<stem>-base.stl` | Rendered base | ✅ Yes (committed for reviewers) |
+| `<stem>-lid.stl`  | Rendered lid  | ✅ Yes |
+| `<stem>-base-iso.png` / `-base-top.png` | Base previews (iso + top) | ✅ Yes |
+| `<stem>-lid-iso.png`  / `-lid-top.png`  | Lid previews (iso + top)  | ✅ Yes |
 
 Add to `<project>/.gitignore`:
 ```
-mechanical/enclosure/*.stl
+# Nothing — STLs and preview PNGs are committed so reviewers can inspect
+# geometry without running OpenSCAD. Re-generate via tools/render_enclosure.ps1.
 ```
 
 ---
