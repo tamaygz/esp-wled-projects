@@ -6,6 +6,19 @@
 
 When designing enclosures, wiring, firmware configs, or PCB layouts, check this register **first** before measuring components manually or looking up datasheets. Using register values ensures consistency between `bom.md`, `*-enclosure.scad`, `WIRING.md`, and any board-specific firmware notes across the repo.
 
+This register is also part of the repo's meta layer. Its job is not just to store data, but to reduce duplicated research across projects: once a part is in the register with good sources and notes, future projects should reuse that work instead of rebuilding it.
+
+## When To Use It
+
+Open this register before you:
+
+- choose between boards, PSUs, LED strips, connectors, or level shifters
+- write a BOM, wiring guide, `specs.md`, or enclosure SCAD file
+- describe core components in a project README
+- need a board pinout, PlatformIO ID, or enclosure cutout dimension
+
+If a project file contains design-critical part facts and the register could have supplied them, the register should usually be updated first.
+
 ## Source Priority
 
 Use sources in this order whenever possible:
@@ -143,6 +156,7 @@ Best practice is to store the smallest set of technical details that repeatedly 
 - **BOM files (`bom.md`)**: Cross-reference part names and MPN values against register entries.
 - **WIRING.md**: Reference connector dimensions for cable routing guidance and strain-relief sizing.
 - **Board-driven firmware docs**: Reuse `software_identifiers` and `board_pinout` instead of recreating board notes in project files.
+- **Project-facing READMEs and specs**: Reuse concise register-backed facts, `source_url` links, and pinout references instead of writing freehand summaries.
 
 Existing entries may still be geometry-first. When you touch an existing part for new work, backfill technical fields opportunistically instead of creating a second source of truth.
 

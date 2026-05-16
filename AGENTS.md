@@ -6,17 +6,22 @@ This file provides guidance for GitHub Copilot Coding Agent and other AI agents 
 
 Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Each subdirectory is a self-contained project with firmware, hardware docs, mechanical designs, and generated diagrams.
 
+The repo root is also a reusable **meta layer**: it defines how new projects are planned, scaffolded, reviewed, and documented. Agents should treat the root-level docs and `.github/` customizations as the control plane for creating or upgrading project folders.
+
 ## Repository Map
 
 | Path | Purpose |
 |------|---------|
 | `_template/` | Copy-paste skeleton for every new project |
+| `README.md` | Public-facing explanation of the repo, the meta layer, and the project list |
+| `tools/parts-register/` | Shared parts register and schema documentation |
 | `tools/diagram_gen/` | Shared Python library for generating all project diagrams |
 | `tools/gen_diagrams.py` | CLI runner: `python tools/gen_diagrams.py <project>` |
 | `tools/yapp/YAPPgenerator_v3.scad` | Shared YAPP_Box library (MIT) — included by every project SCAD |
 | `tools/render_enclosure.ps1` | One-shot helper: renders base + lid STLs + 4 preview PNGs |
 | `tools/upload_spiffs.py` | WiFi file push: uploads `firmware/spiffs/` files to a live WLED device over HTTP (no USB needed) |
 | `reefs/` | Active project — driftwood ambient lamps (SK6812 RGBW, ESP32, Home Assistant) |
+| `curtaincinemalights/` | Active project — curtain-integrated cinema lighting (SK6812 RGBW, ESP8266, Home Assistant) |
 | `reefs/homeassistant/` | HA package, blueprints, lovelace card, import guide |
 | `reefs/firmware/spiffs/ha-import.html` | Device-served HA import assistant page |
 | `.github/instructions/` | Scoped Copilot instruction files |
@@ -24,6 +29,18 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 | `.github/skills/enclosure-gen/` | API reference for YAPP_Box / OpenSCAD enclosure generation |
 | `.github/agents/` | Custom agent definitions |
 | `.github/hooks/README.md` | Hook policy and adoption guidance for deterministic automation |
+
+## Doc Ownership
+
+Use the root docs by role instead of treating them as interchangeable:
+
+- `README.md` is the public-facing entry point. Keep it oriented around what the repo contains, how the meta layer helps, and how consumers should start a new project.
+- `AGENTS.md` is the quick operational guide for coding agents. Keep it directive, repo-specific, and implementation-oriented.
+- `.github/copilot-instructions.md` is the canonical always-on policy layer. Put broad repo rules there when they must apply consistently.
+- `tools/parts-register/README.md` is the schema and sourcing reference for the parts register.
+- `.github/hooks/README.md` explains when hooks are appropriate and when they are the wrong mechanism.
+
+When a meta-level edit changes workflow, update all affected docs in the same pass instead of leaving the story split across files.
 
 ## VS Code Insiders Customizations
 
@@ -72,6 +89,15 @@ For discoverability and troubleshooting in VS Code Insiders:
    Alternative (PlatformIO / USB): `pio run -t uploadfs`
 11. Add a row to the Projects table in `README.md`
 12. Open a PR from a branch named `project/<project-name>`
+
+### Meta-Level Doc Updates
+
+When the task is about the repo root, `.github/`, shared tools, or the parts register rather than a single lighting build:
+
+1. Start with `README.md`, `AGENTS.md`, and `.github/copilot-instructions.md` to understand the current public story and internal workflow.
+2. Check whether the change also affects `tools/parts-register/README.md` or `.github/hooks/README.md`.
+3. Keep public explanation in `README.md` and operational detail in `AGENTS.md` or `.github/copilot-instructions.md` instead of duplicating full sections in all three places.
+4. After broad meta edits, prefer a reviewer pass to catch drift between prompts, instructions, agents, and root docs.
 
 ### Home Assistant Integration
 
@@ -134,7 +160,7 @@ Each effect creates controllable HA entities (Switch / Number / Select / Sensor 
 2. Install "WLED Effects" from HACS → restart HA
 3. Settings → Devices & Services → Add → "WLED Effects" → select WLED device
 4. Document installed effects and entity IDs in `specs.md` → "Home Assistant"
-5. Document installed effects and entity IDs in `specs.md` → "Home Assistant"; add example automations to `homeassistant/package.yaml`
+5. Add example automations to `homeassistant/package.yaml` or `design/effects/ha-automations.yaml`
 
 ### Generating an Enclosure
 

@@ -5,11 +5,24 @@
 Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266.
 Each subdirectory (except `_template/` and `tools/`) is a self-contained project.
 
+The repo root is also a meta layer: shared scaffolding, instructions, agents, prompts, tooling, and register-backed data live there so new project creation follows one repeatable workflow instead of becoming project-by-project improvisation.
+
 ## Active Projects
 
 | Project | LED Strip | Controller | Description |
 |---------|-----------|------------|-------------|
 | `reefs/` | SK6812 RGBW 60 LED/m × 2 | ESP32-WROOM-32 | Driftwood ambient lamps, Home Assistant integrated |
+| `curtaincinemalights/` | SK6812 RGBW 60 LED/m, ~180 LEDs · 3 m | ESP8266 D1 Mini | Curtain-synced cinema lighting with Home Assistant effects |
+
+## Documentation Ownership
+
+- `README.md` is the public-facing overview. Keep it focused on the repo concept, the meta layer, the project list, and the consumer workflow.
+- `AGENTS.md` is the concise operational guide for coding agents.
+- `.github/copilot-instructions.md` is the canonical always-on rule set for repo-wide behavior.
+- `tools/parts-register/README.md` owns the register schema, field semantics, and sourcing workflow.
+- `.github/hooks/README.md` owns hook policy and should stay focused on deterministic automation decisions.
+
+When a workflow change affects several of these layers, update them together so the public explanation, agent behavior, and detailed policy remain coherent.
 
 ## Project Folder Convention
 
@@ -81,6 +94,7 @@ Every project mirrors the `_template/` skeleton:
 ## Workflow Design
 
 - Keep the main repo workflow intuitive: plan with the planner agent, then hand off to a reviewer agent before considering the scaffold or meta-layer update complete.
+- For public-facing repo changes, make sure `README.md` explains the user-visible story while `AGENTS.md` and this file carry the operational detail.
 - When adding future agents, prefer a coordinator-and-reviewer structure over many overlapping general-purpose agents.
 - If a future agent should only be used internally, mark it `user-invocable: false`. If it should not be auto-selected as a subagent, use `disable-model-invocation: true` unless an explicit coordinator needs it.
 - If future prompt files need isolated research or parallel checks, include agent/subagent tooling intentionally rather than assuming broad delegation.
@@ -98,6 +112,7 @@ Every project mirrors the `_template/` skeleton:
 - When key requirements or tradeoffs are unclear, use the VS Code ask-question tool instead of asking only in free-form chat.
 - Always provide a short list of sensible options and keep free-form input enabled so the user can choose or supply a different answer.
 - Use structured questions especially for project planning choices such as LED family, controller board, PSU strategy, Home Assistant integration level, enclosure style, and whether to scaffold files immediately.
+- When the task is a meta-layer documentation update, check whether the same change also affects `README.md`, `AGENTS.md`, `.github/hooks/README.md`, or `tools/parts-register/README.md` before stopping.
 
 Run diagrams from repo root:
 ```bash

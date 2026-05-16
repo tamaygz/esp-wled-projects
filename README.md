@@ -13,6 +13,28 @@ Each actual project folder is then a self-contained build with its own firmware 
 
 I created this repository primarily for myself as a structured workspace for planning, building, documenting, and reusing WLED-based lighting projects. The goal is to keep my own process consistent first, while still making each finished project understandable and reusable for others.
 
+## Meta Layer At A Glance
+
+If you want to create a new project from this repo, the root-level meta layer is the part that helps you.
+
+| Meta asset | What it contains | How it helps when creating a new project |
+|------------|------------------|------------------------------------------|
+| [_template/](./_template/) | Base folder skeleton | Gives every new project the same starting structure and required files |
+| [tools/parts-register/parts.json](./tools/parts-register/parts.json) | Shared parts registry | Reuses known dimensions, electrical facts, and board pinouts instead of re-researching them |
+| [tools/](./tools/) | Shared generators and helpers | Produces diagrams, renders enclosures, and uploads SPIFFS assets consistently |
+| [.github/instructions/](./.github/instructions/) | Scoped Copilot rules | Keeps edits to firmware, hardware, diagrams, and new-project docs aligned with repo conventions |
+| [.github/prompts/](./.github/prompts/) | Reusable slash-command workflows | Speeds up scaffolding, diagram generation, and enclosure generation |
+| [.github/agents/](./.github/agents/) | Planner and reviewer agents | Guides planning first, then checks the scaffold or meta change for coherence |
+| [AGENTS.md](./AGENTS.md) and [.github/copilot-instructions.md](./.github/copilot-instructions.md) | Always-on repo guidance | Explains how the meta layer is supposed to be used and what rules always apply |
+
+### How The Meta Layer Helps
+
+1. Start from `_template/` instead of inventing a structure from scratch.
+2. Use the parts register before looking up dimensions, pinouts, or PSU data again.
+3. Let the planner prompt or agent drive the first pass when requirements are still forming.
+4. Generate diagrams and enclosure artifacts from shared tools so outputs stay consistent across projects.
+5. Run the reviewer step before considering a new project scaffold or meta change complete.
+
 ---
 
 ## Projects
@@ -164,6 +186,17 @@ This repo is configured for GitHub Copilot (VS Code Insiders) and GitHub cloud a
 | `ESP/WLED Project Reviewer` custom agent | Reviews scaffold/meta coherence, upgrades docs, and checks current customization conventions |
 | `enclosure-gen` skill | Reusable enclosure reference and YAPP_Box workflow support |
 | `.github/hooks/README.md` | Documents the repo hook policy and recommended first deterministic hook use cases |
+
+### Which Doc To Read
+
+| If you need to understand... | Read this first |
+|------------------------------|-----------------|
+| what this repo is and how the meta layer helps | [README.md](./README.md) |
+| how an agent should behave in this repo | [AGENTS.md](./AGENTS.md) |
+| the full always-on repo conventions | [.github/copilot-instructions.md](./.github/copilot-instructions.md) |
+| file-specific editing rules | [.github/instructions/](./.github/instructions/) |
+| the parts register schema and sourcing rules | [tools/parts-register/README.md](./tools/parts-register/README.md) |
+| hook policy and whether a hook should exist at all | [.github/hooks/README.md](./.github/hooks/README.md) |
 
 ### Working In VS Code Insiders
 
