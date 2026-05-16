@@ -11,7 +11,7 @@
 | 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | (user-owned) | — | — | Verify nameplate rating ≥ 10 A |
 | 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ 1 m | 2 | ~€5 ea | Local / LUMINES | Type-Z or equiv. | Conducts heat away from wood |
 | 5 | 3-conductor cable | 18 AWG power + 26 AWG data, or 3-core 20 AWG flex | 2 × 2.5 m | ~€2/m | Local electrical | — | 0.5 m slack; one cable per lamp |
-| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | <€0.01 ea | LCSC | C57436 | Series on GPIO data line at ESP32 side |
+| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | <€0.01 ea | LCSC | C119313 | Series on GPIO data line at ESP32 side — ⚠️ C57436 is 10kΩ (MFR0W4F1002A50), not 330Ω |
 | 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | ~€0.30 | LCSC | C12494 | 3.3 V → 5 V for SK6812 data; 2 channels used |
 | 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | ~€0.50 ea | LCSC / local | — | One per lamp 5 V power run |
 | 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | <€0.20 ea | Local | — | 2 installed + 2 spare |

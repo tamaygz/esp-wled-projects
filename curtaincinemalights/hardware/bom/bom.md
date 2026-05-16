@@ -12,7 +12,7 @@
 | 3 | Hi-Link HLK-20M05 | 5V 4A 20W AC-DC module, DIP, 56 × 32 × 22.5 mm | 1 | ~€4 | LCSC | C465406 | ⚠️ WLED ABL must be ≤ 3200 mA; upgrade to HLK-30M05 if adding more LEDs |
 | 4 | Aluminium LED channel (U-profile) | 12–16 mm wide with frosted diffuser lid, cut to curtain width | 1 length | ~€4/m | Local / LUMINES | Type-Z or equiv. | Cut on site; conducts heat away from curtain fabric |
 | 5 | 74AHCT125 level shifter | DIP-14, 7.62 mm row pitch, 19.05 × 6.35 × 4.57 mm | 1 | ~€0.30 | LCSC | C57369 | Buffers 3.3 V GPIO → 5 V SK6812 data; uses 1 of 4 gates |
-| 6 | 330 Ω resistor | ¼ W, through-hole | 1 | <€0.01 | LCSC | C57436 | Series on GPIO2 data line (ESP8266 side of shifter) |
+| 6 | 330 Ω resistor | ¼ W, through-hole | 1 | <€0.01 | LCSC | C119313 | Series on GPIO2 data line (ESP8266 side of shifter) — ⚠️ C57436 is 10kΩ (MFR0W4F1002A50), not 330Ω |
 | 7 | JST SM 3-pin connector pair | 2.5 mm pitch, M+F pair | 1 pair | ~€0.30 | On hand | — | Female panel-mount in box wall pocket; male plug on strip cable |
 | 8 | 3-conductor cable | 20 AWG (or 2× 18 AWG power + 26 AWG data) flex | ~curtain width + 1 m | ~€1.50/m | Local electrical | — | Power + data to strip; route inside curtain rail bracket channel |
 | 9 | Schuko captive mains lead | H05VV-F 3×0.75 mm², CEE 7/7 plug, ≥ 1.5 m | 1 | ~€2 | Local / scavenged | — | Mains entry to PSU; strain-relieved inside enclosure via printed cable clamp |
