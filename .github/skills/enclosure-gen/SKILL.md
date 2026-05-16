@@ -245,13 +245,126 @@ connectors = [
 
 ## Labels
 
+`labelsPlane` accepts any number of text entries on any face.
+
+```
+// Parameters:
+//   p(0) = posx           — horizontal position on the face
+//   p(1) = posy/z         — vertical/depth position on the face
+//   p(2) = rotation       — degrees CCW
+//   p(3) = depth          — negative = raised (Add), positive = recessed/engraved (Remove)
+//   p(4) = face           — yappLid | yappBase | yappFront | yappBack | yappLeft | yappRight
+//   p(5) = font           — OpenSCAD font string, e.g. "Liberation Sans:style=Bold"
+//   p(6) = size           — cap height in mm
+//   p(7) = "text"         — the label string
+// Optional:
+//   p(8)  = expand        — extra stroke width in mm (makes text bolder, default 0)
+//   p(9)  = direction     — yappTextLeftToRight (default) | yappTextRightToLeft
+//                         |  yappTextTopToBottom | yappTextBottomToTop
+//   p(10) = h-align       — yappTextHAlignLeft | yappTextHAlignCenter | yappTextHAlignRight
+//   p(11) = v-align       — yappTextVAlignTop | yappTextVAlignCenter
+//                         |  yappTextVAlignBaseLine | yappTextVAlignBottom
+```
+
+**Coordinate system for labels** (default `yappCoordBox`):
+- Origin = outer front-left-bottom corner of the box
+- Lid posx/posy are measured in the horizontal plane (left→right, front→back)
+- Face labels: posx = horizontal along the face, posy = vertical height from base
+- Outer dimensions: `outerL = pcbLength + 2×wallThickness`, `outerW = pcbWidth + 2×wallThickness`
+
+---
+
+### Project Title Label (lid or main face)
+
+**Defaults to project name; supports 1–3 custom lines.**
+Place on the lid, centered. Use negative depth for raised text (+0.5–0.8mm above surface).
+
+**Lid center coordinates:** `posx = outerL / 2`, `posy = outerW / 2`
+
+**Multi-line vertical spacing:** step lines by `1.6 × largest_font_size` mm.
+
 ```scad
+// --- Lid label: 2-line version ---
+// Lid outer: 150 × 100mm → center (75, 50)
+// Line spacing = 1.6 × 10 = 16mm → line1 at y=58, line2 at y=42
 labelsPlane = [
-  // [posx, posy, rotation, depth, face, font, size, "text"]
-  [0, 0, 0, -0.5, yappLid, "Liberation Sans:style=Bold", 8, "REEFS"],
-  // depth negative = raised text; depth positive = recessed/engraved
+  // Line 1: project name — large, bold, centered
+  [75, 58, 0, -0.6, yappLid,
+   "Liberation Sans:style=Bold", 10, "REEFS",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+  // Line 2: subtitle — smaller
+  [75, 42, 0, -0.4, yappLid,
+   "Liberation Sans", 6, "WLED v0.15 | SK6812 RGBW",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
 ];
 ```
+
+```scad
+// --- Lid label: 3-line version ---
+// line spacing = 1.6 × 10 = 16mm; lines at +16, 0, -16 from center y=50
+labelsPlane = [
+  [75, 66, 0, -0.6, yappLid, "Liberation Sans:style=Bold", 10, "PROJECT NAME",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+  [75, 50, 0, -0.4, yappLid, "Liberation Sans", 6, "Subtitle / Description",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+  [75, 34, 0, -0.3, yappLid, "Liberation Sans", 4, "v1.0 — 2026",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+];
+```
+
+---
+
+### Cutout Labels (connector identification, wiring agenda)
+
+Place a label near every external connector and cable entry to identify wiring.
+Labels go on the **same face** as the corresponding cutout, centred horizontally on the cutout.
+
+**Positioning formula** (BoxInside + yappCenter cutout → BoxBox label coords):
+
+```
+cutout horizontal center (in BoxInside): cx = cutout_p0  (fromBack / fromLeft)
+cutout vertical center (in BoxInside):   cz = cutout_p1
+
+→ label posx (BoxBox) = cx + wallThickness
+→ below cutout: label posy (BoxBox) = (cz − cutout_height/2 − gap − label_size/2)
+                                      + basePlaneThickness
+→ above cutout: label posy (BoxBox) = (cz + cutout_height/2 + gap + label_size/2)
+                                      + basePlaneThickness
+
+Recommended: gap = 2mm, label_size = 4mm (compact) or 5mm (normal)
+For circles: substitute cutout_height/2 → radius
+```
+
+**Example — back wall IEC C14 (center at BoxInside (47, 30), 28×48mm rect):**
+```scad
+// IEC C14 label below the cutout:
+// cz=30, height=48 → bottom at 30−24=6; below: 6−2−2=2; BoxBox: 2+1.5=3.5
+[47 + wallThickness, 3.5, 0, -0.4, yappBack,
+ "Liberation Sans:style=Bold", 4, "POWER IN",
+ 0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+```
+
+**Example — front wall PG9 gland (center at BoxInside (20, 30), radius 8):**
+```scad
+// PG9 label above the gland:
+// cz=30, radius=8 → top at 38; above: 38+2+2=42; BoxBox: 42+1.5=43.5
+[20 + wallThickness, 43.5, 0, -0.4, yappFront,
+ "Liberation Sans", 4, "LAMP 1",
+ 0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+```
+
+**Example — right wall USB-C (center at BoxInside (25, 12), 9×3.5mm rect):**
+```scad
+// USB-C label above the cutout:
+// cz=12, height=3.5 → top at 13.75; above: 13.75+2+2=17.75; BoxBox: 17.75+1.5=19.25
+[25 + wallThickness, 19.25, 0, -0.4, yappRight,
+ "Liberation Sans", 4, "OTA",
+ 0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+```
+
+> **Tip:** Preview positions in the OpenSCAD GUI (`F5`) and adjust until labels
+> sit cleanly on the panel. Raised labels (`depth = −0.5`) are easier to read than
+> engraved ones on FDM prints.
 
 ---
 
@@ -347,7 +460,10 @@ Output a complete `<project>-enclosure.scad` that:
 3. Fills `cutoutsFront`, `cutoutsBack`, `cutoutsLeft`, `cutoutsRight`, `cutoutsLid` per the component layout
 4. Fills `pcbStands` for the ESP32 DevKit standoff pattern
 5. Fills `connectors` for M3 lid screws at 4 corners
-6. Ends with `include <./YAPPgenerator_v3.scad>` — **this include must be the LAST line**
+6. Fills `labelsPlane` with:
+   - **Project title** on the lid: 1–3 lines, centered; line 1 = project name (size 10), optional line 2 = subtitle (size 6), optional line 3 = version/date (size 4); defaults to project name when no custom text is supplied
+   - **Cutout labels**: one label per external connector/cutout entry on the same face; placed above or below the hole (whichever has more clearance), horizontally centred on the cutout; use size 4–5mm; text = connector purpose (e.g. `"POWER IN"`, `"OTA"`, `"LAMP 1"`, `"LAMP 2"`)
+7. Ends with `include <./YAPPgenerator_v3.scad>` — **this include must be the LAST line**
 
 ---
 
@@ -433,9 +549,40 @@ cutoutsLeft  = [];
 cutoutsLid   = [];
 cutoutsBase  = [];
 
-// --- Label ---
+// --- Labels ---
+// Lid outer: 144+6=150mm × 94+6=100mm → center (75, 50)
+// Line spacing 1.6×10=16mm → name at y=58, subtitle at y=42
 labelsPlane = [
-  [0, 0, 0, -0.5, yappLid, "Liberation Sans:style=Bold", 10, "REEFS"],
+  // Lid — project name
+  [75, 58, 0, -0.6, yappLid,
+   "Liberation Sans:style=Bold", 10, "REEFS",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+  // Lid — subtitle
+  [75, 42, 0, -0.4, yappLid,
+   "Liberation Sans", 6, "WLED v0.15 | SK6812 RGBW",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+
+  // Back wall — IEC C14 label (cutout center BoxInside (47,30), h=48)
+  // bottom at 30−24=6; below: 6−2−2=2; BoxBox: 2+1.5=3.5
+  [47+3, 3.5, 0, -0.4, yappBack,
+   "Liberation Sans:style=Bold", 4, "POWER IN",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+
+  // Front wall — PG9 gland 1 (BoxInside (20,30), r=8)
+  // top at 30+8=38; above: 38+2+2=42; BoxBox: 42+1.5=43.5
+  [20+3, 43.5, 0, -0.4, yappFront,
+   "Liberation Sans", 4, "LAMP 1",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+  // Front wall — PG9 gland 2 (BoxInside (60,30), r=8)
+  [60+3, 43.5, 0, -0.4, yappFront,
+   "Liberation Sans", 4, "LAMP 2",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
+
+  // Right wall — USB-C OTA (BoxInside (25,12), h=3.5)
+  // top at 12+1.75=13.75; above: 13.75+2+2=17.75; BoxBox: 17.75+1.5=19.25
+  [25+3, 19.25, 0, -0.4, yappRight,
+   "Liberation Sans", 4, "OTA",
+   0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
 ];
 
 // --- Snap / Mount (none for this project) ---

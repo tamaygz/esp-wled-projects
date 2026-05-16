@@ -109,12 +109,29 @@ The file **must** include (in this order):
 5. `pcbStands` — 4 standoffs for ESP32 DevKit or actual PCB mounting holes
 6. `connectors` — 4×M3 lid corner screws
 7. All six cutout arrays (`cutoutsFront`, `cutoutsBack`, `cutoutsLeft`, `cutoutsRight`, `cutoutsLid`, `cutoutsBase`)
-8. `labelsPlane` — project name on lid (optional)
-9. Empty arrays for unused features (snapJoins, boxMounts, lightTubes, pushButtons, displayMounts)
+8. `labelsPlane` with **two mandatory label groups**:
+   - **Project title on lid** — 1–3 lines centered on the lid:
+     - Line 1 (always): project name, size 10, `"Liberation Sans:style=Bold"`, raised (`depth = -0.6`)
+     - Line 2 (if user supplied a subtitle or description): subtitle, size 6
+     - Line 3 (optional): version / short tagline, size 4
+     - All centered using `yappTextHAlignCenter, yappTextVAlignCenter`
+     - Lid center = `(outerL/2, outerW/2)` where `outerL = pcbLength + 2×wallThickness`
+     - Line spacing = 1.6 × largest font size (mm)
+   - **Cutout identification labels** — one entry per external connector/hole:
+     - Same face constant (`yappFront`, `yappBack`, `yappLeft`, `yappRight`, `yappLid`) as the cutout
+     - Horizontally centred on the cutout: `posx = cutout_p0 + wallThickness`
+     - Vertically placed **above** the cutout hole (prefer above; use below if at wall top):
+       - Above: `posy = (cutout_p1 + hole_half_height + 2 + 2) + basePlaneThickness`
+       - Below: `posy = (cutout_p1 − hole_half_height − 2 − 2) + basePlaneThickness`
+       - For circles: `hole_half_height = radius`
+     - Font size 4–5mm; text = connector purpose in ALLCAPS (e.g. `"POWER IN"`, `"OTA"`, `"LAMP 1"`)
+     - Raised text: `depth = -0.4`
+9. Empty arrays for unused features (`snapJoins`, `boxMounts`, `lightTubes`, `pushButtons`, `displayMounts`)
 10. `include <./YAPPgenerator_v3.scad>` — **this must be the very last line**
 
 Use `yappCoordBoxInside, yappCenter` for all cutout positioning.
 Add inline comments explaining each cutout's purpose and its source in the BOM.
+Add inline comments on each label showing the coordinate calculation.
 
 ---
 
