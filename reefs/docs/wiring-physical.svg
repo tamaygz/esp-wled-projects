@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1100" height="700" viewBox="0 0 1100 700">
+<defs>
+</defs>
+<rect x="0" y="0" width="1100" height="700" fill="#0d0d12" />
+<text x="550.0" y="28" font-size="16" fill="#e8e8f0" font-family="monospace" font-weight="bold" text-anchor="middle" dominant-baseline="central">REEFS  –  ESP32 WLED Ambient Lighting</text>
+<g>
+<rect x="30" y="80" width="130" height="90" fill="#1a2a1a" stroke="#66bb6a" stroke-width="1.5" rx="8" />
+<text x="95.0" y="98" font-size="12" fill="#4fc3f7" font-family="monospace" font-weight="bold" text-anchor="middle" dominant-baseline="central">5V / 10A PSU</text>
+<text x="95" y="130" font-size="9" fill="#66bb6a" font-family="monospace" font-weight="normal" text-anchor="middle" dominant-baseline="central">+5 V / GND out →</text>
+</g>
+<g>
+<rect x="240" y="60" width="200" height="250" fill="#1e3a5f" stroke="#4fc3f7" stroke-width="1.5" rx="8" />
+<text x="340.0" y="78" font-size="12" fill="#4fc3f7" font-family="monospace" font-weight="bold" text-anchor="middle" dominant-baseline="central"><tspan x="340.0" dy="0em">ESP32-WROOM-32</tspan><tspan x="340.0" dy="1em">WLED v0.15+</tspan></text>
+<circle cx="440" cy="140" r="5" fill="#43a047" stroke="#111" stroke-width="1" />
+<text x="430" y="140" font-size="9" fill="#43a047" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">GPIO 16</text>
+<circle cx="440" cy="180" r="5" fill="#26c6da" stroke="#111" stroke-width="1" />
+<text x="430" y="180" font-size="9" fill="#26c6da" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">GPIO 17</text>
+<circle cx="440" cy="260" r="5" fill="#e53935" stroke="#111" stroke-width="1" />
+<text x="430" y="260" font-size="9" fill="#e53935" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">5V</text>
+<circle cx="440" cy="285" r="5" fill="#424242" stroke="#555" stroke-width="1" />
+<text x="430" y="285" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">GND</text>
+</g>
+<g>
+<rect x="510" y="90" width="130" height="170" fill="#2a1a3e" stroke="#ce93d8" stroke-width="1.5" rx="4" />
+<text x="575.0" y="175.0" font-size="11" fill="#ce93d8" font-family="monospace" font-weight="bold" text-anchor="middle" dominant-baseline="central">74AHCT125</text>
+<circle cx="507" cy="124.0" r="3" fill="#ce93d8" />
+<text x="516" y="124.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="start" dominant-baseline="central">1A</text>
+<circle cx="507" cy="158.0" r="3" fill="#ce93d8" />
+<text x="516" y="158.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="start" dominant-baseline="central">2A</text>
+<circle cx="507" cy="192.0" r="3" fill="#ce93d8" />
+<text x="516" y="192.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="start" dominant-baseline="central">nOE1</text>
+<circle cx="507" cy="226.0" r="3" fill="#ce93d8" />
+<text x="516" y="226.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="start" dominant-baseline="central">nOE2</text>
+<circle cx="643" cy="124.0" r="3" fill="#ce93d8" />
+<text x="634" y="124.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">1Y</text>
+<circle cx="643" cy="158.0" r="3" fill="#ce93d8" />
+<text x="634" y="158.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">2Y</text>
+<circle cx="643" cy="192.0" r="3" fill="#ce93d8" />
+<text x="634" y="192.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">VCC</text>
+<circle cx="643" cy="226.0" r="3" fill="#ce93d8" />
+<text x="634" y="226.0" font-size="9" fill="#888899" font-family="monospace" font-weight="normal" text-anchor="end" dominant-baseline="central">GND</text>
+<text x="575.0" y="274" font-size="9" fill="#ce93d8" font-family="monospace" font-weight="normal" text-anchor="middle" dominant-baseline="central">Level Shifter</text>
+</g>
+<path d="M440,140 L455.0,140 L455.0,124.0 L510,124.0" stroke="#43a047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<rect x="437.0" y="123.0" width="36" height="18" fill="#1e3a5f" stroke="#43a047" stroke-width="1" rx="3" />
+<text x="455.0" y="132.0" font-size="8" fill="#43a047" font-family="monospace" text-anchor="middle" dominant-baseline="central">330Ω</text>
+<path d="M440,180 L455.0,180 L455.0,158.0 L510,158.0" stroke="#26c6da" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<rect x="437.0" y="160.0" width="36" height="18" fill="#1e3a5f" stroke="#26c6da" stroke-width="1" rx="3" />
+<text x="455.0" y="169.0" font-size="8" fill="#26c6da" font-family="monospace" text-anchor="middle" dominant-baseline="central">330Ω</text>
+<path d="M640,124.0 L720,124.0" stroke="#43a047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<rect x="720" y="110.0" width="80" height="28" fill="#1a1a2e" stroke="#43a047" stroke-width="1" rx="4" />
+<text x="760" y="124.0" font-size="9" fill="#43a047" font-family="monospace" text-anchor="middle" dominant-baseline="central">JST → LAMP 1</text>
+<path d="M640,158.0 L720,158.0" stroke="#26c6da" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<rect x="720" y="144.0" width="80" height="28" fill="#1a1a2e" stroke="#26c6da" stroke-width="1" rx="4" />
+<text x="760" y="158.0" font-size="9" fill="#26c6da" font-family="monospace" text-anchor="middle" dominant-baseline="central">JST → LAMP 2</text>
+<path d="M440,260 L575.0,260 L575.0,85 L620,85" stroke="#e53935" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<path d="M440,285 L585.0,285 L585.0,265 L620,265" stroke="#424242" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<path d="M160,105 L240,105 L240,260 L240,260" stroke="#e53935" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<path d="M160,140 L220,140 L220,285 L240,285" stroke="#424242" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+<g>
+<path d="M30,590 L60,590" stroke="#e53935" stroke-width="3" stroke-linecap="round" />
+<text x="68" y="590" font-size="9" fill="#888899" font-family="monospace" dominant-baseline="central">+5 V power rail</text>
+<path d="M30,610 L60,610" stroke="#424242" stroke-width="3" stroke-linecap="round" />
+<text x="68" y="610" font-size="9" fill="#888899" font-family="monospace" dominant-baseline="central">GND</text>
+<path d="M30,630 L60,630" stroke="#43a047" stroke-width="3" stroke-linecap="round" />
+<text x="68" y="630" font-size="9" fill="#888899" font-family="monospace" dominant-baseline="central">DATA (Lamp 1)</text>
+<path d="M30,650 L60,650" stroke="#26c6da" stroke-width="3" stroke-linecap="round" />
+<text x="68" y="650" font-size="9" fill="#888899" font-family="monospace" dominant-baseline="central">DATA (Lamp 2)</text>
+<path d="M30,670 L60,670" stroke="#ce93d8" stroke-width="3" stroke-linecap="round" />
+<text x="68" y="670" font-size="9" fill="#888899" font-family="monospace" dominant-baseline="central">3.3→5V level-shifted</text>
+</g>
+</svg>
