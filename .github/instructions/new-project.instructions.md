@@ -27,7 +27,7 @@ Then work through these steps **in order**:
 4. **`gen_diagrams_config.py`** — copy from `reefs/gen_diagrams_config.py`, update values
 5. **`gen_diagrams.py`** — copy from `reefs/gen_diagrams.py`, update project import path
 6. **`firmware/cfg.json`** — set a unique mDNS hostname: `"id": {"mdns": "<project-name>"}` and ensure `"nw": {"mdns": 1}`
-7. **`README.md`** (project level) — brief overview, link to specs.md
+7. **`README.md`** (project level) — full project README following the **Project README Structure** standard below: concept images first, documentation index table, wiring diagrams, build checklist
 8. **`README.md`** (repo root) — add a row to the Projects table
 
 ## specs.md Structure
@@ -78,6 +78,36 @@ Four types are produced by `python tools/gen_diagrams.py <project>`:
 | `concept` | `concept.py` | `concept-side-view.png`, `concept-top-view.png` | Real-world visualisation: cross-section of lamp on wall (side), floor-plan with lamp positions and cable run (top) |
 | `wiring` | `wiring.py` | `wiring-physical.svg` (+ `.png`) | Color-coded physical wiring: ESP32 pins → level shifter → JST connectors |
 | `schematic` | `schematic.py` | `schematic-level-shifter.png`, `schematic-power.png` | Electrical schematics: level-shifter gate circuit and power distribution |
+
+## Project README Structure
+
+Every project `README.md` **must** follow this section order:
+
+1. **Title + one-liner** — `# Project Name` and a `>` blockquote tagline
+2. **Concept section** — 2–3 sentences describing the lighting effect and installation, immediately followed by the three concept images:
+   - `docs/concept-side-view.png` — real-world cross-section of the lamp/object
+   - `docs/concept-top-view.png` — floor-plan with installation positions and cable run
+   - `docs/concept-system.png` — system block diagram (PSU → ESP32 → strips → HA)
+3. **Quick Facts table** — board, LED type, LED count, PSU, WLED version, smart-home target
+4. **Documentation Index table** — one row per document that physically exists in the project, linking to:
+   - `specs.md`
+   - `hardware/bom/bom.md`
+   - `hardware/wiring/WIRING.md`
+   - `design/led-map/LED-DESIGN.md`
+   - `design/effects/ha-automations.yaml`
+   - `mechanical/enclosure/MODELS.md` (when enclosure exists)
+   - `firmware/platformio_override.ini`
+   - `firmware/cfg.json`
+   - `firmware/presets.json`
+5. **Wiring & Schematics section** — embed `docs/wiring-physical.svg`, then a two-column table containing `docs/schematic-level-shifter.png` and `docs/schematic-power.png`; include a text link to `hardware/wiring/WIRING.md` for the GPIO table
+6. **Build Checklist** — project-specific MVP steps as a task list
+7. **Resources** — at minimum link to `specs.md`, WLED Docs, and WLED GitHub
+
+**Rules:**
+- Concept images must appear **before** the Quick Facts table — visuals communicate the idea before the spec details.
+- If diagrams have not been generated yet, keep the `![](docs/...)` image tags in place and add a callout: `> Run \`python tools/gen_diagrams.py <project>\` to generate these images.`
+- Only link files that physically exist. Remove links to empty stubs from the Documentation Index.
+- Do not hand-edit anything in `docs/` — regenerate via `python tools/gen_diagrams.py <project>`.
 
 ## README.md Projects Table
 

@@ -50,7 +50,28 @@ Scaffold a new WLED project in this repository.
    # Add example automations here once hacs-wledext-effects effects are configured
    ```
 
-8. Update root `README.md`:
+8. Edit `$PROJECT_NAME/README.md` with the correct project README structure:
+
+   **Section order (required):**
+   1. `# $PROJECT_NAME` title and `>` one-liner tagline
+   2. **Concept** section — 2–3 sentences, then three image embeds with a generate note:
+      ```markdown
+      ![Side-view cross-section](docs/concept-side-view.png)
+      ![Top-down floor plan](docs/concept-top-view.png)
+      ![System block diagram](docs/concept-system.png)
+      > Run `python tools/gen_diagrams.py $PROJECT_NAME` from the repo root to generate these images.
+      ```
+   3. **Quick Facts** table — board, `$LED_TYPE`, count, PSU, WLED version, Home Assistant
+   4. **Documentation Index** table — link every file that will exist:
+      `specs.md`, `hardware/bom/bom.md`, `hardware/wiring/WIRING.md`,
+      `design/led-map/LED-DESIGN.md`, `design/effects/ha-automations.yaml`,
+      `firmware/platformio_override.ini`, `firmware/cfg.json`, `firmware/presets.json`
+   5. **Wiring & Schematics** section — embed `docs/wiring-physical.svg`, two-column table with
+      `docs/schematic-level-shifter.png` and `docs/schematic-power.png`, link to `hardware/wiring/WIRING.md`
+   6. **Build Checklist** — project-specific MVP steps (flash, bench-test, assemble, configure WLED, add to HA, mount, thermal soak)
+   7. **Resources** — link `specs.md`, WLED Docs, WLED GitHub
+
+9. Update root `README.md`:
    - Add a row to the Projects table: `| [$PROJECT_NAME](./$PROJECT_NAME/) | planning | $LED_TYPE × $LED_COUNT | $DESCRIPTION |`
 
 ## Constraints
@@ -58,3 +79,4 @@ Scaffold a new WLED project in this repository.
 - Do not create any files outside `$PROJECT_NAME/` and `README.md`
 - Do not modify `_template/` — only copy from it
 - Do not run `gen_diagrams.py` yet — leave that for after hardware config is finalised
+- Keep `![](docs/...)` image tags in the README even though images do not exist yet; the generate note explains this
