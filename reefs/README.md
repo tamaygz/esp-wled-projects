@@ -45,11 +45,12 @@ Power and data flow from mains → PSU → ESP32 + level shifter → both lamps,
 
 ## Control Box Enclosure
 
-The 3D project file is at [`3d/CustomProjectEnclosureV1.7.8b.3mf`](3d/CustomProjectEnclosureV1.7.8b.3mf).
+The BambuStudio project file is at [`mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf`](mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf).
 
-![Control box — isometric preview](3d/case-preview.png)
+![Control box — isometric preview](mechanical/enclosure/case-preview.png)
 
-> Printed in PETG or ASA. Ventilation slots on all sides for PSU convection. IEC C14 inlet cutout, USB-C access port for OTA recovery, and two PG9 cable glands for the lamp runs.
+> Printed in PETG or ASA. Ventilation slots on all sides for PSU convection. IEC C14 inlet cutout, USB-C access port for OTA recovery, and two PG9 cable glands for the lamp runs.  
+> Full print settings and cutout dimensions: [`mechanical/enclosure/MODELS.md`](mechanical/enclosure/MODELS.md).
 
 ---
 
@@ -71,6 +72,7 @@ Full PRD with wiring diagrams, BOM, power budget, and WLED config: **[specs.md](
 | [§8.5 — WLED Configuration](specs.md#85-wled-configuration) | GPIO assignments, LED count, colour order |
 | [§8.6 — GPIO Pin Assignment](specs.md#86-gpio-pin-assignment-esp32) | Safe pins, strapping pin warnings |
 | [§8.7 — Enclosure Design](specs.md#87-3d-printed-enclosure-design-spec) | Print spec, dimensions, cutouts |
+| [§8.8 — Home Assistant](specs.md#88-home-assistant-integration) | HA entity IDs, mDNS config, automation examples |
 | [§9 — Milestones](specs.md#9-milestones--roadmap) | 11-step MVP checklist + v1.1/v2 roadmap |
 
 ---
@@ -95,15 +97,35 @@ Full PRD with wiring diagrams, BOM, power budget, and WLED config: **[specs.md](
 
 ```
 reefs/
-├── README.md          ← this file
-├── specs.md           ← full PRD (wiring, BOM, WLED config)
-├── docs/
-│   ├── concept-side-view.png   ← cross-section lighting concept
-│   ├── concept-top-view.png    ← floor plan with cable runs
-│   └── concept-system.png      ← system block diagram
-└── 3d/
-    ├── CustomProjectEnclosureV1.7.8b.3mf   ← BambuStudio project
-    ├── case-preview.png                     ← isometric render
-    ├── case-top.png                         ← top-view render
-    └── gen_diagrams.py                      ← generates docs/ concept PNGs
+├── firmware/
+│   ├── platformio_override.ini   ← WLED build config (env:reefs)
+│   ├── cfg.json                  ← WLED device config (mDNS, outputs, boot preset)
+│   └── presets.json              ← Exported WLED presets
+├── hardware/
+│   ├── bom/
+│   │   └── bom.md                ← 16-item BOM with power budget
+│   └── wiring/
+│       └── WIRING.md             ← Wiring notes, GPIO table, references to diagrams
+├── mechanical/
+│   └── enclosure/
+│       ├── CustomProjectEnclosureV1.7.8b.3mf  ← BambuStudio project
+│       ├── case-preview.png
+│       ├── case-top.png
+│       └── MODELS.md             ← Print settings, cutout dimensions
+├── design/
+│   ├── led-map/
+│   │   └── LED-DESIGN.md         ← Segment plan, preset design, white channel strategy
+│   └── effects/
+│       └── ha-automations.yaml   ← Example HA automations and Reef Scene script
+├── docs/                         ← Auto-generated diagrams (do not hand-edit)
+│   ├── concept-side-view.png
+│   ├── concept-top-view.png
+│   ├── concept-system.png
+│   ├── schematic-level-shifter.png
+│   ├── schematic-power.png
+│   └── wiring-physical.svg
+├── gen_diagrams.py               ← Diagram generation entry point (uses tools/diagram_gen)
+├── gen_diagrams_config.py        ← DIAGRAM_CONFIG dict for this project
+├── README.md                     ← this file
+└── specs.md                      ← Full PRD (wiring, BOM, WLED config, HA integration)
 ```

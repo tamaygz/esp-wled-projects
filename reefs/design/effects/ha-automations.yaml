@@ -1,0 +1,79 @@
+# Home Assistant Automations — Reefs
+
+# Example automations for the Reefs driftwood ambient lamps.
+# Import via: Settings → Automations & Scenes → ⋮ → Import Blueprint / paste YAML.
+#
+# Entity IDs — adjust to match your HA instance after WLED auto-discovery:
+#   light.reef_lamps_lamp_1     — Lamp 1 (Driftwood A)
+#   light.reef_lamps_lamp_2     — Lamp 2 (Driftwood B)
+#   light.reef_lamps            — Both lamps (master entity)
+#
+# Preset IDs reference firmware/presets.json:
+#   1 = Warm Ambient (boot preset)
+#   2 = Reef Calm
+#   3 = Night Glow
+
+automation:
+  - id: reefs_sunset_on
+    alias: "Reefs — Turn on at sunset"
+    description: "Activate warm ambient preset on both lamps 30 minutes before sunset."
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: "-00:30:00"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reef_lamps_lamp_1
+            - light.reef_lamps_lamp_2
+        data:
+          effect: "Warm Ambient"
+          brightness_pct: 40
+    mode: single
+
+  - id: reefs_dim_late_evening
+    alias: "Reefs — Dim at 23:00"
+    description: "Reduce to Night Glow preset at 23:00."
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reef_lamps_lamp_1
+            - light.reef_lamps_lamp_2
+        data:
+          effect: "Night Glow"
+          brightness_pct: 10
+    mode: single
+
+  - id: reefs_off_midnight
+    alias: "Reefs — Turn off at midnight"
+    description: "Turn both lamps off at 00:00."
+    trigger:
+      - platform: time
+        at: "00:00:00"
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.reef_lamps
+    mode: single
+
+script:
+  reef_scene:
+    alias: "Reef Scene"
+    description: "Activate slow warm ambient preset on both lamps simultaneously."
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.reef_lamps_lamp_1
+            - light.reef_lamps_lamp_2
+        data:
+          effect: "Warm Ambient"
+          brightness_pct: 40
+          transition: 2
+    mode: restart
+    max_exceeded: silent
