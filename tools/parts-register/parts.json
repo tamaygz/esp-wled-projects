@@ -155,6 +155,218 @@
       ],
       "source_url": "https://cdn-shop.adafruit.com/product-files/1138/SK6812+LED+datasheet+.pdf",
       "verified": true
+    },
+    "ESP32_DEVKITC_V4": {
+      "name": "ESP32-DevKitC V4 Development Board",
+      "manufacturer": "Espressif Systems",
+      "mfr_part_number": "ESP32-DevKitC-32E",
+      "category": "microcontroller",
+      "pcb_or_body_mm": { "l": 55.3, "w": 28.0, "h": 12.9 },
+      "mounting_holes": [],
+      "cutouts_needed": [
+        {
+          "label": "Micro-USB port (short edge, USB end)",
+          "l": 8.0,
+          "w": 4.0,
+          "x_from_left": 10.1,
+          "y_from_bottom": 0.0,
+          "note": "Approximate; measure your board before committing to a cutout"
+        }
+      ],
+      "key_notes": [
+        "38 pins total: 19 per row, 2.54mm pin pitch, row spacing 25.4mm (1 inch)",
+        "No mounting holes — use friction pocket or printed rail clips in enclosure",
+        "Official Espressif version uses CP2102 USB-UART; clones use CH340C or CH9102F",
+        "Module: ESP32-WROOM-32E (or -32D/-32UE on some board revisions)",
+        "USB port: Micro-USB on official Espressif DevKitC V4 (not USB-C)",
+        "Height 12.9mm includes male pin headers and WROOM module dome",
+        "LCSC C701341 is the bare ESP32-WROOM-32E-N4 module (SMD 18×25.5mm) — NOT this board",
+        "Strapping pins: GPIO0 (BOOT btn), GPIO2, GPIO12, GPIO15 — do not pull at power-on",
+        "GPIO6–11: wired to internal SPI flash in WROOM module — NEVER use for GPIO",
+        "GPIO34–39: input-only, no internal pullup/pulldown",
+        "GPIO1 (TX0) and GPIO3 (RX0): shared with USB-UART bridge — avoid in production code",
+        "WLED: use GPIO2 or GPIO16 for LED data; avoid GPIO0, 2, 12, 15 for inputs"
+      ],
+      "software_identifiers": {
+        "platformio_board": "esp32dev",
+        "arduino_board_name": "ESP32 Dev Module",
+        "esphome_board": "esp32dev",
+        "wled_target": "esp32dev (default WLED build target)"
+      },
+      "board_pinout": {
+        "image_url": "https://docs.espressif.com/projects/esp-dev-kits/en/latest/_images/esp32-devkitC-v4-pinout.png",
+        "source_url": "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html",
+        "notes": "38-pin layout. Row L = left when USB at top; Row R = right. Position 1 = closest to USB connector.",
+        "pins": [
+          { "silkscreen": "3V3",     "row": "L", "pos": 1,  "gpio": null, "aliases": [],           "caps": ["pwr_out_3v3"],        "warnings": [] },
+          { "silkscreen": "EN",      "row": "L", "pos": 2,  "gpio": null, "aliases": [],           "caps": ["chip_enable"],        "warnings": ["active high; connected to EN button via RC"] },
+          { "silkscreen": "VP",      "row": "L", "pos": 3,  "gpio": 36,   "aliases": ["IO36"],     "caps": ["adc1_ch0"],           "warnings": ["input-only — no internal pullup/pulldown"] },
+          { "silkscreen": "VN",      "row": "L", "pos": 4,  "gpio": 39,   "aliases": ["IO39"],     "caps": ["adc1_ch3"],           "warnings": ["input-only — no internal pullup/pulldown"] },
+          { "silkscreen": "IO34",    "row": "L", "pos": 5,  "gpio": 34,   "aliases": [],           "caps": ["adc1_ch6"],           "warnings": ["input-only — no internal pullup/pulldown"] },
+          { "silkscreen": "IO35",    "row": "L", "pos": 6,  "gpio": 35,   "aliases": [],           "caps": ["adc1_ch7"],           "warnings": ["input-only — no internal pullup/pulldown"] },
+          { "silkscreen": "IO32",    "row": "L", "pos": 7,  "gpio": 32,   "aliases": [],           "caps": ["adc1_ch4","touch9","xtal_32k_p","i/o"],  "warnings": [] },
+          { "silkscreen": "IO33",    "row": "L", "pos": 8,  "gpio": 33,   "aliases": [],           "caps": ["adc1_ch5","touch8","xtal_32k_n","i/o"],  "warnings": [] },
+          { "silkscreen": "IO25",    "row": "L", "pos": 9,  "gpio": 25,   "aliases": [],           "caps": ["adc2_ch8","dac1","i/o"],  "warnings": [] },
+          { "silkscreen": "IO26",    "row": "L", "pos": 10, "gpio": 26,   "aliases": [],           "caps": ["adc2_ch9","dac2","i/o"],  "warnings": [] },
+          { "silkscreen": "IO27",    "row": "L", "pos": 11, "gpio": 27,   "aliases": [],           "caps": ["adc2_ch7","touch7","i/o"],  "warnings": [] },
+          { "silkscreen": "IO14",    "row": "L", "pos": 12, "gpio": 14,   "aliases": [],           "caps": ["adc2_ch6","touch6","hspi_clk","i/o"],  "warnings": ["strapping pin — affects boot log if pulled; safe for GPIO after boot"] },
+          { "silkscreen": "IO12",    "row": "L", "pos": 13, "gpio": 12,   "aliases": [],           "caps": ["adc2_ch5","touch5","hspi_miso","i/o"],  "warnings": ["strapping pin — HIGH at power-on causes boot failure; use only after boot or leave floating"] },
+          { "silkscreen": "GND",     "row": "L", "pos": 14, "gpio": null, "aliases": [],           "caps": ["gnd"],                "warnings": [] },
+          { "silkscreen": "IO13",    "row": "L", "pos": 15, "gpio": 13,   "aliases": [],           "caps": ["adc2_ch4","touch4","hspi_id","i/o"],  "warnings": [] },
+          { "silkscreen": "SD2",     "row": "L", "pos": 16, "gpio": 9,    "aliases": ["IO9"],      "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] },
+          { "silkscreen": "SD3",     "row": "L", "pos": 17, "gpio": 10,   "aliases": ["IO10"],     "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] },
+          { "silkscreen": "CMD",     "row": "L", "pos": 18, "gpio": 11,   "aliases": ["IO11"],     "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] },
+          { "silkscreen": "VIN",     "row": "L", "pos": 19, "gpio": null, "aliases": [],           "caps": ["pwr_in_5v"],          "warnings": ["5V input — connects to onboard LDO; do not exceed 5.5V"] },
+          { "silkscreen": "GND",     "row": "R", "pos": 1,  "gpio": null, "aliases": [],           "caps": ["gnd"],                "warnings": [] },
+          { "silkscreen": "IO23",    "row": "R", "pos": 2,  "gpio": 23,   "aliases": [],           "caps": ["vspi_mosi","i/o"],     "warnings": [] },
+          { "silkscreen": "IO22",    "row": "R", "pos": 3,  "gpio": 22,   "aliases": [],           "caps": ["vspi_clk","i2c_scl","i/o"],  "warnings": [] },
+          { "silkscreen": "TXD0",    "row": "R", "pos": 4,  "gpio": 1,    "aliases": ["IO1","TX0"],"caps": ["uart0_tx","i/o"],      "warnings": ["shared with USB-UART bridge; Serial.print() uses this pin"] },
+          { "silkscreen": "RXD0",    "row": "R", "pos": 5,  "gpio": 3,    "aliases": ["IO3","RX0"],"caps": ["uart0_rx","i/o"],      "warnings": ["shared with USB-UART bridge"] },
+          { "silkscreen": "IO21",    "row": "R", "pos": 6,  "gpio": 21,   "aliases": [],           "caps": ["vspi_hd","i2c_sda","i/o"],  "warnings": [] },
+          { "silkscreen": "GND",     "row": "R", "pos": 7,  "gpio": null, "aliases": [],           "caps": ["gnd"],                "warnings": [] },
+          { "silkscreen": "IO19",    "row": "R", "pos": 8,  "gpio": 19,   "aliases": [],           "caps": ["vspi_miso","i/o"],     "warnings": [] },
+          { "silkscreen": "IO18",    "row": "R", "pos": 9,  "gpio": 18,   "aliases": [],           "caps": ["vspi_clk","i/o"],      "warnings": [] },
+          { "silkscreen": "IO5",     "row": "R", "pos": 10, "gpio": 5,    "aliases": [],           "caps": ["vspi_cs0","i/o"],      "warnings": ["strapping pin — affects SPI boot mode; safe after boot"] },
+          { "silkscreen": "IO17",    "row": "R", "pos": 11, "gpio": 17,   "aliases": [],           "caps": ["uart2_tx","i/o"],      "warnings": [] },
+          { "silkscreen": "IO16",    "row": "R", "pos": 12, "gpio": 16,   "aliases": [],           "caps": ["uart2_rx","i/o"],      "warnings": [] },
+          { "silkscreen": "IO4",     "row": "R", "pos": 13, "gpio": 4,    "aliases": [],           "caps": ["adc2_ch0","touch0","i/o"],  "warnings": [] },
+          { "silkscreen": "IO0",     "row": "R", "pos": 14, "gpio": 0,    "aliases": [],           "caps": ["adc2_ch1","touch1","i/o"],  "warnings": ["strapping pin / BOOT button — LOW at power-on enters download mode; avoid external pulldown"] },
+          { "silkscreen": "IO2",     "row": "R", "pos": 15, "gpio": 2,    "aliases": [],           "caps": ["adc2_ch2","touch2","i/o"],  "warnings": ["strapping pin — must not be HIGH at boot; onboard LED on some boards"] },
+          { "silkscreen": "IO15",    "row": "R", "pos": 16, "gpio": 15,   "aliases": [],           "caps": ["adc2_ch3","touch3","hspi_cs","i/o"],  "warnings": ["strapping pin — affects U0TXD/boot log verbosity; safe after boot"] },
+          { "silkscreen": "SD1",     "row": "R", "pos": 17, "gpio": 8,    "aliases": ["IO8"],      "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] },
+          { "silkscreen": "SD0",     "row": "R", "pos": 18, "gpio": 7,    "aliases": ["IO7"],      "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] },
+          { "silkscreen": "CLK",     "row": "R", "pos": 19, "gpio": 6,    "aliases": ["IO6"],      "caps": [],                     "warnings": ["tied to internal SPI flash in WROOM — DO NOT USE for GPIO"] }
+        ]
+      },
+      "source_url": "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html",
+      "verified": true
+    },
+    "ESP32_WROOM32E_MODULE": {
+      "name": "ESP32-WROOM-32E 4MB Wi-Fi/BT Module",
+      "manufacturer": "Espressif Systems",
+      "mfr_part_number": "ESP32-WROOM-32E-N4",
+      "category": "wifi_module",
+      "pcb_or_body_mm": { "l": 25.5, "w": 18.0, "h": 3.1 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "LCSC C701341 — SMD module; solders directly onto carrier PCB via castellated pads",
+        "Contains ESP32-D0WD-V3 dual-core Xtensa LX6 @ 240MHz, 4MB SPI flash, 520KB SRAM",
+        "Wireless: Wi-Fi 802.11b/g/n 2.4GHz + Bluetooth 4.2/BLE",
+        "PCB antenna on one short end — maintain antenna keep-out zone (3D clear zone above antenna area)",
+        "38 castellated pads at 1.27mm pitch on three sides of the module",
+        "Supply voltage 3.0–3.6V; absolute max 3.9V — do NOT connect 5V directly",
+        "GPIO6–11 are routed to the internal SPI flash — unavailable for user GPIO",
+        "GPIO34–39 are input-only with no internal pullup/pulldown resistors",
+        "This is the MODULE ONLY — see ESP32_DEVKITC_V4 for the full development board entry"
+      ],
+      "software_identifiers": {
+        "platformio_board": "esp32dev",
+        "arduino_board_name": "ESP32 Dev Module",
+        "esphome_board": "esp32dev"
+      },
+      "source_url": "https://www.lcsc.com/product-detail/WiFi-Modules_Espressif-Systems-ESP32-WROOM-32E-N4_C701341.html",
+      "verified": true
+    },
+    "AL_LED_CHANNEL_12MM": {
+      "name": "Aluminium U-Profile LED Channel 12mm Inner Width with Diffuser",
+      "manufacturer": "Various (QSG-1707 / LUMINES Type-Z profile)",
+      "mfr_part_number": "QSG-1707",
+      "category": "led_accessory",
+      "pcb_or_body_mm": { "l": 1000.0, "w": 17.4, "h": 7.6 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Per-metre dimensions; cut to any length on-site with a mitre saw",
+        "Outer cross-section: W 17.4mm × H 7.6mm; inner channel width 12.3mm",
+        "Accepts LED strips up to 12mm wide (e.g. SK6812 60 LED/m at 10mm wide)",
+        "Material: 6063-T5 aluminium alloy, silver anodised (black anodised also available)",
+        "Diffuser options: PC opal 60–65% transmittance, semi-clear 70–80%, clear; diffuser push-fits into channel grooves",
+        "Mounting: 2× spring clips per metre for surface or recessed mount; self-adhesive tape also available",
+        "End caps supplied: 1× with wire exit hole, 1× solid per channel length",
+        "Acts as heat spreader — conducts heat away from LED strip and mounting surface (wood, fabric)",
+        "LUMINES Type-Z is functionally identical (same cross-section standard); widely sold as 'LED aluminium profile U type'"
+      ],
+      "source_url": "https://www.superlightingled.com/light-diffuser-aluminum-led-profile-for-12mm-flexible-led-strip-lights-p-4554.html",
+      "verified": true
+    },
+    "KF2EDG_3POS_508": {
+      "name": "KF2EDGK/KF2EDGR Pluggable Terminal Block 3-Position 5.08mm Pitch",
+      "manufacturer": "Cixi Kefa Electronics",
+      "mfr_part_number": "KF2EDGR-5.08-3P",
+      "category": "connector",
+      "pcb_or_body_mm": { "l": 16.2, "w": 8.5, "h": 12.5 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "LCSC C441205 (KF2EDGR-5.08-3P, right-angle PCB header / socket side)",
+        "Plug (wire side KF2EDGK-5.08-3P): 16.2mm L × 8.5mm W × 12.5mm H (approx — verified: false)",
+        "PCB header (board side KF2EDGR-5.08-3P): right-angle, 16.2mm L × 8.5mm W × 8.5mm above PCB",
+        "Pitch 5.08mm; 3 positions; overall footprint length = 2×5.08 + 6mm ≈ 16.2mm",
+        "Rated 320V, 15A; wire range AWG 12–24 (0.2–2.5mm²); temperature −40°C to +105°C",
+        "Body material PA66, UL94 V-0; colour green",
+        "Phoenix Contact MKDS/MC equivalents (compatible footprint and cross-mating)",
+        "Dimensions are estimated from 5.08mm pitch standard geometry — confirm from Cixi Kefa datasheet before PCB layout"
+      ],
+      "source_url": "https://www.lcsc.com/product-detail/C441205.html",
+      "verified": false
+    },
+    "FUSE_HOLDER_5X20_INLINE": {
+      "name": "Inline Wire-Mount 5×20mm Blade Fuse Holder with Screw Cap",
+      "manufacturer": "Various",
+      "mfr_part_number": null,
+      "category": "protection",
+      "pcb_or_body_mm": { "l": 38.0, "w": 13.0, "h": 13.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Inline (in-line) type with screw-off cap; mounts directly in wire run — no PCB required",
+        "Body approx 38mm long × Ø13mm diameter; accepts standard IEC 5mm×20mm glass or ceramic fuse",
+        "Rated typically 10A/250Vac (check specific product); wire gauge typically 18–16AWG leads",
+        "Weatherproof versions have a rubber seal inside the cap (recommended for LED enclosures)",
+        "Dimensions are estimated from common inline fuse holder geometry — confirm before enclosure cutout",
+        "Common LCSC equivalents: search 'inline fuse holder 5x20'; Schurter 0031.8401 is a quality branded option"
+      ],
+      "source_url": "https://www.schurter.com/en/Products/Fuse-Holders/Panel-Mount-Holders/Series/0031.8401",
+      "verified": false
+    },
+    "CAP_1000UF_10V_RADIAL": {
+      "name": "Aluminium Electrolytic Capacitor 1000µF 10V Radial (105°C)",
+      "manufacturer": "Various (Nichicon, Rubycon, KEMET equiv.)",
+      "mfr_part_number": null,
+      "category": "passive",
+      "pcb_or_body_mm": { "l": 12.5, "w": 10.0, "h": 10.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Standard dimensions: body Ø10mm × H12.5mm; lead pitch 5.0mm (confirmed by multiple retailers for 105°C series)",
+        "Capacitance: 1000µF; rated voltage 10V; tolerance ±20%",
+        "Operating temperature: −40°C to +105°C (standard general-purpose 105°C grade)",
+        "Lead pitch: 5.0mm; lead diameter: ~0.6mm",
+        "Used at LED strip power rail for decoupling — place within 10cm of first LED",
+        "Common LCSC alternatives: Nichicon UMW1A102MDD, Rubycon 10ZLJ1000M10X16, LCSC C59461",
+        "pcb_or_body_mm.l stores the body height (12.5mm); .w and .h both store body diameter (10mm)"
+      ],
+      "source_url": "https://www.taydaelectronics.com/1000uf-10v-105c-radial-electrolytic-capacitor-10x12-5mm.html",
+      "verified": true
+    },
+    "RES_330R_025W_AXIAL": {
+      "name": "330Ω ¼W Metal Film Through-Hole Resistor",
+      "manufacturer": "Various (CCO, UNI-ROYAL, Yageo equiv.)",
+      "mfr_part_number": null,
+      "category": "passive",
+      "pcb_or_body_mm": { "l": 3.5, "w": 2.0, "h": 2.0 },
+      "mounting_holes": [],
+      "cutouts_needed": [],
+      "key_notes": [
+        "Standard CF/MF-1/4W axial body: Ø2.0mm × L3.5mm; standard lead pitch for mounting 10mm (bent leads)",
+        "330Ω ±1% metal film: LCSC C119313 (CCO MF1/4W-330Ω±1%); ±5% carbon film: LCSC C120043 (CCO CF1/4W-330Ω±5%)",
+        "IMPORTANT: LCSC C57436 is NOT 330Ω — it is a UNI-ROYAL 10kΩ ±1% 250mW metal film resistor (MFR0W4F1002A50); correct this in any BOM that lists C57436 as 330Ω",
+        "Used as series resistor on LED strip DIN to reduce ringing; 330Ω is sufficient for 1–5m runs",
+        "pcb_or_body_mm stores body only (L3.5mm × Ø2.0mm); actual PCB footprint uses 10mm lead pitch"
+      ],
+      "source_url": "https://www.lcsc.com/product-detail/C119313.html",
+      "verified": true
     }
   }
 }
