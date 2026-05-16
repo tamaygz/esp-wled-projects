@@ -15,15 +15,15 @@
 | 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | ~€0.30 | LCSC | C12494 | 3.3 V → 5 V for SK6812 data; 2 channels used |
 | 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | ~€0.50 ea | LCSC / local | — | One per lamp 5 V power run |
 | 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | <€0.20 ea | Local | — | 2 installed + 2 spare |
-| 10 | JST SM 3-pin connector (M+F pair) | 5 A rated | 2 pairs | ~€0.30/pair | LCSC | — | Detachable lamp connection point |
-| 11 | Screw terminal block | 5 mm pitch, 4-pos | 1 | ~€0.40 | LCSC | C396798 | PSU → bus distribution inside control box |
-| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm PETG/ASA | 1 | ~€2 filament | Self-printed | — | See `mechanical/enclosure/MODELS.md` |
-| 13 | M3 × 8 mm screws + brass inserts | — | 8 | ~€0.10 ea | Local | — | Mount ESP32 and PSU bracket |
-| 14 | IEC C14 inlet with switch + fuse | Chassis mount, 2 A slow-blow | 1 | ~€3 | LCSC / local | — | Mains entry to control box |
-| 15 | Heat-shrink tubing | 2 mm, 4 mm, 6 mm assorted | 1 pack | ~€2 | Local / AliExpress | — | Insulate all solder joints |
-| 16 | Cable gland PG9 | Nylon, IP54 | 2 | ~€0.50 ea | LCSC / local | — | One per lamp cable entry into enclosure |
+| 10 | JST SM 3-pin connector (M+F pair) | 2.5 mm pitch, 3 A rated | 2 pairs | ~€0.30/pair | on hand | — | **Female panel-mounted** in box wall pocket (lamp side male); V+/GND/DATA |
+| 11 | Phoenix-style pluggable terminal | 3-pos, 5.08 mm pitch, screw clamp (PCB header + plug) | 1 | (on hand) | on hand | — | Internal 5 V distribution (PSU → fuses); replaces classic screw terminal |
+| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm PETG/ASA | 1 | ~€2 filament | Self-printed | — | See `mechanical/enclosure/reefs-automatedvariant-enclosure-spec.md` |
+| 13 | M3 × 8 mm screws + brass inserts | — | 12 | ~€0.10 ea | Local | — | 4× ESP32 standoffs, 2× PSU bracket, **2× mains cable clamp**, 4× spare |
+| 14 | Schuko captive mains lead | H05VV-F 3×0.75 mm², CEE 7/7 plug, ≥ 1.5 m | 1 | ~€2 | Local / scavenged | — | Mains entry; outer jacket clamped inside box; conductors go to PSU L/N/PE screws |
+| 15 | Heat-shrink tubing | 2 mm, 4 mm, 6 mm assorted | 1 pack | ~€2 | Local / AliExpress | — | Insulate all solder joints; mandatory on every mains conductor |
+| 16 | Cable ties (zip-ties) | 2.5 × 100 mm | 1 pack | ~€1 | Local | — | Strain-relief anchors for 2× lamp cables inside box |
 
-> **Total estimated cost (excluding PSU):** ~€45–55 depending on local LED strip pricing. PSU is user-owned.
+> **Total estimated cost (excluding PSU):** ~€35–45 — drops vs. v1 because IEC C14 inlet, screw terminal block and PG9 glands are eliminated. PSU is user-owned.
 
 ---
 
@@ -53,3 +53,25 @@
 | Max current (1 m strip full load) | 3.6 A |
 | Voltage drop | **0.30 V** |
 | Strip supply voltage | **4.70 V** ✅ (SK6812 spec: 4.5–5.5 V) |
+
+---
+
+## Connector & Cable Entry Strategy
+
+No cable glands or IEC inlet used — all box penetrations are 3D-printed features in the enclosure SCAD.
+
+| Penetration | Hole | Strain relief | Connector |
+|---|---|---|---|
+| Mains AC entry (back wall) | Ø8 mm round | **Printed 2-screw cable clamp** (M3 inserts) pressing on jacket | None (captive Schuko lead); conductors → PSU L/N/PE screw terminals |
+| Lamp 1 output (left wall) | Rectangular pocket ~9.5 × 6 mm with internal shoulder | Connector body trapped by pocket shoulder + internal zip-tie | **Panel-mounted JST SM 3-pin female**; male plug from lamp cable inserts from outside |
+| Lamp 2 output (right wall) | Rectangular pocket ~9.5 × 6 mm with internal shoulder | As above | As above |
+| USB-C OTA (front wall) | 12 × 8 mm slot | n/a (cable accessed only during flashing) | ESP32 onboard USB-C |
+
+### JST SM 3-pin current headroom
+
+JST SM is rated 3 A/contact; worst-case per lamp is 3.6 A (60 LEDs × 60 mA at 100% white). Mitigations:
+
+- **WLED ABL** (auto brightness limiter) set to **2800 mA per output** in LED Preferences
+- **OR** cap UI max brightness at ~85% via boot preset
+
+Typical real-world ambient use (50% coloured) draws <1 A per lamp, so the headroom only matters for the synthetic worst case.

@@ -139,7 +139,7 @@ def draw_level_shifter_circuit(out_path: str) -> None:
 def draw_power_circuit(out_path: str) -> None:
     """
     Generate a power distribution schematic:
-    IEC C14 → fuse → terminal block → PSU → per-lamp fuse → LED strip.
+    Schuko lead → printed cable clamp → PSU → pluggable terminal → per-lamp fuse → LED strip.
     """
     import matplotlib.pyplot as plt
     style.apply_dark_theme()
@@ -163,9 +163,9 @@ def draw_power_circuit(out_path: str) -> None:
               .label("F1  2A\nSlow-blow", loc="top")
               .color(style.SCH_YLW))
 
-        # IEC C14 inlet (represented as a labelled line segment)
+        # Schuko captive lead enters via printed cable clamp (labelled line segment)
         d.add(elm.Line().right(1.5)
-              .label("IEC C14\nInlet", loc="top")
+              .label("Schuko lead\n+ printed clamp", loc="top")
               .color(style.SCH_WIRE))
 
         # PSU block (placed at current drawing position via .at())

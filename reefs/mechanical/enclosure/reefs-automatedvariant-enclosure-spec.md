@@ -46,10 +46,10 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 
 ## Wall Cutouts
 
-### Back wall — IEC C14 mains inlet
-- Opening: 28 × 48 mm (rectangle)
-- Centre: Y = 47 mm (centred on 94 mm inner width), Z = 25 mm from inner floor
-- Purpose: panel-mount IEC C14 inlet with built-in switch + fuse
+### Back wall — Schuko captive mains lead entry
+- Cable hole: Ø8 mm (circle), centre Y = 47 mm, Z = 30 mm
+- Clamp screw holes: 2× Ø3.2 mm at Y = 35 / 59 mm (12 mm each side of centre), Z = 30 mm
+- Purpose: captive Schuko H05VV-F 3×0.75 mm² lead jacket clamped by an external 2-screw printed clamp (M3 brass inserts)
 
 ### Front wall — USB-C OTA access
 - Opening: 12 × 8 mm (rectangle)
@@ -57,11 +57,12 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 - Purpose: cable access for ESP32 USB-C port during OTA flashing
 
 ### Left wall — Lamp 1
-- PG9 cable gland: Ø16 mm (radius 8), centre X = 72 mm, Z = 25 mm
+- JST SM panel-mount pocket: 9.5 × 6 mm rectangle, centre X = 72 mm, Z = 25 mm
+- Female JST SM 3-pin body is trapped from the inside; lamp male plug inserts from outside
 - Ventilation: 4 × (15 × 4 mm) slots at Z = 20 mm, X = 15, 40, 104, 129 mm
 
 ### Right wall — Lamp 2 (mirror of left)
-- PG9 cable gland: Ø16 mm (radius 8), centre X = 72 mm, Z = 25 mm
+- JST SM panel-mount pocket: 9.5 × 6 mm rectangle, centre X = 72 mm, Z = 25 mm
 - Ventilation: 4 × (15 × 4 mm) slots at Z = 20 mm, X = 15, 40, 104, 129 mm
 
 ## ESP32 Standoffs
@@ -109,10 +110,10 @@ entry and drop `ridgeHeight` back to 5.0 mm.
 | `REEFS` (bold) | Lid | centre | 10 mm |
 | `WLED v16 \| SK6812 RGBW` | Lid | centre | 6 mm |
 | `2x 60-LED Lamps \| 5V 10A PSU` | Lid | centre | 4 mm |
-| `POWER IN` (bold) | Back | above IEC cutout | 4 mm |
+| `MAINS` (bold) | Back | above cable entry | 4 mm |
 | `OTA` | Front | above USB-C cutout | 4 mm |
-| `LAMP 1` | Left | above PG9 | 4 mm |
-| `LAMP 2` | Right | above PG9 | 4 mm |
+| `LAMP 1` | Left | above JST pocket | 4 mm |
+| `LAMP 2` | Right | above JST pocket | 4 mm |
 
 ## Print Settings
 
@@ -150,8 +151,8 @@ openscad --render -o reefs-automatedvariant-lid.stl  \
 | Outer width | ≤ 100 mm | 100 mm ✓ |
 | Outer height | ≤ 60 mm | 59 mm ✓ |
 | ESP32 mount | 4× M3 standoffs | ✓ |
-| Mains entry | IEC C14 back wall | ✓ |
+| Mains entry | Captive Schuko lead via Ø8 mm hole + 2-screw clamp | ✓ |
 | OTA access | USB-C front wall | ✓ |
-| Cable glands | 2× PG9 (left + right) | ✓ |
+| Lamp ports | 2× JST SM panel-mount pockets (left + right) | ✓ |
 | Ventilation | 4 slots per side | ✓ |
 | Fasteners | tool-free | 4× snap-joins (no screws) ✓ |

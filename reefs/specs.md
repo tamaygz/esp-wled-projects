@@ -237,13 +237,13 @@ MAINS (230 V AC)
 | 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | 3.3 V → 5 V for SK6812 data; 2 channels used |
 | 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | One per lamp 5 V power run |
 | 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | 2 installed + 2 spare |
-| 10 | JST SM 3-pin connectors (M+F pair) | 5 A rated | 2 pairs | Detachable connection at lamp entry point |
-| 11 | Screw terminal block | 5 mm pitch, 4-pos | 1 | PSU → bus distribution in control box |
-| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm | 1 | See §8.5 |
-| 13 | M3 × 8 mm screws + brass inserts | — | 8 | Mount ESP32 and PSU bracket |
-| 14 | IEC C14 inlet with switch + fuse | Chassis mount, 2 A fuse | 1 | Mains entry to control box |
-| 15 | Heat-shrink tubing assorted | 2 mm, 4 mm, 6 mm | 1 pack | Insulate all solder joints |
-| 16 | Cable gland PG9 | Nylon, IP54 | 2 | One per lamp cable entry into enclosure |
+| 10 | JST SM 3-pin connectors (M+F pair) | 2.5 mm pitch, 3 A rated | 2 pairs | **Female panel-mounted** in box wall pocket; male plug on lamp cable end |
+| 11 | Phoenix-style pluggable terminal | 3-pos, 5.08 mm pitch screw-clamp (PCB header + plug) | 1 | Internal 5 V distribution from PSU → fuses; replaces classic fixed screw terminal |
+| 12 | 3D-printed enclosure | ~150 × 100 × 60 mm | 1 | See §8.7 |
+| 13 | M3 × 8 mm screws + brass inserts | — | 12 | 4× ESP32 standoffs, 2× PSU bracket, 2× mains cable clamp, 4× spare |
+| 14 | Schuko captive mains lead | H05VV-F 3×0.75 mm², CEE 7/7 plug, ≥ 1.5 m | 1 | Captive — jacket clamped inside box; conductors → PSU L/N/PE screw terminals |
+| 15 | Heat-shrink tubing assorted | 2 mm, 4 mm, 6 mm | 1 pack | Insulate all solder joints; mandatory on every mains conductor |
+| 16 | Cable ties | 2.5 × 100 mm | 1 pack | Internal strain-relief anchors for lamp cables |
 
 > **Strip length confirmed**: 1 m per lamp (60 LEDs each, 120 LEDs total). The strip should span the full driftwood rear face length minus ~5 mm clearance each end. Trim to fit after dry-fitting the aluminium channel.
 
@@ -265,18 +265,20 @@ MAINS (230 V AC)
 #### 8.4.1 Control Box Internal Wiring
 
 ```
-IEC C14 Inlet
-  ├── Live   ──▶  PSU L
-  ├── Neutral ──▶  PSU N
-  └── Earth  ──▶  PSU PE ──▶ enclosure ground screw
+Schuko captive lead (H05VV-F 3×0.75)
+  ├── Live (brown)     ──▶ PSU L screw
+  ├── Neutral (blue)   ──▶ PSU N screw
+  └── Earth (gn/yel)   ──▶ PSU PE screw
+  └── Outer jacket clamped by 3D-printed 2× M3 cable clamp (back wall)
 
-PSU +5V ──▶ Terminal Block V+
-PSU GND ──▶ Terminal Block GND
+PSU +5V ──▶ Pluggable terminal pin 1 (V+ bus)
+PSU GND ──▶ Pluggable terminal pin 2 (GND bus)
+              pin 3 = unused / spare
 
-Terminal Block V+  ──▶ [5A fuse] ──▶ JST Lamp 1 Pin 1 (5V)
-Terminal Block GND ──▶             ──▶ JST Lamp 1 Pin 2 (GND)
-Terminal Block V+  ──▶ [5A fuse] ──▶ JST Lamp 2 Pin 1 (5V)
-Terminal Block GND ──▶             ──▶ JST Lamp 2 Pin 2 (GND)
+V+ bus  ──▶ [5A fuse] ──▶ JST Lamp 1 Pin 1 (5V)
+GND bus ───────────────▶ JST Lamp 1 Pin 2 (GND)
+V+ bus  ──▶ [5A fuse] ──▶ JST Lamp 2 Pin 1 (5V)
+GND bus ───────────────▶ JST Lamp 2 Pin 2 (GND)
 
 ESP32 GPIO16 ──[330Ω]──▶ 74AHCT125 Channel A IN
                          74AHCT125 Channel A OUT ──▶ JST Lamp 1 Pin 3 (DATA)
@@ -284,11 +286,16 @@ ESP32 GPIO16 ──[330Ω]──▶ 74AHCT125 Channel A IN
 ESP32 GPIO17 ──[330Ω]──▶ 74AHCT125 Channel B IN
                          74AHCT125 Channel B OUT ──▶ JST Lamp 2 Pin 3 (DATA)
 
-74AHCT125 VCC ──▶ Terminal Block V+ (5V)
-74AHCT125 GND ──▶ Terminal Block GND
-ESP32 5V (Vin) ──▶ Terminal Block V+
-ESP32 GND     ──▶ Terminal Block GND
+74AHCT125 VCC ──▶ V+ bus (5V)
+74AHCT125 GND ──▶ GND bus
+74AHCT125 nOE ──▶ GND (always enabled)
+ESP32 5V (Vin) ──▶ V+ bus
+ESP32 GND      ──▶ GND bus
 ```
+
+**JST SM panel-mount detail:** female JST SM 3-pin pigtail is trapped from inside the box wall by a printed rectangular pocket (~9.5 × 6 mm with an internal shoulder lip). The connector body shoulders are wider than the cable hole, so the receptacle cannot pull through the wall. A zip-tie around the cable inside the box provides secondary strain relief. The male plug on the lamp cable inserts from outside the box.
+
+**Mains strain relief detail:** the Schuko lead enters through an 8 mm round hole in the back wall. Immediately inside the wall, a 3D-printed two-screw clamp (2× M3 brass inserts) compresses a rib onto the cable's outer jacket. Conductors continue ~80 mm to the PSU's L / N / PE screw terminals. No mains junction in air.
 
 #### 8.4.2 Lamp Cable (per lamp, 2 m run)
 
@@ -345,12 +352,12 @@ Pin 3  (26 AWG white) ──▶ LED strip DIN pad
 | Outer dimensions | ≤ 150 × 100 × 60 mm (L × W × H) |
 | Wall thickness | ≥ 2.5 mm (PETG or ASA recommended for thermal stability) |
 | Ventilation | ≥ 4 × 15 mm slot openings on each side (PSU convection) |
-| IEC inlet cutout | 28 × 48 mm (standard C14 panel mount) |
-| USB-C access port | 12 × 6 mm slot on enclosure side, aligned with ESP32 USB port |
-| Cable gland holes | 2 × PG9 knockouts (one per lamp cable) |
+| Mains entry (back wall) | **Ø8 mm round hole for captive Schuko lead** + **printed 2-screw cable clamp** (2× M3 inserts) immediately inside the wall |
+| USB-C access port (front wall) | 12 × 8 mm slot, aligned with ESP32 USB-C |
+| Lamp output ports (left/right walls) | **Rectangular pocket ~9.5 × 6 mm with internal shoulder** — traps the female JST SM 3-pin receptacle so the lamp male plug inserts from outside; 1 per side |
 | PCB standoffs | 4 × M3 brass heat-set inserts, 20 × 30 mm pattern for ESP32 DevKit |
-| Lid fastening | 4 × M3 screws, top-opening lid |
-| Strain relief | Cable glands PG9 provide strain relief; no additional clamps needed |
+| Lid fastening | Snap-on (4× snap-joins, tool-free) |
+| Strain relief | Mains: printed M3 cable clamp on jacket. Lamps: connector body trapped by pocket + internal zip-tie anchor on cable |
 
 > Source files: [`mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf`](mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf) — BambuStudio 3MF project.  
 > See [`mechanical/enclosure/MODELS.md`](mechanical/enclosure/MODELS.md) for full print profile.

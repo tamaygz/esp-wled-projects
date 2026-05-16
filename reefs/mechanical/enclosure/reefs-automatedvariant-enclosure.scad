@@ -80,9 +80,14 @@ pcbStands = [
 // about the wall midline). Width 15 mm per snap. Tool-free open/close.
 connectors = [];
 
-// ---- BACK wall: IEC C14 mains inlet (28x48 mm) ----
+// ---- BACK wall: Schuko captive mains lead entry (Ø8 mm) + 2x M3 clamp bosses ----
+// Round Ø8 mm hole for the cable jacket; flanked by two Ø3.2 mm screw holes
+// (12 mm pitch each side of centre) for a printed external cable clamp that
+// compresses the cable jacket with two M3 × 8 screws into brass inserts.
 cutoutsBack = [
-  [47, 25, 28, 48, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [47, 30, 0, 0, 4, yappCircle, 0, 0, yappCoordBoxInside, yappCenter],  // Ø8 cable hole
+  [35, 30, 0, 0, 1.6, yappCircle, 0, 0, yappCoordBoxInside, yappCenter],  // clamp screw L
+  [59, 30, 0, 0, 1.6, yappCircle, 0, 0, yappCoordBoxInside, yappCenter],  // clamp screw R
 ];
 
 // ---- FRONT wall: USB-C OTA slot (12x8 mm) ----
@@ -90,22 +95,25 @@ cutoutsFront = [
   [47, 10, 12, 8, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
 ];
 
-// ---- LEFT wall: PG9 Lamp1 gland + 4 vent slots ----
+// ---- LEFT wall: Lamp1 JST SM panel-mount pocket + 4 vent slots ----
+// Pocket = rectangular 9.5 x 6 mm cutout that traps the female JST SM body
+// from inside; the cable hole on the outside is narrower than the connector
+// shoulders so it cannot pull through.
 cutoutsLeft = [
-  [15,  20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [40,  20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [72,  25, 0,  0, 8, yappCircle,    0, 0, yappCoordBoxInside, yappCenter],
-  [104, 20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [129, 20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [15,  20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [40,  20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [72,  25, 9.5, 6, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],  // JST SM pocket
+  [104, 20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [129, 20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
 ];
 
-// ---- RIGHT wall: PG9 Lamp2 gland + 4 vent slots (mirror of left) ----
+// ---- RIGHT wall: Lamp2 JST SM panel-mount pocket + 4 vent slots (mirror) ----
 cutoutsRight = [
-  [15,  20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [40,  20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [72,  25, 0,  0, 8, yappCircle,    0, 0, yappCoordBoxInside, yappCenter],
-  [104, 20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
-  [129, 20, 15, 4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [15,  20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [40,  20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [72,  25, 9.5, 6, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],  // JST SM pocket
+  [104, 20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
+  [129, 20, 15,  4, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
 ];
 
 cutoutsLid   = [];
@@ -123,9 +131,9 @@ labelsPlane = [
   [75, 36, 0, -0.3, yappLid,
    "Liberation Sans", 4, "2x 60-LED Lamps  |  5V 10A PSU",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
-  // Back wall: IEC inlet label
+  // Back wall: mains entry label
   [50, 54.5, 0, -0.4, yappBack,
-   "Liberation Sans:style=Bold", 4, "POWER IN",
+   "Liberation Sans:style=Bold", 4, "MAINS",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   // Front wall: USB-C OTA label
   [50, 19.5, 0, -0.4, yappFront,
