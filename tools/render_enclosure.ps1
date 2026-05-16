@@ -36,11 +36,11 @@ $base = Join-Path $encDir "$stem-base.stl"
 $lid  = Join-Path $encDir "$stem-lid.stl"
 
 function Invoke-OpenScad {
-  param([string[]] $Args, [string] $Label)
+  param([string[]] $ScadArgs, [string] $Label)
   $errF = Join-Path $env:TEMP "openscad-$Label-$([guid]::NewGuid().ToString('N')).log"
   $outF = "$errF.out"
-  Write-Host "[$Label] openscad $($Args -join ' ')"
-  $p = Start-Process -FilePath $OpenScad -ArgumentList $Args -Wait -NoNewWindow `
+  Write-Host "[$Label] openscad $($ScadArgs -join ' ')"
+  $p = Start-Process -FilePath $OpenScad -ArgumentList $ScadArgs -Wait -NoNewWindow `
        -PassThru -RedirectStandardError $errF -RedirectStandardOutput $outF
   if ($p.ExitCode -ne 0) {
     Write-Host (Get-Content $errF -Raw)
@@ -50,10 +50,10 @@ function Invoke-OpenScad {
 }
 
 # --- STL renders ---
-Invoke-OpenScad -Label "base-stl" -Args @(
+Invoke-OpenScad -Label "base-stl" -ScadArgs @(
   "--render","-o",$base,$scad,"-D","printLidShell=false"
 )
-Invoke-OpenScad -Label "lid-stl"  -Args @(
+Invoke-OpenScad -Label "lid-stl"  -ScadArgs @(
   "--render","-o",$lid,$scad,"-D","printBaseShell=false"
 )
 
@@ -67,13 +67,13 @@ Invoke-OpenScad -Label "lid-stl"  -Args @(
 
 function Render-Png {
   param([string] $Out, [string[]] $ShellFlag, [string[]] $CameraArgs, [string] $Label)
-  $args = @(
+  $a = @(
     "-o",$Out,$scad,
     "--imgsize=$ImgW,$ImgH",
     "--colorscheme=$ColorScheme",
     "--viewall","--autocenter"
   ) + $CameraArgs + @("-D",$ShellFlag[0])
-  Invoke-OpenScad -Label $Label -Args $args
+  Invoke-OpenScad -Label $Label -ScadArgs $a
 }
 
 # Isometric (perspective): rotation 55,0,25

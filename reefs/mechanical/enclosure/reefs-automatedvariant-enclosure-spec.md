@@ -13,16 +13,29 @@ Generated via `enclosure-gen` skill using YAPP_Box v3.3.8.
 | Lid ceiling | 1.5 mm |
 | Base wall height | 30 mm |
 | Lid wall height | 26 mm |
-| Ridge height | 5.0 mm |
+| Ridge height | 6.0 mm |
 | Corner radius | 3.0 mm |
+
+> Ridge height bumped from 5.0 → 6.0 mm to satisfy YAPP's snap-join geometry
+> constraint (`ridgeHeight ≥ wallThickness × 1.8 = 5.4 mm`).
 
 ## Files
 
-| File | Description | Size |
-|------|-------------|------|
-| `reefs-automatedvariant-enclosure.scad` | Parametric SCAD config | 5.7 KB |
-| `reefs-automatedvariant-base.stl` | Base shell | 2.3 MB |
-| `reefs-automatedvariant-lid.stl` | Lid shell | 3.8 MB |
+| File | Description |
+|------|-------------|
+| `reefs-automatedvariant-enclosure.scad` | Parametric SCAD config |
+| `reefs-automatedvariant-base.stl` | Base shell (print-ready) |
+| `reefs-automatedvariant-lid.stl` | Lid shell (print-ready) |
+| `reefs-automatedvariant-base-iso.png` | Base preview — isometric |
+| `reefs-automatedvariant-base-top.png` | Base preview — top-down |
+| `reefs-automatedvariant-lid-iso.png`  | Lid preview — isometric  |
+| `reefs-automatedvariant-lid-top.png`  | Lid preview — top-down  |
+
+Render all six in one step:
+
+```powershell
+pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-automatedvariant-enclosure
+```
 
 ## Shared Library
 
@@ -53,7 +66,8 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 
 ## ESP32 Standoffs
 
-4 × M3 threaded standoffs (5 mm height, Ø7 mm outer, Ø3 mm pin):
+4 × M3 threaded standoffs (5 mm height, Ø7 mm outer, Ø3 mm pin), **base only**
+(`yappBaseOnly` — the lid stays clear of standoff stems):
 
 | Position | PCB coord (X, Y) | Corner |
 |----------|-----------------|--------|
@@ -64,12 +78,29 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 
 Board orientation: USB-C end toward FRONT wall (high X).
 
-## Lid Connectors
+## Lid Closure — Snap-On (no screws)
 
-4 × M3 corner screws, 5 mm from each inner corner:
-- Standoff height: 5 mm (sufficient for M3 screw engagement; was incorrectly 12 mm)
-- Screw: M3 (Ø3 mm), head Ø6 mm
-- Insert hole: Ø3.2 mm (self-threading M3; use Ø4.2 mm for heat-set insert)
+The lid uses YAPP `snapJoins` so it presses onto the base by hand and can be
+opened without tools. Four snaps total, on the two long walls:
+
+| Snap | Wall | Position along wall | Width |
+|------|------|--------------------|-------|
+| 1 | Left  | 40 mm  | 15 mm |
+| 2 | Left  | 110 mm | 15 mm (mirrored via `yappSymmetric`) |
+| 3 | Right | 40 mm  | 15 mm |
+| 4 | Right | 110 mm | 15 mm (mirrored via `yappSymmetric`) |
+
+SCAD entry:
+
+```scad
+connectors = [];
+snapJoins  = [
+  [40, 15, yappLeft, yappRight, yappCenter, yappSymmetric],
+];
+```
+
+If screw fastening is later required, replace `snapJoins` with a `connectors[]`
+entry and drop `ridgeHeight` back to 5.0 mm.
 
 ## Lid Labels (engraved)
 
@@ -96,15 +127,18 @@ Board orientation: USB-C end toward FRONT wall (high X).
 
 ## Render Commands
 
-From `reefs/mechanical/enclosure/`:
+From repo root — single command produces both STLs **and** the four preview PNGs:
+
+```powershell
+pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-automatedvariant-enclosure
+```
+
+Manual fallback (per shell):
 
 ```bash
-# Base only
 openscad --render -o reefs-automatedvariant-base.stl \
   reefs-automatedvariant-enclosure.scad -D "printLidShell=false"
-
-# Lid only
-openscad --render -o reefs-automatedvariant-lid.stl \
+openscad --render -o reefs-automatedvariant-lid.stl  \
   reefs-automatedvariant-enclosure.scad -D "printBaseShell=false"
 ```
 
@@ -120,4 +154,4 @@ openscad --render -o reefs-automatedvariant-lid.stl \
 | OTA access | USB-C front wall | ✓ |
 | Cable glands | 2× PG9 (left + right) | ✓ |
 | Ventilation | 4 slots per side | ✓ |
-| Fasteners | 4× M3 corner screws | ✓ |
+| Fasteners | tool-free | 4× snap-joins (no screws) ✓ |
