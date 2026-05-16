@@ -15,6 +15,7 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 | `tools/gen_diagrams.py` | CLI runner: `python tools/gen_diagrams.py <project>` |
 | `tools/yapp/YAPPgenerator_v3.scad` | Shared YAPP_Box library (MIT) — included by every project SCAD |
 | `tools/render_enclosure.ps1` | One-shot helper: renders base + lid STLs + 4 preview PNGs |
+| `tools/upload_spiffs.py` | WiFi file push: uploads `firmware/spiffs/` files to a live WLED device over HTTP (no USB needed) |
 | `reefs/` | Active project — driftwood ambient lamps (SK6812 RGBW, ESP32, Home Assistant) |
 | `reefs/homeassistant/` | HA package, blueprints, lovelace card, import guide |
 | `reefs/firmware/spiffs/ha-import.html` | Device-served HA import assistant page |
@@ -35,8 +36,15 @@ Mono-repo for DIY LED lighting projects powered by **WLED** on ESP32/ESP8266. Ea
 6. Run `/gen-enclosure` to write the SCAD and render shells + preview PNGs into `mechanical/enclosure/` (helper: `pwsh tools/render_enclosure.ps1 -Project <project-name> -ScadName <project-name>-enclosure`)
 7. Set a unique mDNS hostname in `firmware/cfg.json` (`"id": {"mdns": "<project-name>"}`, `"nw": {"mdns": 1}`)
 8. Create `homeassistant/` artifacts (see "Home Assistant Config Files" section below)
-9. Add a row to the Projects table in `README.md`
-10. Open a PR from a branch named `project/<project-name>`
+9. Upload spiffs to the device over WiFi (no USB required):
+   ```
+   python tools/upload_spiffs.py --project <project-name>
+   # or with explicit IP:
+   python tools/upload_spiffs.py --project <project-name> --device 192.168.x.x
+   ```
+   Alternative (PlatformIO / USB): `pio run -t uploadfs`
+10. Add a row to the Projects table in `README.md`
+11. Open a PR from a branch named `project/<project-name>`
 
 ### Home Assistant Integration
 

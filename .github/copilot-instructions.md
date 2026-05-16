@@ -251,7 +251,12 @@ See `tools/parts-register/README.md` for field definitions and instructions for 
    - `homeassistant/lovelace.yaml` — dashboard card
    - `homeassistant/README.md` — import guide with badge links
    - `firmware/spiffs/ha-import.html` — update `PROJECT_CONFIG` block from template
-9. Add a row to the Projects table in `README.md`
+9. Push spiffs files to the device over WiFi (works after web installer, no USB needed):
+   ```
+   python tools/upload_spiffs.py --project <project-name>
+   ```
+   Alternative (PlatformIO + USB): `pio run -t uploadfs`
+10. Add a row to the Projects table in `README.md`
 
 ## Commit Convention
 

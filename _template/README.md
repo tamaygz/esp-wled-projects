@@ -78,7 +78,7 @@ See [hardware/wiring/WIRING.md](hardware/wiring/WIRING.md) for the full GPIO tab
 - [ ] Assemble control box (PSU, ESP32, level shifter)
 - [ ] Wire lamp cables; connect via JST connectors
 - [ ] Configure WLED: outputs, LED count, colour order, boot preset
-- [ ] Flash spiffs (`pio run -t uploadfs`) so `ha-import.html` is served by the device
+- [ ] Upload spiffs to device — WiFi (no USB): `python tools/upload_spiffs.py --project <project-name>` · or USB: `pio run -t uploadfs`
 - [ ] Add WLED integration to Home Assistant; verify light entities
 - [ ] Open `http://[device-ip]/ha-import.html` → import blueprints / download package.yaml
 - [ ] Mount installation; conceal cables
