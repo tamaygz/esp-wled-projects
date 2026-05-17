@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated": "2026-05-16",
+  "updated": "2026-05-17",
   "note": "All dimensions in mm. 'pcb_or_body_mm' gives L×W×H of the PCB footprint or encapsulated body. 'mounting_holes' positions are measured from the bottom-left corner of the footprint bounding box. 'verified: false' entries are estimated from datasheet families or community sources — confirm before committing to a PCB layout or enclosure cutout.",
   "parts": {
     "D1_MINI_V4": {
@@ -29,6 +29,69 @@
       ],
       "source_url": "https://www.wemos.cc/en/latest/d1/d1_mini.html",
       "verified": true
+    },
+    "ESP8266_NODEMCU_V3": {
+      "name": "ESP8266 NodeMCU V3 Development Board",
+      "manufacturer": "NodeMCU / LoLin-style clone family",
+      "mfr_part_number": "NodeMCU V3",
+      "category": "microcontroller",
+      "pcb_or_body_mm": { "l": 58.0, "w": 31.0, "h": 12.5 },
+      "mounting_holes": [],
+      "cutouts_needed": [
+        {
+          "label": "Micro-USB port",
+          "l": 8.0,
+          "w": 4.0,
+          "x_from_left": 11.5,
+          "y_from_bottom": 0.0,
+          "note": "UNVERIFIED clone-derived placement; confirm against the actual board before changing enclosure cutouts"
+        }
+      ],
+      "electrical": {
+        "logic_voltage_v": 3.3,
+        "supply_voltage_v": 5.0,
+        "wireless": ["wifi_2_4ghz"],
+        "flash_mb": 4
+      },
+      "interfaces": ["micro_usb", "uart", "wifi", "pwm", "adc"],
+      "software_identifiers": {
+        "platformio_board": "nodemcuv2",
+        "arduino_board_name": "NodeMCU 1.0 (ESP-12E Module)",
+        "frameworks": ["arduino"],
+        "mcu": "ESP8266",
+        "usb_bridge": "CH340 or CP2102 depending on board revision",
+        "wled_target": "ESP8266 / nodemcuv2-class build (use ESP8266 branch, e.g. WLED v0.15)"
+      },
+      "board_pinout": {
+        "source_url": "https://www.nodemcu.com/index_en.html",
+        "notes": "UNVERIFIED common NodeMCU V3 / NodeMCU 1.0 pin mapping. Verify the silkscreen against the actual board before committing enclosure or wiring changes.",
+        "pins": [
+          { "label": "D0", "gpio": 16, "aliases": [], "capabilities": ["digital_io"], "warnings": ["no_pwm", "no_interrupt"] },
+          { "label": "D1", "gpio": 5, "aliases": ["SCL"], "capabilities": ["digital_io", "i2c", "pwm"], "warnings": [] },
+          { "label": "D2", "gpio": 4, "aliases": ["SDA"], "capabilities": ["digital_io", "i2c", "pwm"], "warnings": [] },
+          { "label": "D3", "gpio": 0, "aliases": [], "capabilities": ["digital_io", "pwm"], "warnings": ["boot_strapping_pin", "must_not_be_pulled_low_at_boot"] },
+          { "label": "D4", "gpio": 2, "aliases": ["LED_BUILTIN"], "capabilities": ["digital_io", "pwm"], "warnings": ["boot_strapping_pin", "onboard_led"] },
+          { "label": "D5", "gpio": 14, "aliases": [], "capabilities": ["digital_io", "pwm", "spi_clk"], "warnings": [] },
+          { "label": "D6", "gpio": 12, "aliases": [], "capabilities": ["digital_io", "pwm", "spi_miso"], "warnings": [] },
+          { "label": "D7", "gpio": 13, "aliases": [], "capabilities": ["digital_io", "pwm", "spi_mosi"], "warnings": [] },
+          { "label": "D8", "gpio": 15, "aliases": [], "capabilities": ["digital_io", "pwm", "spi_cs"], "warnings": ["boot_strapping_pin", "must_be_low_at_boot"] },
+          { "label": "RX", "gpio": 3, "aliases": ["RX0"], "capabilities": ["uart_rx", "digital_io"], "warnings": ["serial_boot_messages"] },
+          { "label": "TX", "gpio": 1, "aliases": ["TX0"], "capabilities": ["uart_tx", "digital_io"], "warnings": ["serial_boot_messages"] },
+          { "label": "A0", "gpio": null, "aliases": [], "capabilities": ["adc"], "warnings": ["analog_only"] },
+          { "label": "VIN", "gpio": null, "aliases": ["VU"], "capabilities": ["pwr_in_5v"], "warnings": ["feeds_onboard_regulator"] },
+          { "label": "3V3", "gpio": null, "aliases": [], "capabilities": ["pwr_out_3v3"], "warnings": [] },
+          { "label": "G", "gpio": null, "aliases": ["GND"], "capabilities": ["gnd"], "warnings": [] }
+        ]
+      },
+      "key_notes": [
+        "LoLin-style NodeMCU V3 boards are larger than D1 Mini boards and usually have a Micro-USB connector",
+        "No mounting holes — use a printed pocket, rails, or cable-tie restraint instead of PCB standoffs",
+        "3.3V logic — level-shift data lines before 5V SK6812 strips in the final build",
+        "Recommended WLED data pins for this project: D5/GPIO14 and D6/GPIO12",
+        "Avoid D3/GPIO0, D4/GPIO2, and D8/GPIO15 for LED data because they affect boot behaviour"
+      ],
+      "source_url": "https://www.nodemcu.com/index_en.html",
+      "verified": false
     },
     "HLK_30M05": {
       "name": "Hi-Link HLK-30M05 30W 5V 6A AC-DC Module",

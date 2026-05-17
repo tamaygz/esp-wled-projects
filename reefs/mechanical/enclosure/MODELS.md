@@ -4,6 +4,8 @@
 
 Parametric PETG enclosure generated via the [`enclosure-gen`](../../../.github/skills/enclosure-gen/SKILL.md) skill, using shared YAPP library at `tools/yapp/YAPPgenerator_v3.scad`.
 
+> Legacy controller geometry: the current SCAD and rendered outputs still use the previous ESP32 DevKit mount and front USB opening. The `reefs` project controller definition moved to `ESP8266_NODEMCU_V3`; refit the board mount and service-port cutout before the next print.
+
 **Snap-on lid — no screws, tool-free open/close.**
 
 | Property | Value |
@@ -39,7 +41,7 @@ pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-automatedvariant-
 
 ## Control Box Enclosure (Legacy BambuStudio)
 
-Custom-designed PETG enclosure housing the ESP32, 74AHCT125 level shifter, screw terminal bus, inline fuses, and IEC C14 inlet.
+Custom-designed PETG enclosure for the older ESP32 controller variant, with 74AHCT125 level shifter, screw terminal bus, inline fuses, and IEC C14 inlet.
 
 | Property | Value |
 |----------|-------|
@@ -66,10 +68,10 @@ Custom-designed PETG enclosure housing the ESP32, 74AHCT125 level shifter, screw
 | Feature | Dimension | Notes |
 |---------|-----------|-------|
 | IEC C14 inlet | 28 × 48 mm | Standard panel-mount C14 |
-| USB-C access port | 12 × 6 mm slot | Aligned to ESP32 USB port for OTA recovery |
+| USB access port | 12 × 6 mm slot | Legacy ESP32-aligned opening; refit for the NodeMCU V3 before reuse |
 | Cable gland holes (PG9) | × 2 | One per lamp cable entry |
 | Ventilation slots | ≥ 4 × 15 mm per side | PSU natural convection |
-| PCB standoffs | 4 × M3, 20 × 30 mm pattern | ESP32 DevKit mount |
+| PCB standoffs | 4 × M3, 20 × 30 mm pattern | Legacy ESP32 DevKit mount |
 | Lid fastening | 4 × M3 × 8 mm | Top-opening lid with brass inserts |
 
 ---

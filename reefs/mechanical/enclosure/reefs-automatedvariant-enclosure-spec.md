@@ -2,6 +2,8 @@
 
 Generated via `enclosure-gen` skill using YAPP_Box v3.3.8.
 
+> Legacy controller geometry: this automated variant still uses the previous ESP32 DevKit standoffs and front USB opening. The project controller definition now targets `ESP8266_NODEMCU_V3`; refit the board mount and service-port cutout before the next enclosure render.
+
 ## Dimensions
 
 | Parameter | Value |
@@ -51,10 +53,10 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 - Clamp screw holes: 2× Ø3.2 mm at Y = 35 / 59 mm (12 mm each side of centre), Z = 30 mm
 - Purpose: captive Schuko H05VV-F 3×0.75 mm² lead jacket clamped by an external 2-screw printed clamp (M3 brass inserts)
 
-### Front wall — USB-C OTA access
+### Front wall — USB service access (legacy ESP32 geometry)
 - Opening: 12 × 8 mm (rectangle)
 - Centre: Y = 47 mm, Z = 10 mm from inner floor
-- Purpose: cable access for ESP32 USB-C port during OTA flashing
+- Purpose: current opening was sized for the earlier ESP32 USB port; resize/reposition for the NodeMCU V3 before the next print
 
 ### Left wall — Lamp 1
 - JST SM panel-mount pocket: 9.5 × 6 mm rectangle, centre X = 72 mm, Z = 25 mm
@@ -65,7 +67,7 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 - JST SM panel-mount pocket: 9.5 × 6 mm rectangle, centre X = 72 mm, Z = 25 mm
 - Ventilation: 4 × (15 × 4 mm) slots at Z = 20 mm, X = 15, 40, 104, 129 mm
 
-## ESP32 Standoffs
+## Legacy ESP32 Standoffs
 
 4 × M3 threaded standoffs (5 mm height, Ø7 mm outer, Ø3 mm pin), **base only**
 (`yappBaseOnly` — the lid stays clear of standoff stems):
@@ -77,7 +79,7 @@ Include pattern: `include` must come **before** all config variables (OpenSCAD "
 | Front-left | 126, 35 | yappFrontLeft |
 | Front-right | 126, 58 | yappFrontRight |
 
-Board orientation: USB-C end toward FRONT wall (high X).
+Board orientation in the current SCAD: USB connector toward FRONT wall (high X).
 
 ## Lid Closure — Snap-On (no screws)
 
@@ -108,10 +110,10 @@ entry and drop `ridgeHeight` back to 5.0 mm.
 | Text | Face | Position | Size |
 |------|------|----------|------|
 | `REEFS` (bold) | Lid | centre | 10 mm |
-| `WLED v16 \| SK6812 RGBW` | Lid | centre | 6 mm |
+| `WLED v0.15 \| SK6812 RGBW` | Lid | centre | 6 mm |
 | `2x 60-LED Lamps \| 5V 10A PSU` | Lid | centre | 4 mm |
 | `MAINS` (bold) | Back | above cable entry | 4 mm |
-| `OTA` | Front | above USB-C cutout | 4 mm |
+| `OTA` | Front | above USB service cutout | 4 mm |
 | `LAMP 1` | Left | above JST pocket | 4 mm |
 | `LAMP 2` | Right | above JST pocket | 4 mm |
 
@@ -150,9 +152,9 @@ openscad --render -o reefs-automatedvariant-lid.stl  \
 | Outer length | ≤ 150 mm | 150 mm ✓ |
 | Outer width | ≤ 100 mm | 100 mm ✓ |
 | Outer height | ≤ 60 mm | 59 mm ✓ |
-| ESP32 mount | 4× M3 standoffs | ✓ |
+| Legacy ESP32 mount | 4× M3 standoffs | ✓ |
 | Mains entry | Captive Schuko lead via Ø8 mm hole + 2-screw clamp | ✓ |
-| OTA access | USB-C front wall | ✓ |
+| OTA access | Front service opening | ✓ |
 | Lamp ports | 2× JST SM panel-mount pockets (left + right) | ✓ |
 | Ventilation | 4 slots per side | ✓ |
 | Fasteners | tool-free | 4× snap-joins (no screws) ✓ |

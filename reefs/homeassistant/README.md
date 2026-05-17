@@ -1,6 +1,6 @@
 # Home Assistant — Reefs
 
-Driftwood ambient lamps — two SK6812 RGBW segments on one ESP32-WLED device.
+Driftwood ambient lamps — two SK6812 RGBW segments on one ESP8266 NodeMCU V3 WLED device.
 
 ---
 

@@ -16,6 +16,10 @@
 // NOTE: include comes FIRST so our variable definitions below override the
 // library defaults (OpenSCAD "last assignment wins").
 // YAPPgenerate() is called explicitly to bypass the library's if(debug) guard.
+// LEGACY GEOMETRY NOTE: this SCAD still carries the previous ESP32 DevKit mount
+// and USB opening. The reefs project controller definition now targets an
+// ESP8266 NodeMCU V3, so refit the board mount and service-port cutout before
+// using this file for a new print run.
 
 include <../../../tools/yapp/YAPPgenerator_v3.scad>
 
@@ -61,9 +65,9 @@ pcb = [
    standoffHeight, standoffDiameter, standoffPinDiameter, standoffHoleSlack],
 ];
 
-// ---- ESP32 DevKit 38-pin standoffs (4x M3) ----
+// ---- Legacy ESP32 DevKit 38-pin standoffs (4x M3) ----
 // Board ~30x51 mm, hole pattern 45x23 mm centre-to-centre
-// Orientation: USB-C toward FRONT (high X)
+// Orientation: USB connector toward FRONT (high X)
 pcbStands = [
   [81,  35, standoffHeight, 0, standoffDiameter, standoffPinDiameter,
    standoffHoleSlack, yappBaseOnly, yappPin, yappBackLeft,   yappCoordPCB],
@@ -90,7 +94,7 @@ cutoutsBack = [
   [59, 30, 0, 0, 1.6, yappCircle, 0, 0, yappCoordBoxInside, yappCenter],  // clamp screw R
 ];
 
-// ---- FRONT wall: USB-C OTA slot (12x8 mm) ----
+// ---- FRONT wall: USB service slot (12x8 mm, legacy ESP32 placement) ----
 cutoutsFront = [
   [47, 10, 12, 8, 0, yappRectangle, 0, 0, yappCoordBoxInside, yappCenter],
 ];
@@ -126,7 +130,7 @@ labelsPlane = [
    "Liberation Sans:style=Bold", 10, "REEFS",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   [75, 50, 0, -0.4, yappLid,
-   "Liberation Sans", 6, "WLED v16  |  SK6812 RGBW",
+  "Liberation Sans", 6, "WLED v0.15  |  SK6812 RGBW",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
   [75, 36, 0, -0.3, yappLid,
    "Liberation Sans", 4, "2x 60-LED Lamps  |  5V 10A PSU",
@@ -135,7 +139,7 @@ labelsPlane = [
   [50, 54.5, 0, -0.4, yappBack,
    "Liberation Sans:style=Bold", 4, "MAINS",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],
-  // Front wall: USB-C OTA label
+  // Front wall: USB service label
   [50, 19.5, 0, -0.4, yappFront,
    "Liberation Sans", 4, "OTA",
    0, yappTextLeftToRight, yappTextHAlignCenter, yappTextVAlignCenter],

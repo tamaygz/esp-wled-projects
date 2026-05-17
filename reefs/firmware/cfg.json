@@ -2,7 +2,7 @@
   "id": {
     "mdns": "reefs",
     "name": "Reef Lamps",
-    "comment": "ESP32 WLED — driftwood ambient lamps"
+    "comment": "ESP8266 NodeMCU V3 WLED — driftwood ambient lamps — WLED v0.15"
   },
   "nw": {
     "mdns": 1,
@@ -15,7 +15,7 @@
   "leds": {
     "ins": [
       {
-        "pin": [16],
+        "pin": [14],
         "type": 30,
         "_type_note": "30 = SK6812 RGBW",
         "order": 6,
@@ -27,7 +27,7 @@
         "name": "Lamp 1"
       },
       {
-        "pin": [17],
+        "pin": [12],
         "type": 30,
         "order": 6,
         "start": 60,

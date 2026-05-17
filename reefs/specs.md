@@ -17,7 +17,7 @@
 
 **Reefs** is a DIY ambient lighting installation built around two pieces of natural driftwood. Each piece of driftwood acts as a self-contained lamp: an SK6812 RGBW LED strip is mounted on the back face of the wood (facing the wall), casting diffused, coloured light onto the wall behind it. The room-facing side of each piece remains unlit, framing the glow naturally through the wood grain and texture.
 
-Both lamps are powered and controlled from a single 3D-printed control box housing an ESP32 running WLED and a Honeywell 5 V PSU. WLED exposes each lamp as an independent segment — or optionally a dedicated channel — and integrates with Home Assistant via the native WLED integration, enabling scene-level control and automations.
+Both lamps are powered and controlled from a single 3D-printed control box housing an ESP8266 NodeMCU V3 running WLED and a Honeywell 5 V PSU. WLED exposes each lamp as an independent segment — or optionally a dedicated channel — and integrates with Home Assistant via the native WLED integration, enabling scene-level control and automations.
 
 The project is intended as a permanent room installation with no exposed wiring, a single mains connection, and full smart-home integration out of the box.
 
@@ -26,7 +26,7 @@ The project is intended as a permanent room installation with no exposed wiring,
 | | |
 |---|---|
 | **Problem Statement** | Standard ambient lamps offer no physical texture or organic character; smart LED solutions typically require bulky off-the-shelf fixtures that cannot be adapted to natural materials. |
-| **Proposed Solution** | Mount RGBW LED strips on the rear face of two driftwood pieces, fed from one centralised ESP32/WLED control box, producing wall-wash ambient light that is individually controllable from Home Assistant. |
+| **Proposed Solution** | Mount RGBW LED strips on the rear face of two driftwood pieces, fed from one centralised NodeMCU/WLED control box, producing wall-wash ambient light that is individually controllable from Home Assistant. |
 | **Success Criteria** | (1) Both lamps respond to WLED commands within 200 ms over Wi-Fi. (2) Each lamp is independently controllable as a Home Assistant light entity. (3) Full-white output at 50 % brightness draws ≤ 4 A total from the PSU. (4) All wiring is concealed inside channels, conduit, or the driftwood profile. (5) The control box fits within a 150 × 100 × 60 mm 3D-printed enclosure. |
 
 ---
@@ -66,7 +66,7 @@ The project is intended as a permanent room installation with no exposed wiring,
 
 ### 3.2 Persona Details
 
-- **Builder**: Comfortable with soldering, ESP32 toolchains, and basic 3D printing. Needs precise wiring specs, pin assignments, and WLED config values — not guesswork.
+- **Builder**: Comfortable with soldering, ESP8266/ESP32 toolchains, and basic 3D printing. Needs precise wiring specs, pin assignments, and WLED config values — not guesswork.
 - **Resident**: Wants one-tap scene activation, consistent behaviour, and no maintenance. Does not interact with WLED UI directly after initial setup.
 
 ### 3.3 Role-Based Access
@@ -124,9 +124,9 @@ The project is intended as a permanent room installation with no exposed wiring,
 
 ### 5.1 First-Time Setup Flow
 
-1. Flash WLED to ESP32 via USB before enclosure assembly.
-2. Connect ESP32 to home Wi-Fi via WLED's captive portal (AP mode on first boot).
-3. In WLED web UI, configure two LED outputs (GPIO 16 → Lamp 1, GPIO 17 → Lamp 2) with correct LED count and SK6812 type.
+1. Flash the ESP8266 WLED build to the NodeMCU V3 via USB before enclosure assembly.
+2. Connect the NodeMCU to home Wi-Fi via WLED's captive portal (AP mode on first boot).
+3. In WLED web UI, configure two LED outputs (D5 / GPIO14 → Lamp 1, D6 / GPIO12 → Lamp 2) with correct LED count and SK6812 type.
 4. Install WLED integration in Home Assistant → auto-discovers both segments as light entities.
 5. Assign entities to a room; create "Reef Scene" script.
 6. Power-cycle test: both lamps illuminate to startup preset within 3 s.
@@ -150,7 +150,7 @@ The project is intended as a permanent room installation with no exposed wiring,
 
 - No physical buttons required for v1 (HA + WLED web UI sufficient).
 - Control box mounts in a concealed location (shelf interior, behind furniture) — not a decorative item.
-- USB-C port on ESP32 must remain accessible through enclosure wall for OTA recovery.
+- The NodeMCU USB service port must remain accessible through the enclosure wall for OTA recovery.
 
 ---
 
@@ -194,16 +194,16 @@ MAINS (230 V AC)
 │               CONTROL BOX (3D-printed)          │
 │                                                 │
 │  ┌───────────────────┐   ┌───────────────────┐  │
-│  │  Honeywell 5 V    │   │     ESP32 DevKit  │  │
+│  │  Honeywell 5 V    │   │  ESP8266 NodeMCU  │  │
 │  │  PSU              │──▶│     (WLED)        │  │
 │  │  (≥ 10 A / 50 W)  │5V │                   │  │
-│  └────────┬──────────┘   │  GPIO16 ──[330Ω]─┼──┼──▶ DATA Lamp 1
-│           │              │  GPIO17 ──[330Ω]─┼──┼──▶ DATA Lamp 2
+│  └────────┬──────────┘   │  D5/GPIO14 ─[330Ω]┼──┼──▶ DATA Lamp 1
+│           │              │  D6/GPIO12 ─[330Ω]┼──┼──▶ DATA Lamp 2
 │           │5V/GND        │                   │  │
 │           ├──[5A fuse]───┼───────────────────┼──┼──▶ 5V/GND Lamp 1
 │           └──[5A fuse]───┼───────────────────┼──┼──▶ 5V/GND Lamp 2
 │                          └───────────────────┘  │
-│  [ USB-C port accessible on enclosure wall ]    │
+│  [ Micro-USB port accessible on enclosure wall ]│
 └─────────────────────────────────────────────────┘
           │                         │
     2 m run                   2 m run
@@ -229,18 +229,18 @@ MAINS (230 V AC)
 | # | Component | Spec | Qty | Notes |
 |---|---|---|---|---|
 | 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin | 2 × **1 m** (60 LEDs each) | Order 1.1 m per lamp to allow for trimming to fit |
-| 2 | ESP32 DevKit-class board (38-pin) | ESP32-WROOM-32 / DevKitC-class reference | 1 | Use `ESP32_DEVKITC_V4` as the reference board entry for dimensions and pinout; actual installed dev board variant still to be confirmed |
+| 2 | ESP8266 NodeMCU V3 board | LoLin/Wemos-style NodeMCU V3 reference | 1 | Use `ESP8266_NODEMCU_V3` as the reference board entry for pinout and enclosure planning. UNVERIFIED — confirm your board size and Micro-USB position before changing printed geometry |
 | 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | User-specified; verify actual model current rating |
 | 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ strip length | 2 | e.g., LUMINES Type-Z or equivalent; conduct heat away from wood |
 | 5 | 3-conductor cable | 18 AWG (power) + 26 AWG (data) **or** 3-core 20 AWG flex | 2 × 2.5 m | Adds 0.5 m slack; one cable per lamp |
-| 6 | 330 Ω resistor | 1/4 W, through-hole | 2 | On data line at ESP32 GPIO; reduces signal ringing |
+| 6 | 330 Ω resistor | 1/4 W, through-hole | 2 | On data line at the NodeMCU GPIO; reduces signal ringing |
 | 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | 3.3 V → 5 V for SK6812 data; 2 channels used |
 | 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | One per lamp 5 V power run |
 | 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | 2 installed + 2 spare |
 | 10 | JST SM 3-pin connectors (M+F pair) | 2.5 mm pitch, 3 A rated | 2 pairs | **Female panel-mounted** in box wall pocket; male plug on lamp cable end |
 | 11 | Phoenix-style pluggable terminal | 3-pos, 5.08 mm pitch screw-clamp (PCB header + plug) | 1 | Internal 5 V distribution from PSU → fuses; replaces classic fixed screw terminal |
 | 12 | 3D-printed enclosure | ~150 × 100 × 60 mm | 1 | See §8.7 |
-| 13 | M3 × 8 mm screws + brass inserts | — | 12 | 4× ESP32 standoffs, 2× PSU bracket, 2× mains cable clamp, 4× spare |
+| 13 | M3 × 8 mm screws + brass inserts | — | 12 | PSU bracket, mains cable clamp, enclosure hardware, and spares. NodeMCU board should use a printed pocket or retaining clip rather than PCB standoffs |
 | 14 | Schuko captive mains lead | H05VV-F 3×0.75 mm², CEE 7/7 plug, ≥ 1.5 m | 1 | Captive — jacket clamped inside box; conductors → PSU L/N/PE screw terminals |
 | 15 | Heat-shrink tubing assorted | 2 mm, 4 mm, 6 mm | 1 pack | Insulate all solder joints; mandatory on every mains conductor |
 | 16 | Cable ties | 2.5 × 100 mm | 1 pack | Internal strain-relief anchors for lamp cables |
@@ -253,11 +253,11 @@ MAINS (230 V AC)
 |---|---|---|---|
 | SK6812 Lamp 1 — 60 LEDs × 60 mA | 5 V | **3.60 A** | **0.90 A** |
 | SK6812 Lamp 2 — 60 LEDs × 60 mA | 5 V | **3.60 A** | **0.90 A** |
-| ESP32 DevKit | 5 V (via USB reg) | 0.50 A | 0.20 A |
+| ESP8266 NodeMCU V3 | 5 V (via onboard reg) | 0.30 A | 0.15 A |
 | Level shifter 74AHCT125 | 5 V | 0.02 A | 0.01 A |
-| **Total** | 5 V | **7.72 A** | **2.01 A** |
+| **Total** | 5 V | **7.52 A** | **1.96 A** |
 
-> PSU minimum rating: 7.72 A ÷ 0.80 = **9.65 A** → use a **10 A (50 W) 5 V PSU**.  
+> PSU minimum rating: 7.52 A ÷ 0.80 = **9.40 A** → use a **10 A (50 W) 5 V PSU**.  
 > Verify Honeywell PSU nameplate rating ≥ 10 A before finalising.
 
 ### 8.4 Wiring Detail
@@ -280,17 +280,17 @@ GND bus ───────────────▶ JST Lamp 1 Pin 2 (GND)
 V+ bus  ──▶ [5A fuse] ──▶ JST Lamp 2 Pin 1 (5V)
 GND bus ───────────────▶ JST Lamp 2 Pin 2 (GND)
 
-ESP32 GPIO16 ──[330Ω]──▶ 74AHCT125 Channel A IN
-                         74AHCT125 Channel A OUT ──▶ JST Lamp 1 Pin 3 (DATA)
+NodeMCU D5 / GPIO14 ──[330Ω]──▶ 74AHCT125 Channel A IN
+                                74AHCT125 Channel A OUT ──▶ JST Lamp 1 Pin 3 (DATA)
 
-ESP32 GPIO17 ──[330Ω]──▶ 74AHCT125 Channel B IN
-                         74AHCT125 Channel B OUT ──▶ JST Lamp 2 Pin 3 (DATA)
+NodeMCU D6 / GPIO12 ──[330Ω]──▶ 74AHCT125 Channel B IN
+                                74AHCT125 Channel B OUT ──▶ JST Lamp 2 Pin 3 (DATA)
 
 74AHCT125 VCC ──▶ V+ bus (5V)
 74AHCT125 GND ──▶ GND bus
 74AHCT125 nOE ──▶ GND (always enabled)
-ESP32 5V (Vin) ──▶ V+ bus
-ESP32 GND      ──▶ GND bus
+NodeMCU VIN / VU ──▶ V+ bus
+NodeMCU GND      ──▶ GND bus
 ```
 
 **JST SM panel-mount detail:** female JST SM 3-pin pigtail is trapped from inside the box wall by a printed rectangular pocket (~9.5 × 6 mm with an internal shoulder lip). The connector body shoulders are wider than the cable hole, so the receptacle cannot pull through the wall. A zip-tie around the cable inside the box provides secondary strain relief. The male plug on the lamp cable inserts from outside the box.
@@ -319,7 +319,7 @@ Pin 3  (26 AWG white) ──▶ LED strip DIN pad
 | Parameter | Lamp 1 | Lamp 2 |
 |---|---|---|
 | LED output | Output 1 | Output 2 |
-| GPIO | 16 | 17 |
+| GPIO | 14 (D5) | 12 (D6) |
 | LED type | SK6812 RGBW | SK6812 RGBW |
 | LED count | **60** | **60** |
 | Color order | GRBW | GRBW |
@@ -327,23 +327,23 @@ Pin 3  (26 AWG white) ──▶ LED strip DIN pad
 | Segment | Segment 0 | Segment 1 |
 | mDNS name | `reefs.local` | — (same device) |
 
-> **WLED build note**: use WLED v16.0 or later (the v16 series introduced major effect, segment, and color-handling improvements and ships the native Home Assistant integration auto-discovery).
+> **WLED build note**: use the ESP8266 WLED branch for this board (for example, WLED v0.15 / `nodemcuv2`-class build). Output 1 is defined with `LEDPIN=14`; configure the second output in the WLED UI as GPIO12.
 
 **Startup preset recommendations:**
 - Preset 1 "Warm Ambient": Effect = Solid, Colour = CCT 3000 K at 40 % brightness, applied to both segments.
 - Set as boot preset in WLED → LED Preferences → Boot Preset.
 
-### 8.6 GPIO Pin Assignment (ESP32)
+### 8.6 GPIO Pin Assignment (ESP8266 NodeMCU V3)
 
 | GPIO | Function | Notes |
 |---|---|---|
-| 16 | LED Data — Lamp 1 | Via 330 Ω + level shifter |
-| 17 | LED Data — Lamp 2 | Via 330 Ω + level shifter |
-| 0 | Boot mode (strapping) | Do not connect to LED data |
-| 2 | Onboard LED (status) | Leave free |
-| EN | Reset | Accessible via enclosure reset hole |
+| D5 / GPIO14 | LED Data — Lamp 1 | Via 330 Ω + level shifter |
+| D6 / GPIO12 | LED Data — Lamp 2 | Via 330 Ω + level shifter |
+| D3 / GPIO0 | Boot mode (strapping) | Do not connect to LED data |
+| D4 / GPIO2 | Onboard LED / strapping | Leave free in this build |
+| D8 / GPIO15 | Boot strapping | Do not connect to LED data |
 
-> Avoid GPIO 0, 2, 12, 15 for LED data — these are strapping pins and affect boot mode.
+> The project uses the `ESP8266_NODEMCU_V3` parts-register entry for silkscreen mapping. UNVERIFIED — confirm the silkscreen against your board before wiring the enclosure permanently.
 
 ### 8.7 3D-Printed Enclosure Design Spec
 
@@ -353,11 +353,13 @@ Pin 3  (26 AWG white) ──▶ LED strip DIN pad
 | Wall thickness | ≥ 2.5 mm (PETG or ASA recommended for thermal stability) |
 | Ventilation | ≥ 4 × 15 mm slot openings on each side (PSU convection) |
 | Mains entry (back wall) | **Ø8 mm round hole for captive Schuko lead** + **printed 2-screw cable clamp** (2× M3 inserts) immediately inside the wall |
-| USB-C access port (front wall) | 12 × 8 mm slot, aligned with ESP32 USB-C |
+| USB service opening (front wall) | Sized to the actual board cutout; current board is NodeMCU V3 Micro-USB |
 | Lamp output ports (left/right walls) | **Rectangular pocket ~9.5 × 6 mm with internal shoulder** — traps the female JST SM 3-pin receptacle so the lamp male plug inserts from outside; 1 per side |
-| PCB standoffs | 4 × M3 brass heat-set inserts, 20 × 30 mm pattern for ESP32 DevKit |
+| Controller mounting | Printed pocket / clip retention for NodeMCU V3 (no PCB mounting holes) |
 | Lid fastening | Snap-on (4× snap-joins, tool-free) |
 | Strain relief | Mains: printed M3 cable clamp on jacket. Lamps: connector body trapped by pocket + internal zip-tie anchor on cable |
+
+> `ESP8266_NODEMCU_V3` is an UNVERIFIED parts-register entry. Confirm board size and Micro-USB position before treating these enclosure updates as manufacturing-ready.
 
 > Source files: [`mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf`](mechanical/enclosure/CustomProjectEnclosureV1.7.8b.3mf) — BambuStudio 3MF project.  
 > See [`mechanical/enclosure/MODELS.md`](mechanical/enclosure/MODELS.md) for full print profile.
@@ -385,8 +387,8 @@ WLED auto-discovers in Home Assistant via the **native WLED integration** (no YA
 | Entity | Entity ID | Notes |
 |--------|-----------|-------|
 | Master (both lamps) | `light.reefs` | WLED device master entity |
-| Lamp 1 (Driftwood A) | `light.reefs_lamp_1` | Segment 0, GPIO 16 |
-| Lamp 2 (Driftwood B) | `light.reefs_lamp_2` | Segment 1, GPIO 17 |
+| Lamp 1 (Driftwood A) | `light.reefs_lamp_1` | Segment 0, D5 / GPIO14 |
+| Lamp 2 (Driftwood B) | `light.reefs_lamp_2` | Segment 1, D6 / GPIO12 |
 | Preset selector | `select.reefs_preset` | WLED preset entity |
 
 > Entity IDs are auto-generated by WLED integration from the device name + segment names set in `cfg.json`.  
@@ -434,12 +436,12 @@ If state-driven effects are added in a future revision (e.g., Breathe on notific
 
 | Step | Task | Done? |
 |---|---|---|
-| 1 | Flash WLED to ESP32, verify Wi-Fi connection | ☐ |
-| 2 | Bench-test SK6812 strip with WLED (single strip, GPIO 16) | ☐ |
+| 1 | Flash ESP8266 WLED to the NodeMCU V3, verify Wi-Fi connection | ☐ |
+| 2 | Bench-test SK6812 strip with WLED (single strip, D5 / GPIO14) | ☐ |
 | 3 | Measure driftwood rear faces; cut and mount aluminium channels | ☐ |
 | 4 | Solder strips into channels; test both strips on bench | ☐ |
 | 5 | Print control box enclosure v1 | ☐ |
-| 6 | Assemble control box: PSU, terminal block, ESP32, level shifter, fuses | ☐ |
+| 6 | Assemble control box: PSU, terminal block, NodeMCU V3, level shifter, fuses | ☐ |
 | 7 | Wire both lamp cables; connect via JST connectors | ☐ |
 | 8 | Configure WLED: 2 outputs, LED counts, SK6812 type, boot preset | ☐ |
 | 9 | Add WLED integration to Home Assistant; verify 2 light entities | ☐ |
@@ -456,7 +458,7 @@ If state-driven effects are added in a future revision (e.g., Breathe on notific
 ### v2.0 — Future Consideration
 
 - Add physical touch button on each driftwood piece (capacitive, via GPIO).
-- Audio-reactive mode (microphone breakout on ESP32).
+- Audio-reactive mode (microphone breakout on a future ESP32 migration).
 - Power monitor (INA226) to track real-time draw.
 
 ### Technical Risks
@@ -466,7 +468,7 @@ If state-driven effects are added in a future revision (e.g., Breathe on notific
 | SK6812 data signal marginal at 3.3 V over 2 m | Medium | 74AHCT125 level shifter (included in BOM) |
 | Driftwood thickness blocks heat dissipation | Low | Aluminium channel conducts heat to air, not into wood |
 | PSU current rating insufficient | Low | Verify nameplate before build; replace if < 10 A |
-| WLED 2-output support on selected GPIO | Low | GPIO 16/17 are proven WLED output pins on ESP32-WROOM-32 |
+| WLED 2-output support on selected GPIO | Low | D5/GPIO14 and D6/GPIO12 are standard WLED-capable output pins on NodeMCU-class ESP8266 boards |
 
 ---
 
@@ -483,6 +485,7 @@ If state-driven effects are added in a future revision (e.g., Breathe on notific
 
 | Date | Change |
 |------|--------|
+| 2026-05-17 | Switched project controller definition to ESP8266 NodeMCU V3 with D5/D6 outputs |
 | 2026-05-16 | Initial spec (v1.0 draft) |
 
 ---
@@ -500,4 +503,4 @@ If state-driven effects are added in a future revision (e.g., Breathe on notific
 | GH-007 | As a builder, I want a 5 A inline fuse on each lamp power feed so that a fault cannot damage the PSU. | High | Each lamp cable has dedicated fuse; fuse blows on 6 A sustained test current. |
 | GH-008 | As a builder, I want the LED strips in aluminium channels so that heat is conducted away from the wood. | High | Strip temp ≤ 45 °C at 50 % brightness after 60 min. |
 | GH-009 | As a builder, I want all wiring concealed so that the installation looks furniture-grade. | High | No visible wire segments from room-facing viewpoint. |
-| GH-010 | As a builder, I want a USB-C port accessible on the enclosure for OTA recovery so that I can re-flash without disassembly. | Medium | USB cable connects to ESP32 through enclosure port without removing lid. |
+| GH-010 | As a builder, I want a USB service port accessible on the enclosure for OTA recovery so that I can re-flash without disassembly. | Medium | USB cable connects to the NodeMCU through the enclosure port without removing lid. |

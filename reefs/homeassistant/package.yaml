@@ -1,5 +1,5 @@
 # HA Package — Reefs
-# Driftwood ambient lamps — SK6812 RGBW, ESP32-WROOM-32, WLED v16+
+# Driftwood ambient lamps — SK6812 RGBW, ESP8266 NodeMCU V3, WLED v0.15
 #
 # ENTITY ID SUBSTITUTION
 # ─────────────────────────────────────────────────────────────────────

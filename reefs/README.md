@@ -1,6 +1,6 @@
 # reefs — Driftwood Ambient Lamps
 
-> Two driftwood wall-wash lamps powered by SK6812 RGBW strips, a shared ESP32/WLED controller, and a compact 3D-printed control box with Home Assistant integration.
+> Two driftwood wall-wash lamps powered by SK6812 RGBW strips, a shared ESP8266 NodeMCU V3/WLED controller, and a compact 3D-printed control box with Home Assistant integration.
 
 ## Concept
 
@@ -20,13 +20,13 @@ Both lamps run back to one concealed control box. That box handles the 5 V power
 
 | Property | Value |
 |---|---|
-| Board | ESP32 DevKit-class board, 38-pin layout |
+| Board | ESP8266 NodeMCU V3 (LoLin/Wemos-style) |
 | LED Type | SK6812 RGBW, 5 V, 60 LED/m, GRBW |
 | LED Count | 120 total (60 per lamp × 2) |
 | Power Supply | Honeywell 5 V / 10 A external PSU |
-| WLED Version | v16+ |
+| WLED Version | v0.15 (ESP8266 branch) |
 | Smart home | Home Assistant native WLED integration |
-| Outputs | GPIO16 → Lamp 1, GPIO17 → Lamp 2 via 74AHCT125 |
+| Outputs | D5/GPIO14 → Lamp 1, D6/GPIO12 → Lamp 2 via 74AHCT125 |
 | Enclosure | 3D-printed PETG / ASA control box, snap-on lid |
 
 ---
@@ -35,7 +35,7 @@ Both lamps run back to one concealed control box. That box handles the 5 V power
 
 | PART_ID | Role | Register-backed facts | Source / Pinout |
 |---|---|---|---|
-| `ESP32_DEVKITC_V4` | Reference controller board | `esp32dev` PlatformIO target; 38-pin board; avoid strapping pins such as GPIO0/2/12/15 for attached hardware at boot | [Board guide](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html) · [Pinout](https://docs.espressif.com/projects/esp-dev-kits/en/latest/_images/esp32-devkitC-v4-pinout.png) |
+| `ESP8266_NODEMCU_V3` | Reference controller board | `nodemcuv2` PlatformIO target; recommended LED pins are D5/GPIO14 and D6/GPIO12; UNVERIFIED clone-derived geometry so confirm your board's size and USB position before enclosure edits | [Board page](https://www.nodemcu.com/index_en.html) |
 | `SK6812_RGBW_60` | LED emitters | 10 mm strip width; GRBW colour order; inject power every ≤ 50 LEDs on longer runs | [Datasheet](https://cdn-shop.adafruit.com/product-files/1138/SK6812+LED+datasheet+.pdf) |
 | `AL_LED_CHANNEL_12MM` | Heat-spreading channel | 12.3 mm inner width; 17.4 × 7.6 mm outer profile; helps move heat away from wood and diffuser | [Profile reference](https://www.superlightingled.com/light-diffuser-aluminum-led-profile-for-12mm-flexible-led-strip-lights-p-4554.html) |
 | `IC_74AHCT125_DIP14` | Data level shifter | 5 V supply; TTL-compatible inputs accept 3.3 V logic; quad buffer lets one gate drive each lamp output | [TI datasheet](https://www.ti.com/product/SN74AHCT125) |
@@ -92,9 +92,9 @@ Re-render with `pwsh tools/render_enclosure.ps1 -Project reefs -ScadName reefs-a
 
 ## Build Checklist
 
-- [ ] Flash WLED to the ESP32 and verify Wi-Fi join
-- [ ] Bench-test one SK6812 strip on GPIO16 through the level shifter
-- [ ] Bench-test both outputs on GPIO16 + GPIO17 with 60 LEDs each
+- [ ] Flash WLED ESP8266 build to the NodeMCU V3 and verify Wi-Fi join
+- [ ] Bench-test one SK6812 strip on D5/GPIO14 through the level shifter
+- [ ] Bench-test both outputs on D5/GPIO14 + D6/GPIO12 with 60 LEDs each
 - [ ] Mount aluminium channels on the driftwood rear faces
 - [ ] Print the current enclosure variant and verify cable-entry fit
 - [ ] Assemble control box: PSU, controller, level shifter, fuses, JST outputs

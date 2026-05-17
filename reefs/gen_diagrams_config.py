@@ -8,11 +8,11 @@ from __future__ import annotations
 
 DIAGRAM_CONFIG: dict = {
     "project":    "reefs",
-    "title":      "REEFS  –  ESP32 WLED Ambient Lighting",
+    "title":      "REEFS  –  ESP8266 WLED Ambient Lighting",
 
     # Power / control hardware
     "psu":        "Honeywell PSU\n5V / 10A",
-    "controller": "ESP32-WROOM-32\nWLED v16+",
+    "controller": "ESP8266 NodeMCU V3\nWLED v0.15",
     "shifter":    "74AHCT125\n3.3 → 5V",
     "power_label": "5V / 10A PSU",
 
@@ -27,8 +27,8 @@ DIAGRAM_CONFIG: dict = {
 
     # GPIO mapping for wiring diagram
     "gpio_map": [
-        {"gpio": 16, "label": "LAMP 1 DATA", "color": "#43a047"},
-        {"gpio": 17, "label": "LAMP 2 DATA", "color": "#26c6da"},
+        {"gpio": 14, "label": "LAMP 1 DATA (D5)", "color": "#43a047"},
+        {"gpio": 12, "label": "LAMP 2 DATA (D6)", "color": "#26c6da"},
     ],
 
     # Concept top-view: lamp positions (cx = x along the wall)

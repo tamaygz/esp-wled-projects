@@ -6,7 +6,7 @@
 
 | Diagram | File | Description |
 |---------|------|-------------|
-| Physical wiring | [`docs/wiring-physical.svg`](../../docs/wiring-physical.svg) | ESP32 → level shifter → JST → strips |
+| Physical wiring | [`docs/wiring-physical.svg`](../../docs/wiring-physical.svg) | NodeMCU V3 → level shifter → JST → strips |
 | Level shifter circuit | [`docs/schematic-level-shifter.png`](../../docs/schematic-level-shifter.png) | 74AHCT125 2-channel schematic |
 | Power circuit | [`docs/schematic-power.png`](../../docs/schematic-power.png) | Mains → fuse → PSU → per-lamp fuses |
 | System block | [`docs/concept-system.png`](../../docs/concept-system.png) | High-level signal and power flow |
@@ -34,18 +34,18 @@ GND bus ────────────▶ JST Lamp 1 Pin 2 (GND)
 V+ bus  ──[5A fuse]──▶ JST Lamp 2 Pin 1 (+5V)
 GND bus ────────────▶ JST Lamp 2 Pin 2 (GND)
 
-ESP32 GPIO16 ──[330Ω]──▶ 74AHCT125 Channel A IN
-                         74AHCT125 Channel A OUT ──▶ JST Lamp 1 Pin 3 (DATA)
+NodeMCU D5 / GPIO14 ──[330Ω]──▶ 74AHCT125 Channel A IN
+                                74AHCT125 Channel A OUT ──▶ JST Lamp 1 Pin 3 (DATA)
 
-ESP32 GPIO17 ──[330Ω]──▶ 74AHCT125 Channel B IN
-                         74AHCT125 Channel B OUT ──▶ JST Lamp 2 Pin 3 (DATA)
+NodeMCU D6 / GPIO12 ──[330Ω]──▶ 74AHCT125 Channel B IN
+                                74AHCT125 Channel B OUT ──▶ JST Lamp 2 Pin 3 (DATA)
 
 74AHCT125 VCC ──▶ V+ bus (5V)
 74AHCT125 GND ──▶ GND bus
 74AHCT125 nOE ──▶ GND (always enabled)
 
-ESP32 5V (Vin) ──▶ V+ bus
-ESP32 GND      ──▶ GND bus
+NodeMCU VIN / VU ──▶ V+ bus
+NodeMCU GND      ──▶ GND bus
 ```
 
 ### Connector / Cable Entry Detail
@@ -55,7 +55,7 @@ ESP32 GND      ──▶ GND bus
 | Mains AC | Back | Ø8 mm round | 3D-printed 2-screw cable clamp (M3 inserts) on jacket |
 | Lamp 1 output | Left | Rectangular pocket ~9.5 × 6 mm + internal shoulder | Female JST SM body trapped by pocket; zip-tie on cable inside |
 | Lamp 2 output | Right | Rectangular pocket ~9.5 × 6 mm + internal shoulder | Female JST SM body trapped by pocket; zip-tie on cable inside |
-| USB-C OTA | Front | 12 × 8 mm slot | n/a (passive cable access) |
+| Micro-USB service opening | Front | Size to actual board cutout | n/a (passive cable access; verify against your NodeMCU board) |
 
 ## Lamp Cable (per lamp, 2 m run)
 
@@ -76,20 +76,20 @@ JST SM rated 3 A/contact — set WLED ABL to **2800 mA per output** to stay with
 
 | GPIO | Function | Notes |
 |------|----------|-------|
-| 16 | LED Data — Lamp 1 | Via 330 Ω series + 74AHCT125 level shifter |
-| 17 | LED Data — Lamp 2 | Via 330 Ω series + 74AHCT125 level shifter |
-| 0 | Boot mode strapping | Do not connect to LED data |
-| 2 | Onboard LED (status) | Leave free |
-| EN | Reset | Accessible via enclosure reset hole |
+| D5 / GPIO14 | LED Data — Lamp 1 | Preferred output pin; via 330 Ω series + 74AHCT125 level shifter |
+| D6 / GPIO12 | LED Data — Lamp 2 | Preferred output pin; via 330 Ω series + 74AHCT125 level shifter |
+| D3 / GPIO0 | Boot mode strapping | Do not use for LED data |
+| D4 / GPIO2 | Boot LED / strapping | Do not use for LED data in this build |
+| D8 / GPIO15 | Boot strapping | Do not use for LED data |
 
-> Avoid GPIO 0, 2, 12, 15 for LED data — these are strapping pins affecting boot mode.
+> The project's NodeMCU mapping follows `ESP8266_NODEMCU_V3` in the parts register. UNVERIFIED clone boards can vary slightly in silkscreen and USB placement, so confirm the labels on your actual board before final wiring.
 
 ---
 
 ## WLED Top 5 Wiring Mistakes
 
 1. **No 300–500 Ω resistor** on data line → signal reflections / flickering.
-2. **Missing common GND** between ESP and strip → erratic/no data.
+2. **Missing common GND** between NodeMCU and strip → erratic/no data.
 3. **3.3 V data direct** to 5 V SK6812 strip → marginal logic level; always use level shifter.
 4. **No 1000 µF cap** on PSU rail → voltage dip on colour change (consider adding near strip).
 5. **Long data line** > 50 cm before level shifter → bit errors at high update rates.

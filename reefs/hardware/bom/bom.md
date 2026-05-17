@@ -7,18 +7,18 @@
 | # | Component | Spec | Qty | Unit Price | Supplier | Part No. | Notes |
 |---|-----------|------|-----|------------|----------|----------|-------|
 | 1 | SK6812 RGBW LED strip | 5 V, 60 LED/m, IP30, 4-pin (GRBW) | 2 × 1 m (60 LEDs each) | ~€8/m | AliExpress / BTF-Lighting | — | Order 1.1 m per lamp; trim to fit |
-| 2 | ESP32 DevKit-class board (38-pin) | ESP32-WROOM-32 / DevKitC-class reference | 1 | ~€4 | Espressif / generic devkit vendor | ESP32-DevKitC-32E reference | Use `ESP32_DEVKITC_V4` in the parts register for reference dimensions and pinout. `LCSC C701341` is the bare ESP32-WROOM-32E module, not the full dev board |
+| 2 | ESP8266 NodeMCU V3 board | LoLin/Wemos-style NodeMCU V3 reference | 1 | ~€4 | Generic NodeMCU vendor | NodeMCU V3 reference | Use `ESP8266_NODEMCU_V3` in the parts register for reference dimensions and pinout. UNVERIFIED — confirm your board's body size and Micro-USB position before updating enclosure geometry |
 | 3 | Honeywell 5 V PSU | 5 V DC, ≥ 10 A (50 W) | 1 | (user-owned) | — | — | Verify nameplate rating ≥ 10 A |
 | 4 | Aluminium LED channel | U-profile with diffuser, 12 mm wide, ≥ 1 m | 2 | ~€5 ea | Local / LUMINES | Type-Z or equiv. | Conducts heat away from wood |
 | 5 | 3-conductor cable | 18 AWG power + 26 AWG data, or 3-core 20 AWG flex | 2 × 2.5 m | ~€2/m | Local electrical | — | 0.5 m slack; one cable per lamp |
-| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | <€0.01 ea | LCSC | C119313 | Series on GPIO data line at ESP32 side — ⚠️ C57436 is 10kΩ (MFR0W4F1002A50), not 330Ω |
+| 6 | 330 Ω resistor | ¼ W, through-hole | 2 | <€0.01 ea | LCSC | C119313 | Series on GPIO data line at the ESP8266 side — ⚠️ C57436 is 10kΩ (MFR0W4F1002A50), not 330Ω |
 | 7 | 74AHCT125 level shifter | SO-14 or DIP-14 | 1 | ~€0.30 | LCSC | C12494 | 3.3 V → 5 V for SK6812 data; 2 channels used |
 | 8 | Blade fuse holder (inline) | 5 × 20 mm, panel or wire mount | 2 | ~€0.50 ea | LCSC / local | — | One per lamp 5 V power run |
 | 9 | 5 A blade fuse | 5 × 20 mm slow-blow | 4 | <€0.20 ea | Local | — | 2 installed + 2 spare |
 | 10 | JST SM 3-pin connector (M+F pair) | 2.5 mm pitch, 3 A rated | 2 pairs | ~€0.30/pair | on hand | — | **Female panel-mounted** in box wall pocket (lamp side male); V+/GND/DATA |
 | 11 | Phoenix-style pluggable terminal | 3-pos, 5.08 mm pitch, screw clamp (PCB header + plug) | 1 | (on hand) | on hand | — | Internal 5 V distribution (PSU → fuses); replaces classic screw terminal |
 | 12 | 3D-printed enclosure | ~150 × 100 × 60 mm PETG/ASA | 1 | ~€2 filament | Self-printed | — | See `mechanical/enclosure/reefs-automatedvariant-enclosure-spec.md` |
-| 13 | M3 × 8 mm screws + brass inserts | — | 12 | ~€0.10 ea | Local | — | 4× ESP32 standoffs, 2× PSU bracket, **2× mains cable clamp**, 4× spare |
+| 13 | M3 × 8 mm screws + brass inserts | — | 12 | ~€0.10 ea | Local | — | 2× PSU bracket, **2× mains cable clamp**, enclosure hardware and spares; NodeMCU board itself should sit in a printed pocket or clip, not on standoffs |
 | 14 | Schuko captive mains lead | H05VV-F 3×0.75 mm², CEE 7/7 plug, ≥ 1.5 m | 1 | ~€2 | Local / scavenged | — | Mains entry; outer jacket clamped inside box; conductors go to PSU L/N/PE screws |
 | 15 | Heat-shrink tubing | 2 mm, 4 mm, 6 mm assorted | 1 pack | ~€2 | Local / AliExpress | — | Insulate all solder joints; mandatory on every mains conductor |
 | 16 | Cable ties (zip-ties) | 2.5 × 100 mm | 1 pack | ~€1 | Local | — | Strain-relief anchors for 2× lamp cables inside box |
@@ -33,11 +33,11 @@
 |-----------|---------|-------------|--------------------------|
 | SK6812 Lamp 1 — 60 LEDs × 60 mA (all channels) | 5 V | **3.60 A** | 0.90 A |
 | SK6812 Lamp 2 — 60 LEDs × 60 mA (all channels) | 5 V | **3.60 A** | 0.90 A |
-| ESP32 DevKit | 5 V (via onboard reg) | 0.50 A | 0.20 A |
+| ESP8266 NodeMCU V3 | 5 V (via onboard reg) | 0.30 A | 0.15 A |
 | 74AHCT125 level shifter | 5 V | 0.02 A | 0.01 A |
-| **Total** | 5 V | **7.72 A** | **2.01 A** |
+| **Total** | 5 V | **7.52 A** | **1.96 A** |
 
-> PSU minimum rating: 7.72 A ÷ 0.80 = **9.65 A** → use a **10 A (50 W) 5 V PSU**.
+> PSU minimum rating: 7.52 A ÷ 0.80 = **9.40 A** → use a **10 A (50 W) 5 V PSU**.
 >
 > Formula used: `N_leds × mA_per_channel × channels` — SK6812 4-channel at 20 mA/channel × 3 active channels max = 60 mA/LED worst-case.
 
@@ -65,7 +65,7 @@ No cable glands or IEC inlet used — all box penetrations are 3D-printed featur
 | Mains AC entry (back wall) | Ø8 mm round | **Printed 2-screw cable clamp** (M3 inserts) pressing on jacket | None (captive Schuko lead); conductors → PSU L/N/PE screw terminals |
 | Lamp 1 output (left wall) | Rectangular pocket ~9.5 × 6 mm with internal shoulder | Connector body trapped by pocket shoulder + internal zip-tie | **Panel-mounted JST SM 3-pin female**; male plug from lamp cable inserts from outside |
 | Lamp 2 output (right wall) | Rectangular pocket ~9.5 × 6 mm with internal shoulder | As above | As above |
-| USB-C OTA (front wall) | 12 × 8 mm slot | n/a (cable accessed only during flashing) | ESP32 onboard USB-C |
+| Micro-USB service opening (front wall) | Size to actual board cutout | n/a (cable accessed only during flashing) | NodeMCU V3 onboard Micro-USB — UNVERIFIED placement, confirm against the physical board |
 
 ### JST SM 3-pin current headroom
 
